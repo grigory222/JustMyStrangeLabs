@@ -9,15 +9,15 @@ public class ThunderWave extends StatusMove {
     public ThunderWave(){
         super(Type.ELECTRIC, 0, 90);
     }
-
-    @Override
-    protected String describe(){
-        return "uses Thunder Wave";
-    }
     
     @Override
     protected void applyOppEffects(Pokemon p){
         // Thunder Wave парализует врага
         Effect.paralyze(p);        
+    }
+
+    @Override
+    protected String describe(){
+        return "uses Thunder Wave";
     }
 }

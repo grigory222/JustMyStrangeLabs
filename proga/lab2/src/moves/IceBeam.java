@@ -1,11 +1,11 @@
 package moves;
 
 import ru.ifmo.se.pokemon.Effect;
-import ru.ifmo.se.pokemon.PhysicalMove;
+import ru.ifmo.se.pokemon.SpecialMove;
 import ru.ifmo.se.pokemon.Pokemon;
 import ru.ifmo.se.pokemon.Type;
 
-public class IceBeam extends PhysicalMove {
+public class IceBeam extends SpecialMove {
     public IceBeam() {
         super(Type.ICE, 90, 100);
     }
@@ -17,5 +17,8 @@ public class IceBeam extends PhysicalMove {
         }
     }
     
-
+    @Override
+    protected String describe(){
+        return "uses Ice Beam";
+    }
 }

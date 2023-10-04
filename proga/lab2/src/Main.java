@@ -1,4 +1,4 @@
-import pokemons.*;
+//import pokemons.*;
 import ru.ifmo.se.pokemon.Battle;
 
 public class Main {
