@@ -1,5 +1,5 @@
 package moves;
-
+    
 import ru.ifmo.se.pokemon.PhysicalMove;
 import ru.ifmo.se.pokemon.Stat;
 import ru.ifmo.se.pokemon.Type;
@@ -11,9 +11,11 @@ public class TakeDown extends PhysicalMove {
     public TakeDown() {
         super(Type.NORMAL, 90, 85);
     }
-
+       
     @Override
-    // атакующий покемон должен получать 25% от урона, который он наносит
+    protected void applySelfEffects(Pokemon p){
+        p.setMod(Stat.HP, (int)Math.round(p.getStat(Stat.ATTACK) / 4));
+    }
 
     @Override
     protected String describe() {
