@@ -26,5 +26,4 @@ public class Slash extends PhysicalMove {
     protected String describe() {
         return "uses Slash";
     }
-
 }

@@ -21,5 +21,4 @@ public class TakeDown extends PhysicalMove {
     protected String describe() {
         return "uses Slash";
     }
-
 }

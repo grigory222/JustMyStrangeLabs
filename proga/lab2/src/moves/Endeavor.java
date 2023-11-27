@@ -18,7 +18,7 @@ public class Endeavor extends PhysicalMove {
 
     @Override
     protected String describe() {
-        return "-3 hp";
+        return "uses Endeavor";
     }
 
 }
