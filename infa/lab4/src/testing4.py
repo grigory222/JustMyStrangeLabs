@@ -3,7 +3,7 @@ import main_parser, re_parser, lib_parser
 
 def test(foo):
     st = time.time()
-    for _ in range(100):
+    for _ in range(1000):
         foo()
     return time.time() - st
 
