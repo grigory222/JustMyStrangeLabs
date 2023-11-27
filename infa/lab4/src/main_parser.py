@@ -157,14 +157,14 @@ def list2yaml(l: list, tab: str, isFirst: bool):
     for i, e in zip(range(len(l)), l):
         if isinstance(e, list):
             tab += ' '
-            res += f"-{list2yaml(e, tab, True)}\n"
+            res += f"{tab[:-2]}- {list2yaml(e, tab, True)}\n"
             tab = tab[:-1]
         elif isinstance(e, dict):
             tab += ' '
-            res += f"-{dict2yaml(e, tab, True)}\n"
+            res += f"{tab[:-2]}- {dict2yaml(e, tab, True)}\n"
             tab = tab[:-1]
         else:
-            res += f"-{tab[:1]}{str(e)}\n"
+            res += f"{tab[:-2]}- {str(e)}\n"
     return res
 
 
@@ -173,15 +173,23 @@ def dict2yaml(d: dict, tab: str, isFirst: bool):
     for i, (key, value) in zip(range(len(d)), d.items()):
         if isinstance(value, dict):
             tab += ' '
-            res += f"{tab[:-1]}{key}:\n{dict2yaml(value, tab, i == 0)}"
+            if not isFirst:
+                res += f"{tab[:-1]}{key}:\n{dict2yaml(value, tab, i == 0)}"
+            else: # если флаг = 1, то отступ не нужен
+                res += f"{key}:\n{dict2yaml(value, tab, i == 0)}"
             tab = tab[:-1]
         elif isinstance(value, list):
             tab += ' '
-            res += f"{tab[:-1]}{key}:\n{list2yaml(value, tab, i == 0)}"
+            if not isFirst:
+                res += f"{tab[:-1]}{key}:\n{list2yaml(value, tab, i == 0)}"
+            else: # если флаг = 1, то отступ не нужен
+                res += f"{key}:\n{list2yaml(value, tab, i == 0)}"         
+            #res += f"{tab[:-1]}{key}:\n{list2yaml(value, tab, i == 0)}"
             tab = tab[:-1]
         else:
             if isFirst:
-                res += f"{tab[:-1]}{key}: {str(value)}\n"
+                #res += f"{tab[:-1]}{key}: {str(value)}\n"
+                res += f"{key}: {str(value)}\n"
                 isFirst = False
             else:
                 res += f"{tab}{key}: {str(value)}\n"
@@ -194,14 +202,14 @@ def dump2yaml(d: dict):
 
 
 def main():
-    with open("/home/grigory/itmo/labs/infa/lab4/data/input.json", "r") as f:
+    with open("/home/grigory/itmo/labs/infa/lab4/data/input_hard.json", "r") as f:
         json_data = f.read()
 
     #mydict = 
 
     yaml_data = dump2yaml(json2dict(json_data))
 
-    with open('/home/grigory/itmo/labs/infa/lab4/data/output.yml', "w") as f:
+    with open('/home/grigory/itmo/labs/infa/lab4/data/output_hard.yml', "w") as f:
         f.write(yaml_data)
     
 

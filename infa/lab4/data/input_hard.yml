@@ -1,0 +1,36 @@
+---
+schedule_Monday_Tuesday:
+- even_week: False
+  day_id: 0
+  day_name: Понедельник
+  schedule:
+  - start_time: 11:40
+    end_time: 13:10
+    subject: Иностранный язык
+    teacher: Батько Светлана Юрьевна
+    classroom: Ауд. 3213, ул.Ломоносова, д.9, лит. Е
+
+  - start_time: 13:30
+    end_time: 15:00
+    subject: Иностранный язык
+    teacher: Батько Светлана Юрьевна
+    classroom: Ауд. 3213, ул.Ломоносова, д.9, лит. Е
+
+
+- even_week: False
+  day_id: 0
+  day_name: Вторник
+  schedule:
+  - start_time: 8:20
+    end_time: 09:50
+    subject: Математический анализ
+    teacher: Константин Владимирович Правдин
+    classroom: Ауд. Orange Classroom (1229), Кронверкский пр., д.49, лит.А
+
+  - start_time: 10:00
+    end_time: 11:30
+    subject: Математический анализ
+    teacher: Константин Владимирович Правдин
+    classroom: Ауд. Orange Classroom (1229), Кронверкский пр., д.49, лит.А
+
+
