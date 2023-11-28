@@ -23,7 +23,7 @@
     },
     {
         "even_week" : false,
-        "day_id" : 0, 
+        "day_id" : 1, 
         "day_name" : "Вторник",
         "schedule" : [
             {

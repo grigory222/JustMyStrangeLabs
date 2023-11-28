@@ -13,7 +13,7 @@ schedule_Monday_Tuesday:
     start_time: '13:30'
     subject: Иностранный язык
     teacher: Батько Светлана Юрьевна
-- day_id: 0
+- day_id: 1
   day_name: Вторник
   even_week: false
   schedule:

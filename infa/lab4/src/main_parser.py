@@ -205,8 +205,6 @@ def main():
     with open("/home/grigory/itmo/labs/infa/lab4/data/input_hard.json", "r") as f:
         json_data = f.read()
 
-    #mydict = 
-
     yaml_data = dump2yaml(json2dict(json_data))
 
     with open('/home/grigory/itmo/labs/infa/lab4/data/output_hard.yml', "w") as f:

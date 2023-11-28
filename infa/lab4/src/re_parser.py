@@ -210,7 +210,7 @@ def main():
     mydict = json2dict(json_data)
     yaml_data = dump2yaml(mydict)
 
-    with open('/home/grigory/itmo/labs/infa/lab4/data/input_hard.yml', "w") as f:
+    with open('/home/grigory/itmo/labs/infa/lab4/data/output_hard.yml', "w") as f:
         f.write(yaml_data)
     
 
