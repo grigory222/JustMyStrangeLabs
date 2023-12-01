@@ -8,12 +8,11 @@ import additional.MyHashMap;
 public class Main {
     public static void main(String[] args){
 
-        MyHashMap<String, String> map = new MyHashMap<>();
-        map.put("123", "LOLOLOL");
-        map.put("456", "amogus");
-        System.out.println("value by key 123: " + map.get("123"));
-        System.out.println("value by key 456: " + map.get("456"));
-        System.out.println("value by key ahaha: " + map.get("ahaha"));
+        MyHashMap<Integer, String> map = new MyHashMap<>();
+        map.put(1, "test");
+        map.put(1, "lol");
+        System.out.println(map.get(1));
+
 
         Znayka znayka = new Znayka();
         Water water = new Water();
