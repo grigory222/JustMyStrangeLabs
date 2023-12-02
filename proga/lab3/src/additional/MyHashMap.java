@@ -4,17 +4,24 @@ import java.util.ArrayList;
 
 public class MyHashMap<K, V> {
     private final int num = 16;
-    ArrayList<Node<K, V>> table = new ArrayList<>();
+    private ArrayList<Node<K, V>> table = new ArrayList<>();
 
     public MyHashMap(){
         // инициализировать массив table пустыми 16-ю значениями
         while (table.size() < num) table.add(null);
     }
 
+    @FunctionalInterface
+    interface CheckInterface<K>{
+        boolean check(K key1, K key2);
+    }
+    CheckInterface<K> check = (K key1, K key2) -> (hash(key1) == hash(key2) && (key1 == key2 || key1.equals(key2)));
+
+
     public V get(K key){
         Node<K, V> node = table.get(getIndex(key));
         while (node != null){
-            if (hash(key) == hash(node.getKey()) && (node.getKey() == key || key.equals(node.getKey()))){
+            if (check.check(key, node.getKey())){
                 return node.getValue();
             }
             node = node.getNextNode();
@@ -23,9 +30,35 @@ public class MyHashMap<K, V> {
     }
 
     public void put(K key, V value) {
-        //Node<K, V> newNode = new Node<>(key.hashCode(), key, value);
         Node<K, V> newNode = new Node<>(hash(key), key, value);
         addNode(getIndex(key), newNode);
+    }
+
+    public void delete(K key){
+        Node<K, V> node = table.get(getIndex(key));
+        // нет элемента с таким ключом
+        if (node == null) return;
+        while (node != null){
+            if (check.check(key, node.getKey())) {
+                deleteNode(node);
+                return;
+            }
+            node = node.getNextNode();
+        }
+    }
+
+    private void deleteNode(Node<K, V> nodeToDelete){
+        Node<K, V> node = table.get(getIndex(nodeToDelete.getKey()));
+
+        // если это первое звено
+        if (node == nodeToDelete){
+            table.set(getIndex(nodeToDelete.getKey()), null);
+            return;
+        }
+
+        // найти звено перед удаляемым
+        while (node.getNextNode() != nodeToDelete) node = node.getNextNode();
+        node.setNextNode(nodeToDelete.getNextNode());
     }
 
     private void addNode(int tableIndex, Node<K, V> newNode){
@@ -36,18 +69,16 @@ public class MyHashMap<K, V> {
             return;
         }
 
-        // ???
-        CheckInterface check = (node) -> {
-            return newNode.getHash() == node.getHash() && (newNode.getKey() == node.getKey() || newNode.getKey().equals(node.getKey()))
-        };
         // если уже есть звенья с таким индексом
         // найти последний
-        while (node.getNextNode() != null);{
+        while (true){
             // если уже есть элемент с таким ключом
-            if (newNode.getHash() == node.getHash() && (newNode.getKey() == node.getKey() || newNode.getKey().equals(node.getKey()))){
+            if (check.check(newNode.getKey(), node.getKey())){
                 node.setValue(newNode.getValue());
                 return;
             }
+            if (node.getNextNode() == null)
+                break;
             node = node.getNextNode();
         }
 

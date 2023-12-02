@@ -1,10 +1,10 @@
 package additional;
 
 class Node<K, V>{
-    int hash;
-    K key;
-    V value;
-    Node<K, V> nextNode;
+    private int hash;
+    private K key;
+    private V value;
+    private Node<K, V> nextNode;
 
     Node(int hash, K key, V value){
         this.hash = hash;
