@@ -15,8 +15,14 @@ public class MyHashMap<K, V> {
     interface CheckInterface<K>{
         boolean check(K key1, K key2);
     }
-    CheckInterface<K> check = (K key1, K key2) -> (hash(key1) == hash(key2) && key1.equals(key2));
-
+    //CheckInterface<K> check = (K key1, K key2) -> (hash(key1) == hash(key2) && key1.equals(key2));
+    CheckInterface<K> check = (K key1, K key2) -> {
+        if (key1 == key2)
+            return true;
+        if (key1 == null || key2 == null)
+            return false;
+        return (hash(key1) == hash(key2) && key1.equals(key2));
+    };
 
     public V get(K key){
         Node<K, V> node = table.get(getIndex(key));

@@ -13,6 +13,8 @@ public class Main {
         map.put(1, "lol");
         map.put(52, "444");
         map.put(1337, "s0m3_v4lu3");
+        map.put(null, "s0m3_v4lu3");
+        System.out.println(map.get(null));
         map.delete(1337);
         map.delete(1337);
         map.delete(13377);
