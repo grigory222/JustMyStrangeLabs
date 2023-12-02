@@ -15,7 +15,7 @@ public class MyHashMap<K, V> {
     interface CheckInterface<K>{
         boolean check(K key1, K key2);
     }
-    CheckInterface<K> check = (K key1, K key2) -> (hash(key1) == hash(key2) && (key1 == key2 || key1.equals(key2)));
+    CheckInterface<K> check = (K key1, K key2) -> (hash(key1) == hash(key2) && key1.equals(key2));
 
 
     public V get(K key){
@@ -63,22 +63,27 @@ public class MyHashMap<K, V> {
 
     private void addNode(int tableIndex, Node<K, V> newNode){
         Node<K, V> node = table.get(tableIndex);
+
         // если еще нет звеньев с таким индексом
         if (node == null){
             table.set(tableIndex, newNode);
             return;
         }
 
+        // случай, когда единственный элемент в списке, ключ которог совпадает с новым
+        if (node.getNextNode() == null && check.check(newNode.getKey(), node.getKey())){
+            node.setValue(newNode.getValue());
+            return;
+        }
+
         // если уже есть звенья с таким индексом
         // найти последний
-        while (true){
+        while (node.getNextNode() != null){
             // если уже есть элемент с таким ключом
             if (check.check(newNode.getKey(), node.getKey())){
                 node.setValue(newNode.getValue());
                 return;
             }
-            if (node.getNextNode() == null)
-                break;
             node = node.getNextNode();
         }
 
