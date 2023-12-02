@@ -1,3 +1,4 @@
+import additional.MyHashMapTest;
 import people.Znayka;
 import substances.Alcohol;
 import substances.MoonRock;
@@ -8,21 +9,8 @@ import additional.MyHashMap;
 public class Main {
     public static void main(String[] args){
 
-        MyHashMap<Integer, String> map = new MyHashMap<>();
-        map.put(1, "test");
-        map.put(1, "lol");
-        map.put(52, "444");
-        map.put(1337, "s0m3_v4lu3");
-        map.put(null, "s0m3_v4lu3");
-        System.out.println(map.get(null));
-        map.delete(1337);
-        map.delete(1337);
-        map.delete(13377);
-        map.put(0xdeadbeef, "0xcafebabe");
-        System.out.println(map.get(1));
-        System.out.println(map.get(52));
-        System.out.println(map.get(1337));
-        System.out.println(map.get(0xdeadbeef));
+        MyHashMapTest test = new MyHashMapTest();
+        test.test();
 
 
         Znayka znayka = new Znayka();
