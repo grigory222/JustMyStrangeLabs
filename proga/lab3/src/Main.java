@@ -4,7 +4,6 @@ import substances.Alcohol;
 import substances.MoonRock;
 import substances.SulfuricAcid;
 import substances.Water;
-import additional.MyHashMap;
 
 public class Main {
     public static void main(String[] args){
@@ -18,7 +17,6 @@ public class Main {
         MoonRock moonRock = new MoonRock();
         SulfuricAcid sulfuricAcid = new SulfuricAcid();
         Alcohol alcohol = new Alcohol();
-
 
 
         System.out.println(znayka.analyze(water));
