@@ -1,3 +1,4 @@
+import additional.MyHashMap;
 import exceptions.ZeroSubstancePropertyException;
 import people.Znayka;
 import substances.*;
@@ -14,9 +15,6 @@ public class Main {
 
         // Локальный класс. "Новый" лунный камень, который меняет вес
         class NewMoonRock extends MoonRock {
-            public NewMoonRock(){
-                super();
-            }
             void updateWeight() {
                 Random random = new Random();
                 double left = 0.1;
@@ -73,5 +71,12 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
+        MyHashMap<String, Integer> m = new MyHashMap<>();
+        m.put("test1", 123);
+        m.put("test2", 456);
+        m.put("test3", 789);
+        for (String x : m){
+            System.out.println(x);
+        }
     }
 }

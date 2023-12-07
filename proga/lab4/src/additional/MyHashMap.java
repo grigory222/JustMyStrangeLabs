@@ -1,10 +1,68 @@
 package additional;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
-public class MyHashMap<K, V> {
+public class MyHashMap<K, V> implements Iterable<K>{
     private final int num = 16;
     private ArrayList<Node<K, V>> table = new ArrayList<>();
+
+    // Возвращает объект-итератор
+    public Iterator<K> iterator(){
+        // найдем первое звено
+        int cur = 0;
+        Node<K, V> startNode = null;
+        while (cur < table.size()){
+            if (table.get(cur) != null){
+                startNode = table.get(cur);
+                break;
+            }
+            cur++;
+        }
+        return new HashMapIterator(startNode);
+    }
+    private class HashMapIterator implements Iterator<K>{
+            private int currentIndex = 0;
+            private Node<K, V> currentNode = null;
+            HashMapIterator(Node<K, V> startNode){
+                currentNode = startNode;
+            }
+            @Override
+            public boolean hasNext() {
+                // Проверяем, есть ли следующий элемент в хешмапе
+                if (currentNode == null){
+                    return currentIndex + 1 < table.size() && table.get(currentIndex + 1) != null;
+                } else{
+                    if (currentNode.getNextNode() == null) // проверить следующий элемент массива
+                        return currentIndex + 1 < table.size() && table.get(currentIndex + 1) != null;
+                    else
+                        return true;
+                }
+            }
+            @Override
+            public K next() {
+                // Переходим к следующему элементу в хешмапе
+                while (currentIndex < table.size()){
+                    if (table.get(currentIndex) == null){
+                        currentIndex++;
+                        continue;
+                    }
+                    currentNode = table.get(currentIndex);
+                    while(currentNode.getNextNode() != null){
+                        currentNode = currentNode.getNextNode();
+                    }
+                    try{
+                        return currentNode.getKey();
+                    } finally {
+                        currentNode = currentNode.getNextNode();
+                    }
+
+
+                }
+                return currentNode.getKey();
+            }
+    }
+
 
     public MyHashMap(){
         // инициализировать массив table пустыми 16-ю значениями
