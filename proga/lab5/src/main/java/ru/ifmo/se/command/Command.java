@@ -1,5 +1,7 @@
 package ru.ifmo.se.command;
 
-public abstract class Command {
+import ru.ifmo.se.receiver.Receiver;
 
+public interface Command {
+    void execute(String[] args);
 }

@@ -1,6 +1,8 @@
 package ru.ifmo.se.controller;
 
 import ru.ifmo.se.command.Command;
+
+import java.util.Arrays;
 import java.util.Map;
 
 public class Invoker {
@@ -13,9 +15,10 @@ public class Invoker {
 
     // Парсит команду с аргументами и делегирует выполнение классу Command
     public void executeCommand(String commandAndArgs){
-        // parse args; create String parsed and String[] args
-        // Command command = commands.get(parsed[0]]
-        // command.execute(args);
+        String[] parsed = commandAndArgs.split(" ");
+        String[] args = Arrays.copyOfRange(parsed, 1, parsed.length);
+        Command command = commands.get(parsed[0]);
+        command.execute(args);
     }
 
 }

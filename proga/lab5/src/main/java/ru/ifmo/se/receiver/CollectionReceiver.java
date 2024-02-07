@@ -1,6 +1,17 @@
 package ru.ifmo.se.receiver;
 
-// работает с командами, которые вносят изменения в коллекцию: add, update id, remove_by_id id, clear, ...
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+
+// работает с командами ввода/вывода: help, info, show, print_unique_difficulty, print_field_ascending_author
 public class CollectionReceiver<T> extends Receiver<T>{
+
+    public CollectionReceiver(){
+
+    }
+
+    public void add(/*аргументы*/){
+        // logic
+    }
 
 }
