@@ -1,17 +1,14 @@
 package ru.ifmo.se.receiver;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
+// работает с командами, которые модифицируют коллекцию: add, update, remove_by_id, clear, add_if_max, add_if_min, group_counting_by_creation_date
+public class CollectionReceiver extends Receiver{
 
-// работает с командами ввода/вывода: help, info, show, print_unique_difficulty, print_field_ascending_author
-public class CollectionReceiver<T> extends Receiver<T>{
-
-    public CollectionReceiver(){
-
+    public CollectionReceiver(CollectionHandler collectionHandler){
+        super(collectionHandler);
     }
 
     public void add(/*аргументы*/){
-        // logic
+
     }
 
 }

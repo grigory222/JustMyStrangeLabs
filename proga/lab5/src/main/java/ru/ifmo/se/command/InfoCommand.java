@@ -2,10 +2,13 @@ package ru.ifmo.se.command;
 
 import ru.ifmo.se.receiver.IoReceiver;
 
-public class InfoCommand<T> extends AbstractCommand implements Command{
-    private final IoReceiver<T> receiver;
-    public InfoCommand(IoReceiver<T> receiver, String name){
-        super(name);
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+
+public class InfoCommand extends AbstractCommand implements Command{
+    private final IoReceiver receiver;
+    public InfoCommand(IoReceiver receiver, BufferedReader reader, PrintWriter printer, String name){
+        super(name, reader, printer);
         this.receiver = receiver;
     }
 
