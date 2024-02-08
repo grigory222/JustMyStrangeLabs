@@ -101,43 +101,15 @@ public class Runner {
     }
 
     public boolean loadCsv(String fileName) throws IOException, CsvException {
-//        CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).build();
-//        String [] line;
-//
-//        // ключ - заголовок. значение - соответствующий столбец
-//        Map<String, ArrayList<String>> map = new HashMap<>();
-//        String[] headers = reader.readNext();
-//        for (String cur : headers)
-//            map.put(cur, new ArrayList<String>());
-//
-//        //
-//        for (String[] row: reader.readAll()){
-//            for (int i = 0; i < row.length; i++){
-//                map.get(headers[i]).add(row[i]);
-//            }
-//        }
-//        System.out.println(map);
 
 
         Reader reader = new BufferedReader(new FileReader(fileName));
 
         CsvToBeanBuilder<LabWork> builder = new CsvToBeanBuilder<LabWork>(reader)
                 .withMappingStrategy(new LabWorkMappingStrategy());
-        CsvToBean<LabWork> ctb = builder.build();
-        for (LabWork lab: ctb.parse()) {
-            System.out.println(lab);
-        }
+        collection = new LinkedHashSet<>(builder.build().parse());
+        System.out.println(collection);
 
-//        CsvToBean<LabWork> csvReader = new CsvToBeanBuilder<LabWork>(reader)
-//                .withType(LabWork.class)
-//                .withSeparator(',')
-//                .withIgnoreLeadingWhiteSpace(true)
-//                .withIgnoreEmptyLine(true)
-//                .build();
-//
-//        LinkedHashSet<LabWork> results = new LinkedHashSet<>(csvReader.parse());
-
-        collection = new LinkedHashSet<>();
 
         collectionHandler = new CollectionHandler(collection);
         return true; // успешно считали

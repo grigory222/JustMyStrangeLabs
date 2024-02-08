@@ -24,14 +24,7 @@ public class LabWorkMappingStrategy extends ColumnPositionMappingStrategy<LabWor
     @Override
     public LabWork populateNewBean(String[] line) throws CsvBeanIntrospectionException, CsvRequiredFieldEmptyException,
             CsvConstraintViolationException, CsvValidationException {
-//        Person person = new Person();
-//        person.id = line[0];
-//        person.lname = line[1];
-//        person.fname = line[2];
-//        person.address = new Address();
-//        person.address.line1 = line[3];
-//        person.address.line2 = line[4];
-//        return person;
+
         LabWork labWork = new LabWork();
         labWork.setId(Integer.parseInt(line[0]));
         labWork.setName(line[1]);
