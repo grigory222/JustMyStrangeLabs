@@ -1,20 +1,23 @@
 package ru.ifmo.se.runner;
 
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
-import com.opencsv.bean.CsvBindByPosition;
-import com.opencsv.bean.CsvToBean;
-import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvException;
-import com.opencsv.exceptions.CsvValidationException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import ru.ifmo.se.command.*;
 import ru.ifmo.se.controller.Invoker;
 import ru.ifmo.se.entity.LabWork;
-import ru.ifmo.se.entity.LabWorkMappingStrategy;
-import ru.ifmo.se.receiver.*;
+import ru.ifmo.se.receiver.CollectionHandler;
+import ru.ifmo.se.receiver.CollectionReceiver;
+import ru.ifmo.se.receiver.IoReceiver;
+import ru.ifmo.se.receiver.StorageReceiver;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+
+import static ru.ifmo.se.csv.CsvHandler.*;
 
 public class Runner {
 
@@ -85,9 +88,9 @@ public class Runner {
 
     void initReceivers(){
         // создаем экземпляры Получателей, чтобы каждая команда знала своего исполнителя
-        ioReceiver = new IoReceiver(collectionHandler, printWriter, bufferedReader);
-        collectionReceiver = new CollectionReceiver(collectionHandler);
-        storageReceiver = new StorageReceiver(collectionHandler, file);
+        ioReceiver = new IoReceiver(collection, collectionHandler, printWriter, bufferedReader);
+        collectionReceiver = new CollectionReceiver(collection, collectionHandler);
+        storageReceiver = new StorageReceiver(collection, collectionHandler, file);
     }
 
     void runCommands() throws IOException{
@@ -100,19 +103,20 @@ public class Runner {
 
     }
 
-    public boolean loadCsv(String fileName) throws IOException, CsvException {
-
+    public void loadCsv(String fileName) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
 
         Reader reader = new BufferedReader(new FileReader(fileName));
+//        CsvToBeanBuilder<LabWork> builder = new CsvToBeanBuilder<LabWork>(reader)
+//                .withMappingStrategy(new LabWorkMappingStrategy());
+//        collection = new LinkedHashSet<>(builder.build().parse());
+//
+//
+//        collectionHandler = new CollectionHandler(collection);
 
-        CsvToBeanBuilder<LabWork> builder = new CsvToBeanBuilder<LabWork>(reader)
-                .withMappingStrategy(new LabWorkMappingStrategy());
-        collection = new LinkedHashSet<>(builder.build().parse());
-        System.out.println(collection);
-
-
+        List<LabWork> labWorks = parseCSV(fileName);
+        writeRowsToCsv(fileName+"_new", labWorks);
+        collection = new LinkedHashSet<>(labWorks);
         collectionHandler = new CollectionHandler(collection);
-        return true; // успешно считали
     }
 
     // Пользовательский метод. Запускает инициализации и цикл чтения команд

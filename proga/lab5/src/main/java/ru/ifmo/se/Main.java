@@ -12,9 +12,6 @@ import ru.ifmo.se.runner.Runner;
 
 public class Main {
     public static void main(String[] args) throws IOException, CsvException {
-//        BufferedReader br;
-//        br = new BufferedReader(new FileReader("foo.in"));
-//        br = new BufferedReader(new InputStreamReader(System.in));
         Runner r = new Runner();
         r.run(args[0]);
     }
