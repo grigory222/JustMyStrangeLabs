@@ -108,7 +108,6 @@ public class Runner {
             if (!invoker.executeCommand(line))
                 printWriter.println("Неверная команда!");
         } while(!line.equals("exit"));
-
     }
 
     public void loadFromCsv(String fileName) {

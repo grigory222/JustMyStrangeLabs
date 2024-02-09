@@ -3,10 +3,16 @@ package ru.ifmo.se.entity;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
 import com.opencsv.bean.CsvRecurse;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.ifmo.se.csv.CsvHandler;
 
+import java.time.LocalDate;
+
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class LabWork {
     @CsvBindByName
     private Integer id;
@@ -42,8 +48,7 @@ public class LabWork {
                 "\nminimalPoint: " + minimalPoint +
                 "\ntunedInWorks: " + tunedInWorks +
                 "\ndifficulty: " + difficulty.name() +
-                "\nauthor: " + author.getAuthorName() +
-                "\nauthor's birthday: " + author.getBirthday();
+                "\nauthor: " + author;
 
     }
 }

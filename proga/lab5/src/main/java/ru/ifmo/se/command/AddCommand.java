@@ -1,5 +1,7 @@
 package ru.ifmo.se.command;
 
+import ru.ifmo.se.entity.LabWork;
+import ru.ifmo.se.entity.LabWorkReader;
 import ru.ifmo.se.receiver.CollectionReceiver;
 
 import java.io.BufferedReader;
@@ -14,10 +16,17 @@ public class AddCommand extends AbstractCommand implements Command{
     }
 
     public void execute(String[] args) {
-        // считать данные нового элемента
-        // с try catch'ами
-        //printer.println();
-        //reader.readLine();
-        //receiver.add();
+        LabWork labWork;
+        try {
+            labWork = LabWorkReader.readLabWork(reader, printer);
+        } catch (IOException e) {
+            printer.println("Не удалось считать элемент");
+            return;
+        }
+
+        // установка автогенерируемых полей + вызов collectionHandler
+        receiver.add(labWork);
+
+        printer.println("Элемент добавлен");
     }
 }
