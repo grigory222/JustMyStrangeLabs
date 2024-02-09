@@ -5,5 +5,5 @@ import ru.ifmo.se.receiver.Receiver;
 import java.io.IOException;
 
 public interface Command {
-    void execute(String[] args) throws IOException;
+    void execute(String[] args);
 }

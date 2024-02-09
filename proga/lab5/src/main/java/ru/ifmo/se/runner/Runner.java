@@ -30,7 +30,6 @@ public class Runner {
     private CollectionHandler collectionHandler; // обработчик crud операций с коллекцией
     private Invoker invoker;
     private LinkedHashSet<LabWork> collection;
-    private File file;
 
 
     // Конструктор без параметров будет использовать PrintWriter с stdout и BufferedReader с stdin
@@ -53,8 +52,8 @@ public class Runner {
     private Map<String, Command> fillCommandMap(){
         Map<String, Command> cmdMap = new HashMap<>();
 
-
         // создаем экземпляры команд, чтобы положить их в мапу, чтобы инвокер из неё вызывал их
+        Command exitCmd = new ExitCommand(bufferedReader, printWriter, "save");
         // IoReceiver
         Command helpCmd = new HelpCommand(ioReceiver, bufferedReader, printWriter, "help"); // не передаю bufferedReader, поому что эти команды не читают
         Command infoCmd = new InfoCommand(ioReceiver, bufferedReader, printWriter, "info"); // ничего с клавиатуры, в отличии от addCommand, например
@@ -68,6 +67,7 @@ public class Runner {
         // ...
         // ...
         // StorageReceiver
+        Command saveCmd = new SaveCommand(storageReceiver, bufferedReader, printWriter, "save");
         // ...
         // ...
         // ...
@@ -76,12 +76,15 @@ public class Runner {
 
 
         // кладём команды в мапу
+        cmdMap.put("exit", exitCmd);
         cmdMap.put("help", helpCmd);
         cmdMap.put("info", infoCmd);
         cmdMap.put("show", showCmd);
         cmdMap.put("print_unique_difficulty", printUniqueDifficultyCmd);
         cmdMap.put("print_field_ascending_author", printFieldAscendingCmd);
         cmdMap.put("add", addCmd);
+        cmdMap.put("save", saveCmd);
+
 
         return cmdMap;
     }
@@ -90,38 +93,44 @@ public class Runner {
         // создаем экземпляры Получателей, чтобы каждая команда знала своего исполнителя
         ioReceiver = new IoReceiver(collection, collectionHandler, printWriter, bufferedReader);
         collectionReceiver = new CollectionReceiver(collection, collectionHandler);
-        storageReceiver = new StorageReceiver(collection, collectionHandler, file);
+        storageReceiver = new StorageReceiver(collection, collectionHandler);
     }
 
-    void runCommands() throws IOException{
+    void runCommands(){
         String line;
         do{
-            line = bufferedReader.readLine();
+            try {
+                line = bufferedReader.readLine();
+            } catch (IOException e) {
+                printWriter.println("Ошибка ввода!");
+                return;
+            }
             if (!invoker.executeCommand(line))
                 printWriter.println("Неверная команда!");
         } while(!line.equals("exit"));
 
     }
 
-    public void loadCsv(String fileName) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-
-        Reader reader = new BufferedReader(new FileReader(fileName));
-//        CsvToBeanBuilder<LabWork> builder = new CsvToBeanBuilder<LabWork>(reader)
-//                .withMappingStrategy(new LabWorkMappingStrategy());
-//        collection = new LinkedHashSet<>(builder.build().parse());
-//
-//
-//        collectionHandler = new CollectionHandler(collection);
-
-        List<LabWork> labWorks = parseCSV(fileName);
-        writeRowsToCsv(fileName+"_new", labWorks);
-        collection = new LinkedHashSet<>(labWorks);
-        collectionHandler = new CollectionHandler(collection);
+    public void loadFromCsv(String fileName) {
+        try {
+            Reader reader = new BufferedReader(new FileReader(fileName));
+            List<LabWork> labWorks = parseCSV(fileName);
+            collection = new LinkedHashSet<>(labWorks);
+            collectionHandler = new CollectionHandler(collection);
+        } catch (FileNotFoundException e) {
+            printWriter.write("Невозможно открыть файл " + fileName);
+        } catch (IOException e) {
+            printWriter.write("Не удаётся прочитать файл " + fileName);
+        }
     }
 
+
+
+
+
     // Пользовательский метод. Запускает инициализации и цикл чтения команд
-    public void run(String fileName) throws IOException, CsvException {
-        loadCsv(fileName);
+    public void run(String fileName)  {
+        loadFromCsv(fileName);
         initReceivers();
         initInvoker();
         runCommands();

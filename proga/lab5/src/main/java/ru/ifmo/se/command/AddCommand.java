@@ -13,10 +13,11 @@ public class AddCommand extends AbstractCommand implements Command{
         this.receiver = receiver;
     }
 
-    public void execute(String[] args) throws IOException {
+    public void execute(String[] args) {
         // считать данные нового элемента
-        printer.println();
-        reader.readLine();
-        receiver.add();
+        // с try catch'ами
+        //printer.println();
+        //reader.readLine();
+        //receiver.add();
     }
 }

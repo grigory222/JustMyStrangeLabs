@@ -2,12 +2,16 @@ package ru.ifmo.se.csv;
 
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.*;
+import com.opencsv.bean.comparator.LiteralComparator;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import lombok.NoArgsConstructor;
 import ru.ifmo.se.entity.*;
+import org.apache.commons.collections4.comparators.FixedOrderComparator;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,14 +19,18 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CsvHandler {
+    private static final List<String> COLUMNS_ORDER = Arrays.asList(
+            "id", "name", "x", "y", "creationDate", "minimalPoint",
+            "tunedInWorks", "difficulty", "authorName", "birthday",
+            "height", "weight", "hairColor"
+    );
 
-    public static class CsvException extends RuntimeException{
+
+    public static class CsvException extends RuntimeException {
         public CsvException(String message) {
             super(message);
         }
@@ -40,14 +48,70 @@ public class CsvHandler {
         return csvToBean.parse();
     }
 
-    public static void writeRowsToCsv(String filePath, List<LabWork> rows)
-            throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
 
-        Writer writer = new FileWriter("src/main/resources/result.csv");
-        StatefulBeanToCsv beanToCsv = new StatefulBeanToCsvBuilder(writer).build();
-        beanToCsv.write(rows);
-        writer.close();
+    private static String getHeaders(Object object) {
+        if (object == null) return "null";
 
+        Class<?> clazz = object.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        StringBuilder csvData = new StringBuilder();
+
+        // Append headers
+        for (Field field : fields) {
+            Class<?> fieldClass = field.getType();
+            field.setAccessible(true);
+            if (fieldClass.isPrimitive() || fieldClass.isEnum() || fieldClass == String.class || fieldClass == Integer.class
+                    || fieldClass == Date.class || fieldClass == LocalDate.class || fieldClass == Double.class) {
+                csvData.append(field.getName()).append(",");
+            } else {
+                try {
+                    csvData.append(getHeaders(field.get(object))).append(",");;
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        csvData.deleteCharAt(csvData.length() - 1);
+
+        return csvData.toString();
+    }
+
+    private static String getValues(Object object) {
+        Class<?> clazz = object.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        StringBuilder csvData = new StringBuilder();
+
+        for (Field field : fields) {
+            Class<?> fieldClass = field.getType();
+            field.setAccessible(true);
+            try {
+                if (fieldClass == Date.class){
+                    csvData.append(new SimpleDateFormat("yyyy-MM-dd").format(field.get(object))).append(",");
+                } else
+                if (fieldClass.isPrimitive() || fieldClass.isEnum() || fieldClass == String.class || fieldClass == Integer.class
+                        || fieldClass == LocalDate.class || fieldClass == Double.class) {
+                    csvData.append(field.get(object)).append(",");
+                } else {
+                    csvData.append(getValues(field.get(object))).append(",");
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        csvData.deleteCharAt(csvData.length() - 1);
+        return csvData.toString();
+    }
+
+    public static void writeRows(FileWriter writer, List<LabWork> rows) throws IOException {
+        if (rows.isEmpty()) return;
+
+        writer.write(getHeaders(rows.get(0)) + "\n");
+
+        for (LabWork row : rows){
+            writer.write(getValues(row) + "\n");
+        }
     }
 
     @NoArgsConstructor

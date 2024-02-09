@@ -14,7 +14,7 @@ public class Invoker {
     }
 
     // Парсит команду с аргументами и делегирует выполнение классу Command
-    public boolean executeCommand(String commandAndArgs) throws IOException {
+    public boolean executeCommand(String commandAndArgs) {
         String[] parsed = commandAndArgs.split(" ");
         String[] args = Arrays.copyOfRange(parsed, 1, parsed.length);
         if (!commands.containsKey(parsed[0]))

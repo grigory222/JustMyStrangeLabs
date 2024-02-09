@@ -6,8 +6,6 @@ import com.opencsv.bean.CsvRecurse;
 import lombok.Data;
 import ru.ifmo.se.csv.CsvHandler;
 
-import java.time.LocalDate;
-
 @Data
 public class LabWork {
     @CsvBindByName
@@ -44,7 +42,7 @@ public class LabWork {
                 "\nminimalPoint: " + minimalPoint +
                 "\ntunedInWorks: " + tunedInWorks +
                 "\ndifficulty: " + difficulty.name() +
-                "\nauthor: " + author.getName() +
+                "\nauthor: " + author.getAuthorName() +
                 "\nauthor's birthday: " + author.getBirthday();
 
     }

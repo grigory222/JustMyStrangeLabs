@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class Person {
     @CsvBindByName(column = "authorName")
-    private String name; //Поле не может быть null, Строка не может быть пустой
+    private String authorName; //Поле не может быть null, Строка не может быть пустой
     @CsvCustomBindByName(column = "birthday", converter = CsvHandler.DateConverterSecond.class)
     private java.util.Date birthday; //Поле не может быть null
     @CsvBindByName
@@ -22,8 +22,8 @@ public class Person {
     @CsvBindByName
     private Color hairColor; //Поле не может быть null
 
-    public Person(String name, Date birthday, int height, Double weight, Color hairColor) {
-        this.name = name;
+    public Person(String authorName, Date birthday, int height, Double weight, Color hairColor) {
+        this.authorName = authorName;
         this.birthday = birthday;
         this.height = height;
         this.weight = weight;
