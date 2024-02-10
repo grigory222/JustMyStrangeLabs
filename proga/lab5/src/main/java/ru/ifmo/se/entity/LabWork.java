@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LabWork {
+public class LabWork implements Comparable<LabWork>{
     @CsvBindByName
     private Integer id;
 
@@ -38,6 +38,11 @@ public class LabWork {
 
     @CsvRecurse
     private Person author;
+
+    @Override
+    public int compareTo(LabWork o) {
+        return this.id - o.id;
+    }
 
     @Override
     public String toString() {

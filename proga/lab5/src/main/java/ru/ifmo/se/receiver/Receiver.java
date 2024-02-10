@@ -13,5 +13,4 @@ public abstract class Receiver {
         this.collection = collection;
         this.collectionHandler = collectionHandler;
     }
-
 }

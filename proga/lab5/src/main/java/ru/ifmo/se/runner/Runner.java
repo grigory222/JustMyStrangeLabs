@@ -12,6 +12,7 @@ import ru.ifmo.se.receiver.IoReceiver;
 import ru.ifmo.se.receiver.StorageReceiver;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -54,17 +55,18 @@ public class Runner {
 
         // создаем экземпляры команд, чтобы положить их в мапу, чтобы инвокер из неё вызывал их
         Command exitCmd = new ExitCommand(bufferedReader, printWriter, "save");
+        Command executeScriptCmd = new ExecuteScriptCommand(collectionReceiver, bufferedReader, printWriter, "execute_script");
         // IoReceiver
-        Command helpCmd = new HelpCommand(ioReceiver, bufferedReader, printWriter, "help"); // не передаю bufferedReader, поому что эти команды не читают
-        Command infoCmd = new InfoCommand(ioReceiver, bufferedReader, printWriter, "info"); // ничего с клавиатуры, в отличии от addCommand, например
+        Command helpCmd = new HelpCommand(ioReceiver, bufferedReader, printWriter, "help");
+        Command infoCmd = new InfoCommand(ioReceiver, bufferedReader, printWriter, "info");
         Command showCmd = new ShowCommand(ioReceiver, bufferedReader, printWriter, "show");
         Command printUniqueDifficultyCmd = new PrintUniqueDifficultyCommand(ioReceiver, bufferedReader, printWriter, "print_unique_difficulty");
         Command printFieldAscendingCmd = new PrintFieldAscendingCommand(ioReceiver, bufferedReader, printWriter, "print_field_ascending_author");
         // CollectionReceiver
         Command addCmd = new AddCommand(collectionReceiver, bufferedReader, printWriter, "add");
-        // ...
-        // ...
-        // ...
+        Command updateCmd = new UpdateCommand(collectionReceiver, bufferedReader, printWriter, "update");
+        Command removeByIdCmd = new RemoveByIdCommand(collectionReceiver, bufferedReader, printWriter, "remove_by_id");
+        Command clearCmd = new ClearCommand(collectionReceiver, bufferedReader, printWriter, "clear");
         // ...
         // StorageReceiver
         Command saveCmd = new SaveCommand(storageReceiver, bufferedReader, printWriter, "save");
@@ -76,6 +78,7 @@ public class Runner {
 
 
         // кладём команды в мапу
+        cmdMap.put("execute_script", executeScriptCmd);
         cmdMap.put("exit", exitCmd);
         cmdMap.put("help", helpCmd);
         cmdMap.put("info", infoCmd);
@@ -83,6 +86,9 @@ public class Runner {
         cmdMap.put("print_unique_difficulty", printUniqueDifficultyCmd);
         cmdMap.put("print_field_ascending_author", printFieldAscendingCmd);
         cmdMap.put("add", addCmd);
+        cmdMap.put("update", updateCmd);
+        cmdMap.put("remove_by_id", removeByIdCmd);
+        cmdMap.put("clear", clearCmd);
         cmdMap.put("save", saveCmd);
 
 
@@ -100,10 +106,15 @@ public class Runner {
         String line;
         do{
             try {
+                printWriter.print("> "); printWriter.flush();
                 line = bufferedReader.readLine();
             } catch (IOException e) {
                 printWriter.println("Ошибка ввода!");
                 return;
+            }
+            if (line == null){
+                printWriter.println("Конец ввода!");
+                break;
             }
             if (!invoker.executeCommand(line))
                 printWriter.println("Неверная команда!");
@@ -115,7 +126,7 @@ public class Runner {
             Reader reader = new BufferedReader(new FileReader(fileName));
             List<LabWork> labWorks = parseCSV(fileName);
             collection = new LinkedHashSet<>(labWorks);
-            collectionHandler = new CollectionHandler(collection);
+            collectionHandler = new CollectionHandler(collection, LocalDate.now());
         } catch (FileNotFoundException e) {
             printWriter.write("Невозможно открыть файл " + fileName);
         } catch (IOException e) {
@@ -123,17 +134,25 @@ public class Runner {
         }
     }
 
-
-
-
+    private void initAll(){
+        initReceivers();
+        initInvoker();
+        printWriter.println("Добро пожаловать! Чтобы просмотреть возможные команды используйте help");
+    }
 
     // Пользовательский метод. Запускает инициализации и цикл чтения команд
     public void run(String fileName)  {
         loadFromCsv(fileName);
-        initReceivers();
-        initInvoker();
+        initAll();
         runCommands();
     }
+
+    public void run(LinkedHashSet<LabWork> collection){
+        this.collection = collection;
+        initAll();
+        runCommands();
+    }
+
 }
 
 

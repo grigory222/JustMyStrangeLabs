@@ -44,7 +44,7 @@ public class IoReceiver extends Receiver{
     }
     public void info(){
         // вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)
-        printer.println("INFO!!!!");
+        printer.println(collectionHandler.getInfo());
     }
 
     public void printUniqueDifficulty(){
