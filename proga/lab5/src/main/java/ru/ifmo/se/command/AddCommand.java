@@ -10,8 +10,8 @@ import java.io.PrintWriter;
 
 public class AddCommand extends AbstractCommand implements Command{
     private final CollectionReceiver receiver;
-    public AddCommand(CollectionReceiver receiver, BufferedReader reader, PrintWriter printer, String name){
-        super(name, reader, printer);
+    public AddCommand(CollectionReceiver receiver, BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter, String name){
+        super(name, reader, printer, infoPrinter);
         this.receiver = receiver;
     }
 
@@ -21,6 +21,11 @@ public class AddCommand extends AbstractCommand implements Command{
             labWork = LabWorkReader.readLabWork(reader, printer);
         } catch (IOException e) {
             printer.println("Не удалось считать элемент");
+            return;
+        }
+
+        if (labWork == null){
+            printer.println("Некорректный ввод! Не удалось добавить элемент");
             return;
         }
 

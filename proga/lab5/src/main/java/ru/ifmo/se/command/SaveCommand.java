@@ -11,8 +11,8 @@ import java.io.PrintWriter;
 public class SaveCommand extends AbstractCommand implements Command{
     private final StorageReceiver receiver;
 
-    public SaveCommand(StorageReceiver receiver, BufferedReader reader, PrintWriter printWriter, String name) {
-        super(name, reader, printWriter);
+    public SaveCommand(StorageReceiver receiver, BufferedReader reader, PrintWriter printWriter, PrintWriter infoPrinter, String name) {
+        super(name, reader, printWriter, infoPrinter);
         this.receiver = receiver;
     }
 

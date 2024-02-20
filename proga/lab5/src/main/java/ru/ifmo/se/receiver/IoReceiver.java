@@ -1,10 +1,14 @@
 package ru.ifmo.se.receiver;
 
+import org.apache.commons.lang3.builder.Diff;
+import ru.ifmo.se.entity.Difficulty;
 import ru.ifmo.se.entity.LabWork;
+import ru.ifmo.se.entity.Person;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
-import java.util.LinkedHashSet;
+import java.util.*;
+import java.util.stream.Stream;
 
 // работает с командами ввода/вывода: help, info, show, print_unique_difficulty, print_field_ascending_author
 public class IoReceiver extends Receiver{
@@ -47,7 +51,22 @@ public class IoReceiver extends Receiver{
         printer.println(collectionHandler.getInfo());
     }
 
-    public void printUniqueDifficulty(){
+    public List<Difficulty> printUniqueDifficulty(){
         // вывести уникальные значения поля difficulty всех элементов в коллекции
+        List<Difficulty> result = new ArrayList<>();
+        for (Difficulty cur : Difficulty.values())
+            if (!collection.stream().filter(labWork -> labWork.getDifficulty() == cur).toList().isEmpty()){
+                result.add(cur);
+            }
+        return result;
+    }
+
+    public List<Person> getAuthors(){
+        List<Person> result = new ArrayList<>();
+        for (LabWork lab : collection)
+            if (lab.getAuthor() != null)
+                result.add(lab.getAuthor());
+        Collections.sort(result);
+        return result;
     }
 }

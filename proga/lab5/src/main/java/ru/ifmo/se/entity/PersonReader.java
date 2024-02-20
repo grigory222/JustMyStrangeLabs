@@ -31,7 +31,7 @@ public class PersonReader {
             printer.print("Введите имя автора: ");
             printer.flush();
             line = reader.readLine();
-        }while (!validateName(line));
+        }while (line != null && !validateName(line));
         return line;
     }
     private static Date readAndParseBirthday(BufferedReader reader, PrintWriter printer) throws IOException {
@@ -42,6 +42,8 @@ public class PersonReader {
             printer.print("Введите день рождения в формате yyyy-MM-dd: ");
             printer.flush();
             line = reader.readLine();
+            if (line == null)
+                return null;
 
             try {
                 date = formatter.parse(line);
@@ -50,13 +52,15 @@ public class PersonReader {
         return date;
     }
 
-    private static int readAndParseHeight(BufferedReader reader, PrintWriter printer) throws IOException {
+    private static Integer readAndParseHeight(BufferedReader reader, PrintWriter printer) throws IOException {
         String line;
         while (true) {
             do {
                 printer.print("Введите рост: ");
                 printer.flush();
                 line = reader.readLine();
+                if (line == null)
+                    return null;
             } while (!validateInt(line));
 
             // проверка не ввёл ли пользователь число, выходящее за границы
@@ -81,6 +85,8 @@ public class PersonReader {
                 printer.print("Введите вес: ");
                 printer.flush();
                 line = reader.readLine();
+                if (line == null)
+                    return null;
             } while (!validateDouble(line));
 
             // проверка не ввёл ли пользователь число, выходящее за границы
@@ -107,7 +113,10 @@ public class PersonReader {
             }
             printer.print("Ваш выбор: ");
             printer.flush();
-            line = reader.readLine().toUpperCase();
+            line = reader.readLine();
+            if (line == null)
+                return null;
+            line = line.toUpperCase();
         } while (!validateHairColor(line));
         return Color.valueOf(line);
     }
@@ -116,11 +125,20 @@ public class PersonReader {
     public static Person readPerson(BufferedReader reader, PrintWriter printer) throws IOException {
         Person result = new Person();
 
-        result.setAuthorName(readAndParseName(reader, printer));
-        result.setBirthday(readAndParseBirthday(reader, printer));
-        result.setHeight(readAndParseHeight(reader, printer));
-        result.setWeight(readAndParseWeight(reader, printer));
-        result.setHairColor(readAndParseHairColor(reader, printer));
+        String name = readAndParseName(reader, printer);
+        Date birthday = readAndParseBirthday(reader, printer);
+        Integer height = readAndParseHeight(reader, printer);
+        Double weight = readAndParseWeight(reader, printer);
+        Color color = readAndParseHairColor(reader, printer);
+
+        if (name == null || birthday == null || height == null || weight == null || color == null)
+            return null;
+
+        result.setAuthorName(name);
+        result.setBirthday(birthday);
+        result.setHeight(height);
+        result.setWeight(weight);
+        result.setHairColor(color);
         return result;
     }
 

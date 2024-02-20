@@ -14,10 +14,19 @@ public class CollectionHandler {
         this.collection = collection;
         this.initDate = initDate;
     }
+
     private void sort(){
 //        List<LabWork> list = new ArrayList<LabWork>(collection);
 //        Collections.sort(list);
 //        collection = new LinkedHashSet<>(list);
+    }
+
+    private void updateIds(){
+        int id = 0;
+        for (LabWork labWork : collection){
+            id += 1;
+            labWork.setId(id);
+        }
     }
 
     public void add(LabWork element){
@@ -25,8 +34,9 @@ public class CollectionHandler {
         sort();
     }
     public void delete(LabWork element){
-        deletedId.add(element.getId());
+        //deletedId.add(element.getId());
         collection.remove(element);
+        updateIds();
     }
 
     public void clear(){
@@ -35,10 +45,9 @@ public class CollectionHandler {
     }
 
     public Integer getNewId() {
-        if (deletedId.isEmpty())
-            return collection.size() + 1;
-        return deletedId.remove();
+        return collection.size() + 1;
     }
+
     public String getInfo(){
         return "Тип коллекции: " + collection.getClass() + "\n" +
                 "Дата инициализации: " + initDate + "\n" +

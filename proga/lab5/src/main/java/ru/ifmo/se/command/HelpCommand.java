@@ -7,8 +7,8 @@ import java.io.PrintWriter;
 
 public class HelpCommand extends AbstractCommand implements Command{
     private final IoReceiver receiver;
-    public HelpCommand(IoReceiver receiver, BufferedReader reader, PrintWriter printer, String name){
-        super(name, reader, printer);
+    public HelpCommand(IoReceiver receiver, BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter, String name){
+        super(name, reader, printer, infoPrinter);
         this.receiver = receiver;
     }
 

@@ -4,15 +4,22 @@ import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.runner.Runner;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 // работает с командами, которые модифицируют коллекцию: add, update, remove_by_id, clear, add_if_max, add_if_min, group_counting_by_creation_date
 public class CollectionReceiver extends Receiver{
+    //private File myFile; // файл
+    private Set<File> historyCall;
 
-    public CollectionReceiver(LinkedHashSet<LabWork> collection, CollectionHandler collectionHandler){
+    public CollectionReceiver(LinkedHashSet<LabWork> collection, CollectionHandler collectionHandler, Set<File> historyCall){
         super(collection, collectionHandler);
+        this.historyCall = historyCall;
     }
 
 
@@ -54,10 +61,28 @@ public class CollectionReceiver extends Receiver{
         collectionHandler.clear();
     }
 
-    public void executeScript(File file) throws FileNotFoundException {
+    public boolean executeScript(PrintWriter infoPrinter, File file) throws FileNotFoundException {
+        List<File> recursion = historyCall.stream().filter(previous -> previous.getName().equals(file.getName())).toList();
+        if (!recursion.isEmpty()){
+            infoPrinter.println("Обнаружена рекурсия " + recursion);
+            return false;
+        }
         PrintWriter scriptPrinter = new PrintWriter("/dev/null");
         BufferedReader scriptReader = new BufferedReader(new FileReader(file));
-        Runner scriptRunner = new Runner(scriptPrinter, scriptReader);
+        Runner scriptRunner = new Runner(infoPrinter, file, historyCall, scriptPrinter, scriptReader);
         scriptRunner.run(collection);
+        return true;
+    }
+
+    public List<LabWork> getGroupCountingByCreationDate() {
+        List<LocalDate> allDates = new ArrayList<>();
+        List<LabWork> result = new ArrayList<>();
+
+        for (LabWork lab: collection){
+            allDates.add(lab.getCreationDate());
+        }
+        for (LocalDate date : allDates)
+            result = Stream.concat(result.stream(), collection.stream().filter(lab -> lab.getCreationDate() == date)).toList();
+        return result;
     }
 }

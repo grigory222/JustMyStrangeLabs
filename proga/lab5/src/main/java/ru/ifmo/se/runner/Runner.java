@@ -1,8 +1,5 @@
 package ru.ifmo.se.runner;
 
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import ru.ifmo.se.command.*;
 import ru.ifmo.se.controller.Invoker;
 import ru.ifmo.se.entity.LabWork;
@@ -13,15 +10,13 @@ import ru.ifmo.se.receiver.StorageReceiver;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static ru.ifmo.se.csv.CsvHandler.*;
 
 public class Runner {
 
+    private final PrintWriter infoPrinter; // для команд show, info внутри скриптов
     private final PrintWriter printWriter;
     private final BufferedReader bufferedReader;
     // создаем экземпляры Получателей, чтобы каждая команда знала своего исполнителя
@@ -31,18 +26,26 @@ public class Runner {
     private CollectionHandler collectionHandler; // обработчик crud операций с коллекцией
     private Invoker invoker;
     private LinkedHashSet<LabWork> collection;
+    private Set<File> historyCall = new HashSet<>();
 
 
     // Конструктор без параметров будет использовать PrintWriter с stdout и BufferedReader с stdin
     public Runner(){
-        printWriter = new PrintWriter(System.out, true);
-        bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        this(new PrintWriter(System.out, true), new BufferedReader(new InputStreamReader(System.in)));
     }
 
     // Конструктор с явным определением printWriter'a и bufferedReader'а
     public Runner(PrintWriter printWriter, BufferedReader bufferedReader){
         this.printWriter = printWriter;
         this.bufferedReader = bufferedReader;
+        this.infoPrinter = printWriter;
+    }
+    public Runner(PrintWriter infoPrinter, File myFile, Set<File> historyCall, PrintWriter printWriter, BufferedReader bufferedReader){
+        this.infoPrinter = infoPrinter;
+        this.printWriter = printWriter;
+        this.bufferedReader = bufferedReader;
+        this.historyCall = historyCall;
+        historyCall.add(myFile);
     }
 
     // Инициализация отправителя - invoker
@@ -54,22 +57,24 @@ public class Runner {
         Map<String, Command> cmdMap = new HashMap<>();
 
         // создаем экземпляры команд, чтобы положить их в мапу, чтобы инвокер из неё вызывал их
-        Command exitCmd = new ExitCommand(bufferedReader, printWriter, "save");
-        Command executeScriptCmd = new ExecuteScriptCommand(collectionReceiver, bufferedReader, printWriter, "execute_script");
+        Command exitCmd = new ExitCommand(bufferedReader, printWriter, infoPrinter, "save");
+        Command executeScriptCmd = new ExecuteScriptCommand(collectionReceiver, bufferedReader, printWriter, infoPrinter, "execute_script");
+        Command historyCmd = new HistoryCommand("history", bufferedReader, printWriter, infoPrinter);
         // IoReceiver
-        Command helpCmd = new HelpCommand(ioReceiver, bufferedReader, printWriter, "help");
-        Command infoCmd = new InfoCommand(ioReceiver, bufferedReader, printWriter, "info");
-        Command showCmd = new ShowCommand(ioReceiver, bufferedReader, printWriter, "show");
-        Command printUniqueDifficultyCmd = new PrintUniqueDifficultyCommand(ioReceiver, bufferedReader, printWriter, "print_unique_difficulty");
-        Command printFieldAscendingCmd = new PrintFieldAscendingCommand(ioReceiver, bufferedReader, printWriter, "print_field_ascending_author");
+        Command helpCmd = new HelpCommand(ioReceiver, bufferedReader, printWriter, infoPrinter, "help");
+        Command infoCmd = new InfoCommand(ioReceiver, bufferedReader, printWriter, infoPrinter, "info");
+        Command showCmd = new ShowCommand(ioReceiver, bufferedReader, printWriter, infoPrinter, "show");
+        Command printUniqueDifficultyCmd = new PrintUniqueDifficultyCommand(ioReceiver, bufferedReader, printWriter, infoPrinter, "print_unique_difficulty");
+        Command printFieldAscendingCmd = new PrintFieldAscendingCommand(ioReceiver, bufferedReader, printWriter, infoPrinter, "print_field_ascending_author");
         // CollectionReceiver
-        Command addCmd = new AddCommand(collectionReceiver, bufferedReader, printWriter, "add");
-        Command updateCmd = new UpdateCommand(collectionReceiver, bufferedReader, printWriter, "update");
-        Command removeByIdCmd = new RemoveByIdCommand(collectionReceiver, bufferedReader, printWriter, "remove_by_id");
-        Command clearCmd = new ClearCommand(collectionReceiver, bufferedReader, printWriter, "clear");
+        Command addCmd = new AddCommand(collectionReceiver, bufferedReader, printWriter, infoPrinter, "add");
+        Command updateCmd = new UpdateCommand(collectionReceiver, bufferedReader, printWriter, infoPrinter, "update");
+        Command removeByIdCmd = new RemoveByIdCommand(collectionReceiver, bufferedReader, printWriter, infoPrinter, "remove_by_id");
+        Command clearCmd = new ClearCommand(collectionReceiver, bufferedReader, printWriter, infoPrinter, "clear");
+        Command groupCountingByCreationDateCmd = new GroupCountingByCreationDateCommand(collectionReceiver, bufferedReader, printWriter, infoPrinter, "group_counting_by_creation_date");
         // ...
         // StorageReceiver
-        Command saveCmd = new SaveCommand(storageReceiver, bufferedReader, printWriter, "save");
+        Command saveCmd = new SaveCommand(storageReceiver, bufferedReader, printWriter, infoPrinter, "save");
         // ...
         // ...
         // ...
@@ -89,6 +94,8 @@ public class Runner {
         cmdMap.put("update", updateCmd);
         cmdMap.put("remove_by_id", removeByIdCmd);
         cmdMap.put("clear", clearCmd);
+        cmdMap.put("group_counting_by_creation_date", groupCountingByCreationDateCmd);
+        cmdMap.put("history", historyCmd);
         cmdMap.put("save", saveCmd);
 
 
@@ -97,8 +104,8 @@ public class Runner {
 
     void initReceivers(){
         // создаем экземпляры Получателей, чтобы каждая команда знала своего исполнителя
-        ioReceiver = new IoReceiver(collection, collectionHandler, printWriter, bufferedReader);
-        collectionReceiver = new CollectionReceiver(collection, collectionHandler);
+        ioReceiver = new IoReceiver(collection, collectionHandler, infoPrinter, bufferedReader);
+        collectionReceiver = new CollectionReceiver(collection, collectionHandler, historyCall);
         storageReceiver = new StorageReceiver(collection, collectionHandler);
     }
 
@@ -149,6 +156,7 @@ public class Runner {
 
     public void run(LinkedHashSet<LabWork> collection){
         this.collection = collection;
+        collectionHandler = new CollectionHandler(collection, LocalDate.now());
         initAll();
         runCommands();
     }

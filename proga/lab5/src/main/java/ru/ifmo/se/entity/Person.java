@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class Person {
+public class Person implements Comparable<Person>{
     @CsvBindByName(column = "authorName")
     private String authorName; //Поле не может быть null, Строка не может быть пустой
     @CsvCustomBindByName(column = "birthday", converter = CsvHandler.DateConverterSecond.class)
@@ -30,4 +30,17 @@ public class Person {
         this.hairColor = hairColor;
     }
 
+    @Override
+    public int compareTo(Person o) {
+        return this.authorName.compareTo(o.getAuthorName());
+    }
+
+    @Override
+    public String toString() {
+        return  authorName +
+                "\n\tbirthday: " + birthday +
+                "\n\theight: " + height +
+                "\n\tweight: " + weight +
+                "\n\thairColor: " + hairColor ;
+    }
 }

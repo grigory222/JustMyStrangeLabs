@@ -10,8 +10,8 @@ import java.util.ArrayList;
 
 public class ExecuteScriptCommand extends AbstractCommand implements Command{
     private final CollectionReceiver receiver;
-    public ExecuteScriptCommand(CollectionReceiver collectionReceiver, BufferedReader reader, PrintWriter printer, String name){
-        super(name, reader, printer);
+    public ExecuteScriptCommand(CollectionReceiver collectionReceiver, BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter, String name){
+        super(name, reader, printer, infoPrinter);
         this.receiver = collectionReceiver;
     }
     public void execute(String[] args){
@@ -30,8 +30,11 @@ public class ExecuteScriptCommand extends AbstractCommand implements Command{
             return;
         }
 
+
         try{
-            receiver.executeScript(file);
+            if (!receiver.executeScript(infoPrinter, file)){;
+                infoPrinter.println("Рекурсия пропущена");
+            };
         } catch (FileNotFoundException e){
             printer.println("Не удалось открыть /dev/null");
         }

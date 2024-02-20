@@ -10,8 +10,8 @@ import java.io.PrintWriter;
 
 public class ClearCommand  extends AbstractCommand implements Command{
     private final CollectionReceiver receiver;
-    public ClearCommand(CollectionReceiver receiver, BufferedReader reader, PrintWriter printer, String name){
-        super(name, reader, printer);
+    public ClearCommand(CollectionReceiver receiver, BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter, String name){
+        super(name, reader, printer, infoPrinter);
         this.receiver = receiver;
     }
 

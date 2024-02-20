@@ -1,5 +1,8 @@
 package ru.ifmo.se.entity;
 
+import org.apache.commons.lang3.builder.Diff;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -47,7 +50,7 @@ public class LabWorkReader {
             printer.print("Введите название лабороторной работы: ");
             printer.flush();
             line = reader.readLine();
-        }while (!validateName(line));
+        }while (line != null && !validateName(line));
         return line;
     }
 
@@ -59,7 +62,9 @@ public class LabWorkReader {
                 printer.print("Введите координаты x и y через пробел: ");
                 printer.flush();
                 line = reader.readLine();
-            } while (!validateCoordinates(line));
+            } while (line != null && !validateCoordinates(line));
+            if (line == null)
+                return null;
             parsed = line.strip().replaceAll("[\\s]{2,}", " ").split(" ");
 
             // проверка не ввёл ли пользователь число, выходящее за границы
@@ -84,7 +89,8 @@ public class LabWorkReader {
                 printer.print("Введите минимальную оценку: ");
                 printer.flush();
                 line = reader.readLine();
-            } while (!validateMinimalPoint(line));
+            } while (line != null && !validateMinimalPoint(line));
+            if (line == null) return null;
 
             // проверка не ввёл ли пользователь число, выходящее за границы
             try {
@@ -108,7 +114,8 @@ public class LabWorkReader {
                 printer.print("Введите tunedInWorks: ");
                 printer.flush();
                 line = reader.readLine();
-            } while (!validateTunedInWorks(line));
+            } while (line != null && !validateTunedInWorks(line));
+            if (line == null) return null;
 
             // проверка не ввёл ли пользователь число, выходящее за границы
             try {
@@ -130,20 +137,31 @@ public class LabWorkReader {
             }
             printer.print("Ваш выбор: ");
             printer.flush();
-            line = reader.readLine().toUpperCase();
+            if ((line = reader.readLine()) == null)
+                break;
+            line = line.toUpperCase();
         } while (!validateDifficulty(line));
+        if (line == null) return null;
         return Difficulty.valueOf(line);
     }
 
     public static LabWork readLabWork(BufferedReader reader, PrintWriter printer) throws IOException {
         String line;
         LabWork result = new LabWork();
+        String name = readAndParseName(reader, printer);
+        Coordinates coordinates = readAndParseCoordinates(reader, printer);
+        Integer minimalPoint = readAndParseMinimalPoint(reader, printer);
+        Integer tunedItWorks = readAndParseTunedInWorks(reader, printer);
+        Difficulty difficulty = readAndParseDifficulty(reader, printer);
 
-        result.setName(readAndParseName(reader, printer));
-        result.setCoordinates(readAndParseCoordinates(reader, printer));
-        result.setMinimalPoint(readAndParseMinimalPoint(reader, printer));
-        result.setTunedInWorks(readAndParseTunedInWorks(reader, printer));
-        result.setDifficulty(readAndParseDifficulty(reader, printer));
+        if (name == null || coordinates == null || minimalPoint == null || tunedItWorks == null || difficulty == null)
+            return null;
+
+        result.setName(name);
+        result.setCoordinates(coordinates);
+        result.setMinimalPoint(minimalPoint);
+        result.setTunedInWorks(tunedItWorks);
+        result.setDifficulty(difficulty);
 
         do{
             printer.print("Хотите указать автора?(y/n) ");
