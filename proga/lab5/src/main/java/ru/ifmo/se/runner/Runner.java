@@ -1,5 +1,7 @@
 package ru.ifmo.se.runner;
 
+import com.opencsv.exceptions.CsvException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import ru.ifmo.se.command.*;
 import ru.ifmo.se.controller.Invoker;
 import ru.ifmo.se.entity.LabWork;
@@ -49,11 +51,11 @@ public class Runner {
     }
 
     // Инициализация отправителя - invoker
-    private void initInvoker(){
-        invoker = new Invoker(fillCommandMap());
+    private void initInvoker(String fileName){
+        invoker = new Invoker(fillCommandMap(fileName));
     }
 
-    private Map<String, Command> fillCommandMap(){
+    private Map<String, Command> fillCommandMap(String fileName){
         Map<String, Command> cmdMap = new HashMap<>();
 
         // создаем экземпляры команд, чтобы положить их в мапу, чтобы инвокер из неё вызывал их
@@ -74,7 +76,7 @@ public class Runner {
         Command groupCountingByCreationDateCmd = new GroupCountingByCreationDateCommand(collectionReceiver, bufferedReader, printWriter, infoPrinter, "group_counting_by_creation_date");
         // ...
         // StorageReceiver
-        Command saveCmd = new SaveCommand(storageReceiver, bufferedReader, printWriter, infoPrinter, "save");
+        Command saveCmd = new SaveCommand(storageReceiver, bufferedReader, printWriter, infoPrinter, "save", fileName);
         // ...
         // ...
         // ...
@@ -102,10 +104,10 @@ public class Runner {
         return cmdMap;
     }
 
-    void initReceivers(){
+    void initReceivers(String fileName){
         // создаем экземпляры Получателей, чтобы каждая команда знала своего исполнителя
         ioReceiver = new IoReceiver(collection, collectionHandler, infoPrinter, bufferedReader);
-        collectionReceiver = new CollectionReceiver(collection, collectionHandler, historyCall);
+        collectionReceiver = new CollectionReceiver(collection, collectionHandler, historyCall, fileName);
         storageReceiver = new StorageReceiver(collection, collectionHandler);
     }
 
@@ -129,35 +131,39 @@ public class Runner {
     }
 
     public void loadFromCsv(String fileName) {
+        List<LabWork> labWorks = new ArrayList<>(); // создадим пустой список на случай ошибки
         try {
+            // проверка можем ли открыть файл
             Reader reader = new BufferedReader(new FileReader(fileName));
-            List<LabWork> labWorks = parseCSV(fileName);
-            collection = new LinkedHashSet<>(labWorks);
-            collectionHandler = new CollectionHandler(collection, LocalDate.now());
+            reader.close();
+            // парсинг
+            labWorks = parseCSV(fileName, infoPrinter);
         } catch (FileNotFoundException e) {
-            printWriter.write("Невозможно открыть файл " + fileName);
+            infoPrinter.println("Невозможно открыть файл " + fileName);
         } catch (IOException e) {
-            printWriter.write("Не удаётся прочитать файл " + fileName);
+            infoPrinter.println("Не удаётся прочитать файл " + fileName);
         }
+        collection = new LinkedHashSet<>(labWorks);
+        collectionHandler = new CollectionHandler(collection, LocalDate.now());
     }
 
-    private void initAll(){
-        initReceivers();
-        initInvoker();
+    private void initAll(String fileName){
+        initReceivers(fileName);
+        initInvoker(fileName);
         printWriter.println("Добро пожаловать! Чтобы просмотреть возможные команды используйте help");
     }
 
     // Пользовательский метод. Запускает инициализации и цикл чтения команд
     public void run(String fileName)  {
         loadFromCsv(fileName);
-        initAll();
+        initAll(fileName);
         runCommands();
     }
 
-    public void run(LinkedHashSet<LabWork> collection){
+    public void run(LinkedHashSet<LabWork> collection, String fileName){
         this.collection = collection;
         collectionHandler = new CollectionHandler(collection, LocalDate.now());
-        initAll();
+        initAll(fileName);
         runCommands();
     }
 

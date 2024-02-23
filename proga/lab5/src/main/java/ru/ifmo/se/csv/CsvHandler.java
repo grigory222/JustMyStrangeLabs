@@ -3,9 +3,12 @@ package ru.ifmo.se.csv;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.*;
 import com.opencsv.bean.comparator.LiteralComparator;
+import com.opencsv.enums.CSVReaderNullFieldIndicator;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import ru.ifmo.se.entity.*;
 import org.apache.commons.collections4.comparators.FixedOrderComparator;
 
@@ -23,95 +26,54 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class CsvHandler {
-    private static final List<String> COLUMNS_ORDER = Arrays.asList(
+    private static final String[] COLUMNS_ORDER = new String[]{
             "id", "name", "x", "y", "creationDate", "minimalPoint",
             "tunedInWorks", "difficulty", "authorName", "birthday",
             "height", "weight", "hairColor"
-    );
+    };
 
 
-    public static class CsvException extends RuntimeException {
-        public CsvException(String message) {
-            super(message);
-        }
-    }
+//    public static class CsvException extends RuntimeException {
+//        public CsvException(String message) {
+//            super(message);
+//        }
+//    }
 
-    public static List<LabWork> parseCSV(String filePath) throws IOException, CsvException {
+    public static List<LabWork> parseCSV(String filePath, PrintWriter logger) throws IOException {
         FileReader fileReader = new FileReader(filePath);
 
         CsvToBean<LabWork> csvToBean = new CsvToBeanBuilder<LabWork>(fileReader)
                 .withType(LabWork.class)
                 .withSeparator(',')
+                .withFieldAsNull(CSVReaderNullFieldIndicator.EMPTY_SEPARATORS)
                 .withIgnoreLeadingWhiteSpace(true)
+                .withThrowExceptions(false)
                 .build();
 
-        return csvToBean.parse();
+        var result = csvToBean.parse();
+        result.forEach(lab -> {if (lab.getAuthor().isEmpty()) lab.setAuthor(null);});
+        csvToBean.getCapturedExceptions().forEach((exception) -> { //3
+            logger.println("Некорректные данные в CSV файле: \"" + String.join("", exception.getLine()) + "\"");
+        });
+
+        return result;
     }
 
+    public static void writeRows(FileWriter writer, List<LabWork> rows) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+        String headers = String.join(",", COLUMNS_ORDER);
+        writer.write(headers+"\n");
 
-    private static String getHeaders(Object object) {
-        if (object == null) return "null";
+        ColumnPositionMappingStrategy strat = new ColumnPositionMappingStrategy();
+        strat.setType(LabWork.class);
+        strat.setColumnMapping(COLUMNS_ORDER);
 
-        Class<?> clazz = object.getClass();
-        Field[] fields = clazz.getDeclaredFields();
-        StringBuilder csvData = new StringBuilder();
+        StatefulBeanToCsv<LabWork> beanToCsv = new StatefulBeanToCsvBuilder<>(writer)
+                .withMappingStrategy(strat)
+                .withApplyQuotesToAll(false)
+                .build();
 
-        // Append headers
-        for (Field field : fields) {
-            Class<?> fieldClass = field.getType();
-            field.setAccessible(true);
-            if (fieldClass.isPrimitive() || fieldClass.isEnum() || fieldClass == String.class || fieldClass == Integer.class
-                    || fieldClass == Date.class || fieldClass == LocalDate.class || fieldClass == Double.class) {
-                csvData.append(field.getName()).append(",");
-            } else {
-                try {
-                    csvData.append(getHeaders(field.get(object))).append(",");;
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        csvData.deleteCharAt(csvData.length() - 1);
-
-        return csvData.toString();
-    }
-
-    private static String getValues(Object object) {
-        Class<?> clazz = object.getClass();
-        Field[] fields = clazz.getDeclaredFields();
-        StringBuilder csvData = new StringBuilder();
-
-        for (Field field : fields) {
-            Class<?> fieldClass = field.getType();
-            field.setAccessible(true);
-            try {
-                if (fieldClass == Date.class){
-                    csvData.append(new SimpleDateFormat("yyyy-MM-dd").format(field.get(object))).append(",");
-                } else
-                if (fieldClass.isPrimitive() || fieldClass.isEnum() || fieldClass == String.class || fieldClass == Integer.class
-                        || fieldClass == LocalDate.class || fieldClass == Double.class) {
-                    csvData.append(field.get(object)).append(",");
-                } else {
-                    csvData.append(getValues(field.get(object))).append(",");
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-        csvData.deleteCharAt(csvData.length() - 1);
-        return csvData.toString();
-    }
-
-    public static void writeRows(FileWriter writer, List<LabWork> rows) throws IOException {
-        if (rows.isEmpty()) return;
-
-        writer.write(getHeaders(rows.get(0)) + "\n");
-
-        for (LabWork row : rows){
-            writer.write(getValues(row) + "\n");
-        }
+        beanToCsv.write(rows);
+        writer.close();
     }
 
     @NoArgsConstructor
@@ -129,8 +91,8 @@ public class CsvHandler {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 return formatter.parse(value);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
+            } catch (ParseException | NullPointerException e) {
+                return null;
             }
 
         }
@@ -151,6 +113,5 @@ public class CsvHandler {
             return Color.valueOf(value);
         }
     }
-
 
 }

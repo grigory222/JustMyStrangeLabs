@@ -16,10 +16,12 @@ import java.util.stream.Stream;
 public class CollectionReceiver extends Receiver{
     //private File myFile; // файл
     private Set<File> historyCall;
+    private String fileName;
 
-    public CollectionReceiver(LinkedHashSet<LabWork> collection, CollectionHandler collectionHandler, Set<File> historyCall){
+    public CollectionReceiver(LinkedHashSet<LabWork> collection, CollectionHandler collectionHandler, Set<File> historyCall, String fileName){
         super(collection, collectionHandler);
         this.historyCall = historyCall;
+        this.fileName = fileName;
     }
 
 
@@ -70,7 +72,7 @@ public class CollectionReceiver extends Receiver{
         PrintWriter scriptPrinter = new PrintWriter("/dev/null");
         BufferedReader scriptReader = new BufferedReader(new FileReader(file));
         Runner scriptRunner = new Runner(infoPrinter, file, historyCall, scriptPrinter, scriptReader);
-        scriptRunner.run(collection);
+        scriptRunner.run(collection, fileName);
         return true;
     }
 

@@ -1,5 +1,7 @@
 package ru.ifmo.se.receiver;
 
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import ru.ifmo.se.csv.CsvHandler;
 import ru.ifmo.se.entity.LabWork;
 
@@ -19,6 +21,10 @@ public class StorageReceiver extends Receiver{
             CsvHandler.writeRows(writer, new ArrayList<>(collection));
         } catch (IOException e) {
             return false;
+        } catch (CsvRequiredFieldEmptyException e) {
+            throw new RuntimeException(e);
+        } catch (CsvDataTypeMismatchException e) {
+            throw new RuntimeException(e);
         }
         return true; // успешно записали
     }

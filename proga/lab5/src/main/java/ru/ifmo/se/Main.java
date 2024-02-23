@@ -5,7 +5,7 @@ import com.opencsv.exceptions.CsvException;
 import ru.ifmo.se.runner.Runner;
 
 public class Main {
-    public static void main(String[] args) throws IOException, CsvException {
+    public static void main(String[] args) {
         Runner r = new Runner();
         r.run(args[0]);
     }

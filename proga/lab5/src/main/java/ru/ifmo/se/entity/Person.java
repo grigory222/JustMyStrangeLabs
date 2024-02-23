@@ -11,6 +11,8 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class Person implements Comparable<Person>{
+    private static final Person EMPTY = new Person();
+
     @CsvBindByName(column = "authorName")
     private String authorName; //Поле не может быть null, Строка не может быть пустой
     @CsvCustomBindByName(column = "birthday", converter = CsvHandler.DateConverterSecond.class)
@@ -28,6 +30,10 @@ public class Person implements Comparable<Person>{
         this.height = height;
         this.weight = weight;
         this.hairColor = hairColor;
+    }
+
+    public boolean isEmpty() {
+        return this.equals(EMPTY);
     }
 
     @Override

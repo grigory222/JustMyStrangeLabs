@@ -36,6 +36,7 @@ public class LabWork implements Comparable<LabWork>{
     @CsvCustomBindByName(column = "difficulty", converter = CsvHandler.DifficultyConverter.class)
     private Difficulty difficulty;
 
+
     @CsvRecurse
     private Person author;
 
