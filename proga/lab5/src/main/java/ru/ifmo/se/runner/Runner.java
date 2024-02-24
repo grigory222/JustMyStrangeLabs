@@ -1,7 +1,5 @@
 package ru.ifmo.se.runner;
 
-import com.opencsv.exceptions.CsvException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import ru.ifmo.se.command.*;
 import ru.ifmo.se.controller.Invoker;
 import ru.ifmo.se.entity.LabWork;
@@ -13,6 +11,7 @@ import ru.ifmo.se.receiver.StorageReceiver;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static ru.ifmo.se.csv.CsvHandler.*;
 
@@ -28,7 +27,7 @@ public class Runner {
     private CollectionHandler collectionHandler; // обработчик crud операций с коллекцией
     private Invoker invoker;
     private LinkedHashSet<LabWork> collection;
-    private Set<File> historyCall = new HashSet<>();
+    public static final ArrayList<File> historyCall = new ArrayList<>();
 
 
     // Конструктор без параметров будет использовать PrintWriter с stdout и BufferedReader с stdin
@@ -42,11 +41,10 @@ public class Runner {
         this.bufferedReader = bufferedReader;
         this.infoPrinter = printWriter;
     }
-    public Runner(PrintWriter infoPrinter, File myFile, Set<File> historyCall, PrintWriter printWriter, BufferedReader bufferedReader){
+    public Runner(PrintWriter infoPrinter, File myFile/*, ArrayList<File> historyCall*/, PrintWriter printWriter, BufferedReader bufferedReader){
         this.infoPrinter = infoPrinter;
         this.printWriter = printWriter;
         this.bufferedReader = bufferedReader;
-        this.historyCall = historyCall;
         historyCall.add(myFile);
     }
 
@@ -130,6 +128,19 @@ public class Runner {
         } while(!line.equals("exit"));
     }
 
+    private boolean checkIds(List<LabWork> labs){
+        Set<Integer> ids = new HashSet<>();
+        labs.forEach(x -> ids.add(x.getId()));
+        if (ids.size() == labs.size()){
+            return true;
+        }
+        // update ids
+        for (int i = 0; i < labs.size(); i++){
+            labs.get(i).setId(i+1);
+        }
+        return false;
+    }
+
     public void loadFromCsv(String fileName) {
         List<LabWork> labWorks = new ArrayList<>(); // создадим пустой список на случай ошибки
         try {
@@ -142,7 +153,13 @@ public class Runner {
             infoPrinter.println("Невозможно открыть файл " + fileName);
         } catch (IOException e) {
             infoPrinter.println("Не удаётся прочитать файл " + fileName);
+        } catch (RuntimeException e){
+            infoPrinter.println(e.getMessage());
         }
+
+        if (!checkIds(labWorks))
+            infoPrinter.println("Обнаружены повторяющиеся ID в CSV файле. Идентификаторы обновлены.");
+
         collection = new LinkedHashSet<>(labWorks);
         collectionHandler = new CollectionHandler(collection, LocalDate.now());
     }

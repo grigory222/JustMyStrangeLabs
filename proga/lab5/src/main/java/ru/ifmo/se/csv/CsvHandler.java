@@ -33,12 +33,6 @@ public class CsvHandler {
     };
 
 
-//    public static class CsvException extends RuntimeException {
-//        public CsvException(String message) {
-//            super(message);
-//        }
-//    }
-
     public static List<LabWork> parseCSV(String filePath, PrintWriter logger) throws IOException {
         FileReader fileReader = new FileReader(filePath);
 

@@ -23,7 +23,7 @@ public class UpdateCommand extends AbstractCommand implements Command{
         try {
             if (args.length < 1) throw new NumberFormatException();
             id = Integer.parseInt(args[0]);
-            labWork = LabWorkReader.readLabWork(reader, printer);
+            labWork = LabWorkReader.readLabWork(reader, printer, infoPrinter);
             receiver.update(id, labWork);
         } catch (IOException e) {
             printer.println("Не удалось считать элемент");

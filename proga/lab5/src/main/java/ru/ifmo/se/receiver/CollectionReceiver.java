@@ -15,10 +15,10 @@ import java.util.stream.Stream;
 // работает с командами, которые модифицируют коллекцию: add, update, remove_by_id, clear, add_if_max, add_if_min, group_counting_by_creation_date
 public class CollectionReceiver extends Receiver{
     //private File myFile; // файл
-    private Set<File> historyCall;
-    private String fileName;
+    private final ArrayList<File> historyCall;
+    private final String fileName;
 
-    public CollectionReceiver(LinkedHashSet<LabWork> collection, CollectionHandler collectionHandler, Set<File> historyCall, String fileName){
+    public CollectionReceiver(LinkedHashSet<LabWork> collection, CollectionHandler collectionHandler, ArrayList<File> historyCall, String fileName){
         super(collection, collectionHandler);
         this.historyCall = historyCall;
         this.fileName = fileName;
@@ -71,8 +71,9 @@ public class CollectionReceiver extends Receiver{
         }
         PrintWriter scriptPrinter = new PrintWriter("/dev/null");
         BufferedReader scriptReader = new BufferedReader(new FileReader(file));
-        Runner scriptRunner = new Runner(infoPrinter, file, historyCall, scriptPrinter, scriptReader);
+        Runner scriptRunner = new Runner(infoPrinter, file, scriptPrinter, scriptReader);
         scriptRunner.run(collection, fileName);
+        historyCall.remove(historyCall.size() - 1);
         return true;
     }
 

@@ -1,8 +1,5 @@
 package ru.ifmo.se.entity;
 
-import org.apache.commons.lang3.builder.Diff;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -44,7 +41,7 @@ public class LabWorkReader {
         return line.matches("[а-яА-Яa-zA-Z0-9_ ]{2,}");
     }
 
-    private static String readAndParseName(BufferedReader reader, PrintWriter printer) throws IOException {
+    private static String readAndParseName(BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter) throws IOException {
         String line;
         do {
             printer.print("Введите название лабороторной работы: ");
@@ -54,7 +51,7 @@ public class LabWorkReader {
         return line;
     }
 
-    private static Coordinates readAndParseCoordinates(BufferedReader reader, PrintWriter printer) throws IOException {
+    private static Coordinates readAndParseCoordinates(BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter) throws IOException {
         String line;
         String[] parsed;
         while (true) {
@@ -65,7 +62,7 @@ public class LabWorkReader {
             } while (line != null && !validateCoordinates(line));
             if (line == null)
                 return null;
-            parsed = line.strip().replaceAll("[\\s]{2,}", " ").split(" ");
+            parsed = line.strip().replaceAll("\\s{2,}", " ").split(" ");
 
             // проверка не ввёл ли пользователь число, выходящее за границы
             try {
@@ -76,13 +73,17 @@ public class LabWorkReader {
                 continue;
             }
 
-            if (Double.parseDouble(parsed[1]) <= 48)
+            double a = Double.parseDouble(parsed[1]);
+
+            if (a - 48 <= Double.MIN_VALUE) { // 48.00000000000001
+                //System.out.println(a - 48.0);
                 break;
-            printer.println("Максимальное значение координаты y: 48");
+            }
+            infoPrinter.println("Максимальное значение координаты y: 48");
         }
         return new Coordinates(Integer.parseInt(parsed[0]), Double.parseDouble(parsed[1]));
     }
-    private static Integer readAndParseMinimalPoint(BufferedReader reader, PrintWriter printer) throws IOException {
+    private static Integer readAndParseMinimalPoint(BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter) throws IOException {
         String line;
         while (true) {
             do {
@@ -96,18 +97,18 @@ public class LabWorkReader {
             try {
                 Integer.parseInt(line);
             } catch (Exception e){
-                printer.println("Что-то пошло не так... Возможно, вы ввели слишком большое число");
+                infoPrinter.println("Что-то пошло не так... Возможно, вы ввели слишком большое число");
                 continue;
             }
 
             if (Integer.parseInt(line) > 0)
                 break;
-            printer.println("Значение должно быть больше 0");
+            infoPrinter.println("Значение должно быть больше 0");
         }
         return Integer.parseInt(line);
     }
 
-    private static Integer readAndParseTunedInWorks(BufferedReader reader, PrintWriter printer) throws IOException {
+    private static Integer readAndParseTunedInWorks(BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter) throws IOException {
         String line;
         while (true) {
             do {
@@ -128,7 +129,7 @@ public class LabWorkReader {
         return Integer.parseInt(line);
     }
 
-    private static Difficulty readAndParseDifficulty(BufferedReader reader, PrintWriter printer) throws IOException {
+    private static Difficulty readAndParseDifficulty(BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter) throws IOException {
         String line;
         do {
             printer.println("Введите сложность лабораторной работы ");
@@ -145,14 +146,14 @@ public class LabWorkReader {
         return Difficulty.valueOf(line);
     }
 
-    public static LabWork readLabWork(BufferedReader reader, PrintWriter printer) throws IOException {
+    public static LabWork readLabWork(BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter) throws IOException {
         String line;
         LabWork result = new LabWork();
-        String name = readAndParseName(reader, printer);
-        Coordinates coordinates = readAndParseCoordinates(reader, printer);
-        Integer minimalPoint = readAndParseMinimalPoint(reader, printer);
-        Integer tunedItWorks = readAndParseTunedInWorks(reader, printer);
-        Difficulty difficulty = readAndParseDifficulty(reader, printer);
+        String name = readAndParseName(reader, printer, infoPrinter);
+        Coordinates coordinates = readAndParseCoordinates(reader, printer, infoPrinter);
+        Integer minimalPoint = readAndParseMinimalPoint(reader, printer, infoPrinter);
+        Integer tunedItWorks = readAndParseTunedInWorks(reader, printer, infoPrinter);
+        Difficulty difficulty = readAndParseDifficulty(reader, printer, infoPrinter);
 
         if (name == null || coordinates == null || minimalPoint == null || tunedItWorks == null || difficulty == null)
             return null;
