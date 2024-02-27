@@ -12,12 +12,6 @@ CREATE TYPE genders as ENUM (
 );
 
 
-CREATE TABLE actions (
-    id BIGSERIAL NOT NULL PRIMARY KEY,
-    name VARCHAR(20) NOT NULL,
-    difficulty difficulties NOT NULL,
-    duration interval NOT NULL
-);
 
 CREATE TABLE body_shapes (
     id BIGSERIAL NOT NULL PRIMARY KEY,
@@ -25,11 +19,6 @@ CREATE TABLE body_shapes (
     body_fat INT NOT NULL
 );
 
-CREATE TABLE states (
-    id BIGSERIAL NOT NULL PRIMARY KEY,
-    name VARCHAR(20) NOT NULL,
-    intensity INT CHECK ( 0 <= intensity AND intensity <= 10 )
-);
 
 CREATE TABLE emotions (
     id BIGSERIAL NOT NULL PRIMARY KEY,
@@ -39,16 +28,37 @@ CREATE TABLE emotions (
 
 CREATE TABLE people (
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    first_name VARCHAR(20) NOT NULL,                          
-    last_name VARCHAR(20) NOT NULL,                           
-    father_name VARCHAR(20) NOT NULL,                         
-    birthday DATE,                                            
-    max_age INTEGER,                                          
-    action_id BIGINT REFERENCES actions(id),                  
-    body_shape_id BIGINT REFERENCES body_shapes(id),          
-    state_id BIGINT REFERENCES states(id),                    
+    first_name VARCHAR(20) NOT NULL,
+    last_name VARCHAR(20) NOT NULL,
+    father_name VARCHAR(20),
+    birthday DATE,
+    max_age INTEGER,
+    action_id BIGINT, --REFERENCES actions(id),
+    body_shape_id BIGINT REFERENCES body_shapes(id),
+    state_id BIGINT, -- REFERENCES states(id),
     gender genders
 );
+
+CREATE TABLE actions (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    owner_id BIGINT REFERENCES people(id) NOT NULL,
+    name VARCHAR(20) NOT NULL,
+    difficulty difficulties NOT NULL,
+    start_time TIMESTAMP,
+    end_time TIMESTAMP
+);
+
+CREATE TABLE states (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    owner_id BIGINT REFERENCES people(id) NOT NULL,
+    name VARCHAR(20) NOT NULL,
+    intensity INT CHECK ( 0 <= intensity AND intensity <= 10 ),
+    start_time TIMESTAMP,
+    end_time TIMESTAMP
+);
+
+ALTER TABLE people ADD FOREIGN KEY (action_id) REFERENCES actions(id);
+ALTER TABLE people ADD FOREIGN KEY (state_id) REFERENCES states(id);
 
 CREATE TABLE feelings (
     id BIGSERIAL NOT NULL PRIMARY KEY,
@@ -59,7 +69,9 @@ CREATE TABLE feelings (
 CREATE TABLE miracles (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    unesco_number BIGINT
+    unesco_number BIGINT,
+    creation_date DATE,
+    loss_date DATE
 );
 
 CREATE TABLE creators (
