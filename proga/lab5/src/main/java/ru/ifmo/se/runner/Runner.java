@@ -34,8 +34,7 @@ public class Runner {
     private Invoker invoker;
     private LinkedHashSet<LabWork> collection = new LinkedHashSet<>();
     public static final ArrayList<File> historyCall = new ArrayList<>();
-    private char lastChar; // последний символ обработанный
-
+    private final HistoryCommand historyCmd;
 
     // Конструктор без параметров будет использовать PrintWriter с stdout и BufferedReader с stdin
     public Runner(){
@@ -47,11 +46,13 @@ public class Runner {
         this.printWriter = printWriter;
         this.bufferedReader = bufferedReader;
         this.infoPrinter = printWriter;
+        historyCmd = new HistoryCommand("history", bufferedReader, printWriter, infoPrinter);
     }
     public Runner(PrintWriter infoPrinter, File myFile/*, ArrayList<File> historyCall*/, PrintWriter printWriter, BufferedReader bufferedReader){
         this.infoPrinter = infoPrinter;
         this.printWriter = printWriter;
         this.bufferedReader = bufferedReader;
+        historyCmd = new HistoryCommand("history", bufferedReader, printWriter, infoPrinter);
         historyCall.add(myFile);
     }
 
@@ -66,7 +67,7 @@ public class Runner {
         // создаем экземпляры команд, чтобы положить их в мапу, чтобы инвокер из неё вызывал их
         Command exitCmd = new ExitCommand(bufferedReader, printWriter, infoPrinter, "save");
         Command executeScriptCmd = new ExecuteScriptCommand(collectionReceiver, bufferedReader, printWriter, infoPrinter, "execute_script");
-        Command historyCmd = new HistoryCommand("history", bufferedReader, printWriter, infoPrinter);
+
         // IoReceiver
         Command helpCmd = new HelpCommand(ioReceiver, bufferedReader, printWriter, infoPrinter, "help");
         Command infoCmd = new InfoCommand(ioReceiver, bufferedReader, printWriter, infoPrinter, "info");
@@ -81,14 +82,8 @@ public class Runner {
         Command removeByIdCmd = new RemoveByIdCommand(collectionReceiver, bufferedReader, printWriter, infoPrinter, "remove_by_id");
         Command clearCmd = new ClearCommand(collectionReceiver, bufferedReader, printWriter, infoPrinter, "clear");
         Command groupCountingByCreationDateCmd = new GroupCountingByCreationDateCommand(collectionReceiver, bufferedReader, printWriter, infoPrinter, "group_counting_by_creation_date");
-        // ...
         // StorageReceiver
         Command saveCmd = new SaveCommand(storageReceiver, bufferedReader, printWriter, infoPrinter, "save", fileName);
-        // ...
-        // ...
-        // ...
-        // ...
-        // ...
 
 
         // кладём команды в мапу
@@ -120,18 +115,27 @@ public class Runner {
         storageReceiver = new StorageReceiver(collection, collectionHandler);
     }
 
+
+
     private String input = "";
     static volatile boolean interceptingWithKeyListener = true;
-
     private String keyListener(){
         JPanel panel = new JPanel();
         JFrame frame = new JFrame("Console Swing Example");
-        panel.setFocusable(true); // Устанавливаем фокус на панели, чтобы она могла перехватывать события клавиатуры
-        panel.requestFocusInWindow();
+        panel.setFocusable(true);
 
         input = "";
         interceptingWithKeyListener = true;
         panel.addKeyListener(new KeyListener() {
+            ConcreteCommand currentCommand = null;
+
+            void updateTerminal(){
+                Arrays.stream(currentCommand.getArgs()).forEach(s -> input = input + " " + s);
+                printWriter.print("\u001b[2K\r");
+                printWriter.flush(); // стереть текущий ввод
+                printWriter.print("> " + input);
+                printWriter.flush();
+            }
 
             @Override
             public void keyTyped(KeyEvent e) {
@@ -145,10 +149,8 @@ public class Runner {
                     input += keyChar;
                     System.out.print(keyChar);
                 }
-                //printWriter.print(keyChar);
                 printWriter.flush();
             }
-
             @Override
             public void keyPressed(KeyEvent e) {
                 // Обработка события нажатия клавиши (когда клавиша только что нажата)
@@ -157,10 +159,17 @@ public class Runner {
                 } else if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_C) {
                     System.exit(0);
                 } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    System.out.println(input);
-                    System.out.println("Нажата стрелка вверх");
+                    currentCommand = historyCmd.getPrevious(currentCommand);
+                    if (currentCommand != null) {
+                        input = currentCommand.getName();
+                        updateTerminal();
+                    }
                 } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    System.out.println("Нажата стрелка вниз");
+                    currentCommand = historyCmd.getNext(currentCommand);
+                    if (currentCommand != null) {
+                        input = currentCommand.getName();
+                        updateTerminal();
+                    }
                 } else if (e.getKeyCode() == KeyEvent.VK_ENTER){
                     // удалить фрейм, чтобы не блокировал ввод в reader.readLine()
                     printWriter.println();
@@ -168,7 +177,6 @@ public class Runner {
                     frame.dispose();
                 }
             }
-
             @Override
             public void keyReleased(KeyEvent e) {
             }
@@ -182,6 +190,8 @@ public class Runner {
 
         return input;
     }
+
+
     private void runCommands(){
         String line;
         do{
