@@ -16,7 +16,7 @@ public class LabWorkReader {
         return line.matches("^-?\\d+(\\.\\d+)?$");
     }
 
-    private static boolean validateDifficulty(String line) {
+    public static boolean validateDifficulty(String line) {
         try{
             Difficulty.valueOf(line);
             return true;
@@ -25,15 +25,15 @@ public class LabWorkReader {
         }
     }
 
-    private static boolean validateTunedInWorks(String line) {
+    public static boolean validateTunedInWorks(String line) {
         return validateInt(line);
     }
 
-    private static boolean validateMinimalPoint(String line) {
+    public static boolean validateMinimalPoint(String line) {
         return validateInt(line);
     }
 
-    private static boolean validateCoordinates(String line) {
+    public static boolean validateCoordinates(String line) {
         return line.matches("^\\s*-?\\d+\\s+-?\\d+(\\.\\d+)?\\s*$");
     }
 

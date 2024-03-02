@@ -1,0 +1,10 @@
+execute_script test2.txt
+execute_script test2.txt
+execute_script test2.txt
+add
+fgf
+-1 48.000000000000000000000000001
+10
+4
+IMPOSSIBLE
+n

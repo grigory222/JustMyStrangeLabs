@@ -4,6 +4,7 @@ import ru.ifmo.se.command.AbstractCommand;
 import ru.ifmo.se.command.Command;
 import ru.ifmo.se.command.HistoryCommand;
 
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
@@ -32,4 +33,21 @@ public class Invoker {
         return true;
     }
 
+    public void keyPressed(KeyEvent e) {
+        int keyCode = e.getKeyCode();
+        switch( keyCode ) {
+            case KeyEvent.VK_UP:
+                // handle up
+                break;
+            case KeyEvent.VK_DOWN:
+                // handle down
+                break;
+            case KeyEvent.VK_LEFT:
+                // handle left
+                break;
+            case KeyEvent.VK_RIGHT :
+                // handle right
+                break;
+        }
+    }
 }

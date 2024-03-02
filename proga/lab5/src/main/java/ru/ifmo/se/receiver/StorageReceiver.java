@@ -18,12 +18,10 @@ public class StorageReceiver extends Receiver{
     }
     public boolean saveCollection(String filePath) {
         try(FileWriter writer = new FileWriter(filePath)) {
-            CsvHandler.writeRows(writer, new ArrayList<>(collection));
+            CsvHandler.writeRows(writer, new ArrayList<>(collectionHandler.getCollection()));
         } catch (IOException e) {
             return false;
-        } catch (CsvRequiredFieldEmptyException e) {
-            throw new RuntimeException(e);
-        } catch (CsvDataTypeMismatchException e) {
+        } catch (CsvRequiredFieldEmptyException | CsvDataTypeMismatchException e) {
             throw new RuntimeException(e);
         }
         return true; // успешно записали

@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"ru.ifmo.se"},{"l":"ru.ifmo.se.command"},{"l":"ru.ifmo.se.controller"},{"l":"ru.ifmo.se.csv"},{"l":"ru.ifmo.se.entity"},{"l":"ru.ifmo.se.receiver"},{"l":"ru.ifmo.se.runner"}];updateSearchResults();

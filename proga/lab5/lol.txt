@@ -1,2 +1,11 @@
-info
-execute_script test.txt
+[?] maven
+[-] opencsv
+[?] null
+[+] validate .csv
+
+
+
+========
+буфер команд (стрелкой вверх)
+shutdown hook
+поиск ctrl + R

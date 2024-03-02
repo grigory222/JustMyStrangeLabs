@@ -5,12 +5,13 @@ import ru.ifmo.se.entity.LabWork;
 import java.util.LinkedHashSet;
 
 public abstract class Receiver {
-    //protected LinkedHashSet<LabWork> collection;
+    public CollectionHandler getCollectionHandler() {
+        return collectionHandler;
+    }
+
     protected final CollectionHandler collectionHandler;
-    protected LinkedHashSet<LabWork> collection;
 
     public Receiver(LinkedHashSet<LabWork> collection, CollectionHandler collectionHandler){
-        this.collection = collection;
         this.collectionHandler = collectionHandler;
     }
 }
