@@ -1,7 +1,0 @@
-add
-fgf
--1 0
-10
-4
-IMPOSSIBLE
-n
