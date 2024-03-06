@@ -1,5 +1,7 @@
 package ru.ifmo.se.runner;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ifmo.se.command.*;
 import ru.ifmo.se.controller.Invoker;
 import ru.ifmo.se.entity.LabWork;
@@ -14,6 +16,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
@@ -119,6 +122,7 @@ public class Runner {
 
     private String input = "";
     static volatile boolean interceptingWithKeyListener = true;
+
     private String keyListener(){
         JPanel panel = new JPanel();
         JFrame frame = new JFrame("Console Swing Example");
@@ -127,12 +131,13 @@ public class Runner {
         input = "";
         interceptingWithKeyListener = true;
         panel.addKeyListener(new KeyListener() {
-            ConcreteCommand currentCommand = null;
+            private ConcreteCommand currentCommand = null;
+            private boolean reverseSearchIsActive = false;
+            private String matchedString = "";
 
             void updateTerminal(){
                 Arrays.stream(currentCommand.getArgs()).forEach(s -> input = input + " " + s);
                 printWriter.print("\u001b[2K\r");
-                printWriter.flush(); // стереть текущий ввод
                 printWriter.print("> " + input);
                 printWriter.flush();
             }
@@ -140,41 +145,68 @@ public class Runner {
             @Override
             public void keyTyped(KeyEvent e) {
                 char keyChar = e.getKeyChar();
-                if (keyChar == KeyEvent.VK_BACK_SPACE) {
-                    if (!input.isEmpty()) {
-                        input = input.substring(0, input.length() - 1);
-                        System.out.print("\b \b"); // Стереть символ в консоли
+
+                if (reverseSearchIsActive) {
+                    if (keyChar == KeyEvent.VK_BACK_SPACE) {
+                        if (!input.isEmpty()) {
+                            input = input.substring(0, input.length() - 1);
+                        }
+                    } else{
+                        if (keyChar != KeyEvent.VK_CONTROL && keyChar != KeyEvent.VK_ALT)
+                            input += keyChar;
                     }
+
+                    printWriter.print("\u001B[2K\r");
+                    currentCommand = historyCmd.getMatch(input);
+                    matchedString = currentCommand == null ? "" : currentCommand.toString();
+                    printWriter.printf("(reverse-search)`%s': %s", input, matchedString);
                 } else {
-                    input += keyChar;
-                    System.out.print(keyChar);
+                    if (keyChar == KeyEvent.VK_BACK_SPACE) {
+                        if (!input.isEmpty()) {
+                            input = input.substring(0, input.length() - 1);
+                            printWriter.print("\b \b"); // Стереть символ в консоли
+                        }
+                    } else {
+                        if (keyChar != KeyEvent.VK_CONTROL && keyChar != KeyEvent.VK_ALT)
+                            input += keyChar;
+                        printWriter.print(keyChar);
+                    }
                 }
+
                 printWriter.flush();
             }
             @Override
             public void keyPressed(KeyEvent e) {
                 // Обработка события нажатия клавиши (когда клавиша только что нажата)
                 if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_R) {
-                    System.out.print("Нажата комбинация Ctrl+R");
+                    reverseSearchIsActive = true;
                 } else if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_C) {
                     System.exit(0);
                 } else if (e.getKeyCode() == KeyEvent.VK_UP) {
                     currentCommand = historyCmd.getPrevious(currentCommand);
                     if (currentCommand != null) {
                         input = currentCommand.getName();
+                        reverseSearchIsActive = false;
                         updateTerminal();
                     }
                 } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                     currentCommand = historyCmd.getNext(currentCommand);
                     if (currentCommand != null) {
                         input = currentCommand.getName();
+                        reverseSearchIsActive = false;
                         updateTerminal();
                     }
-                } else if (e.getKeyCode() == KeyEvent.VK_ENTER){
-                    // удалить фрейм, чтобы не блокировал ввод в reader.readLine()
-                    printWriter.println();
-                    interceptingWithKeyListener = false;
-                    frame.dispose();
+                } else {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        if (reverseSearchIsActive) {
+                            input = matchedString.isEmpty() ? input : matchedString;
+                            reverseSearchIsActive = false;
+                        }
+                        currentCommand = null;
+                        printWriter.println();
+                        interceptingWithKeyListener = false;
+                        frame.dispose(); // удалить фрейм, чтобы не блокировал ввод в reader.readLine()
+                    }
                 }
             }
             @Override

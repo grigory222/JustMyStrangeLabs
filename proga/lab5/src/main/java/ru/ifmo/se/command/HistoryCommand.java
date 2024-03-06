@@ -1,7 +1,10 @@
 package ru.ifmo.se.command;
 
+import ru.ifmo.se.runner.Runner;
+
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Stack;
 
 public class HistoryCommand extends AbstractCommand implements Command{
@@ -12,7 +15,8 @@ public class HistoryCommand extends AbstractCommand implements Command{
     }
 
     public void add(AbstractCommand cmd, String[] args){
-        history.push(new ConcreteCommand(cmd, args));
+        ConcreteCommand concreteCommand = new ConcreteCommand(cmd, args);
+        history.push(concreteCommand);
     }
     @Override
     public void execute(String[] args) {
@@ -49,5 +53,18 @@ public class HistoryCommand extends AbstractCommand implements Command{
             return history.elementAt(index + 1);
         }
         return currentCommand;
+    }
+
+    public ConcreteCommand getMatch(String input) {
+        if (input.isEmpty()) {
+            return null;
+        }
+
+        List<ConcreteCommand> matches = history.stream().filter(s -> s.getName().contains(input)).toList();
+        if (!matches.isEmpty()) {
+            return matches.get(0);
+        }
+
+        return null;
     }
 }
