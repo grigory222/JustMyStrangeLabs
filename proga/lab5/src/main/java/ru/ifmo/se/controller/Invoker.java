@@ -21,6 +21,7 @@ public class Invoker {
 
     // Парсит команду с аргументами и делегирует выполнение классу Command
     public boolean executeCommand(String commandAndArgs) {
+        commandAndArgs = commandAndArgs.trim();
         String[] parsed = commandAndArgs.split(" ");
         String[] args = Arrays.copyOfRange(parsed, 1, parsed.length);
         // проверка существования такой команды

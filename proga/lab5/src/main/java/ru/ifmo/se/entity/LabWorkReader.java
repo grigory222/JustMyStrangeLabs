@@ -25,14 +25,6 @@ public class LabWorkReader {
         }
     }
 
-    public static boolean validateTunedInWorks(String line) {
-        return validateInt(line);
-    }
-
-    public static boolean validateMinimalPoint(String line) {
-        return validateInt(line);
-    }
-
     public static boolean validateCoordinates(String line) {
         return line.matches("^\\s*-?\\d+\\s+-?\\d+(\\.\\d+)?\\s*$");
     }
@@ -44,7 +36,7 @@ public class LabWorkReader {
     private static String readAndParseName(BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter) throws IOException {
         String line;
         do {
-            printer.print("Введите название лабороторной работы: ");
+            printer.print("Введите название лабораторной работы (разрешены латиница и кириллица, цифры и '_'): ");
             printer.flush();
             line = reader.readLine();
         }while (line != null && !validateName(line));
@@ -55,21 +47,21 @@ public class LabWorkReader {
         String line;
         String[] parsed;
         while (true) {
-            do {
+
+            try {
                 printer.print("Введите координаты x и y через пробел: ");
                 printer.flush();
                 line = reader.readLine();
-            } while (line != null && !validateCoordinates(line));
-            if (line == null)
-                return null;
-            parsed = line.strip().replaceAll("\\s{2,}", " ").split(" ");
+                if (line == null) return null;
+                if (!validateCoordinates(line))
+                    throw new Exception();
+                parsed = line.strip().replaceAll("\\s{2,}", " ").split(" ");
 
-            // проверка не ввёл ли пользователь число, выходящее за границы
-            try {
                 Integer.parseInt(parsed[0]);
                 Double.parseDouble(parsed[1]);
+
             } catch (Exception e){
-                printer.println("Что-то пошло не так... Возможно, вы ввели слишком большое число");
+                printer.println("Что-то пошло не так... Введите координаты x и y через пробел. x - целое, y - дробное");
                 continue;
             }
 
@@ -86,18 +78,14 @@ public class LabWorkReader {
     private static Integer readAndParseMinimalPoint(BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter) throws IOException {
         String line;
         while (true) {
-            do {
+            try {
                 printer.print("Введите минимальную оценку: ");
                 printer.flush();
                 line = reader.readLine();
-            } while (line != null && !validateMinimalPoint(line));
-            if (line == null) return null;
-
-            // проверка не ввёл ли пользователь число, выходящее за границы
-            try {
+                if (line == null) return null;
                 Integer.parseInt(line);
             } catch (Exception e){
-                infoPrinter.println("Что-то пошло не так... Возможно, вы ввели слишком большое число");
+                infoPrinter.println("Что-то пошло не так... Введите целое число");
                 continue;
             }
 
@@ -111,22 +99,17 @@ public class LabWorkReader {
     private static Integer readAndParseTunedInWorks(BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter) throws IOException {
         String line;
         while (true) {
-            do {
-                printer.print("Введите tunedInWorks: ");
+            try {
+                printer.print("Введите tunedInWorks (int): ");
                 printer.flush();
                 line = reader.readLine();
-            } while (line != null && !validateTunedInWorks(line));
-            if (line == null) return null;
-
-            // проверка не ввёл ли пользователь число, выходящее за границы
-            try {
-                Integer.parseInt(line);
-                break;
-            } catch (Exception e){
-                printer.println("Что-то пошло не так... Возможно, вы ввели слишком большое число");
+                if (line == null) return null;
+                return Integer.parseInt(line);
+            } catch (NumberFormatException e){
+                printer.println("Что-то пошло не так... Введите целочисленное число.");
             }
         }
-        return Integer.parseInt(line);
+
     }
 
     private static Difficulty readAndParseDifficulty(BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter) throws IOException {

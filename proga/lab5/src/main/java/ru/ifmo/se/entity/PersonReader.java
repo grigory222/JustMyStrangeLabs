@@ -55,19 +55,14 @@ public class PersonReader {
     private static Integer readAndParseHeight(BufferedReader reader, PrintWriter printer) throws IOException {
         String line;
         while (true) {
-            do {
+            try {
                 printer.print("Введите рост: ");
                 printer.flush();
                 line = reader.readLine();
-                if (line == null)
-                    return null;
-            } while (!validateInt(line));
-
-            // проверка не ввёл ли пользователь число, выходящее за границы
-            try {
+                if (line == null) return null;
                 Integer.parseInt(line);
             } catch (Exception e){
-                printer.println("Что-то пошло не так... Возможно, вы ввели слишком большое число");
+                printer.println("Что-то пошло не так... Введите целое число");
                 continue;
             }
 
@@ -81,19 +76,14 @@ public class PersonReader {
     private static Double readAndParseWeight(BufferedReader reader, PrintWriter printer) throws IOException {
         String line;
         while (true) {
-            do {
+            try {
                 printer.print("Введите вес: ");
                 printer.flush();
                 line = reader.readLine();
-                if (line == null)
-                    return null;
-            } while (!validateDouble(line));
-
-            // проверка не ввёл ли пользователь число, выходящее за границы
-            try {
+                if (line == null) return null;
                 Double.parseDouble(line);
             } catch (Exception e){
-                printer.println("Что-то пошло не так... Возможно, вы ввели слишком большое число");
+                printer.println("Что-то пошло не так... Введите дробное число");
                 continue;
             }
 
