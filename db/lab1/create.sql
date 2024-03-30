@@ -11,8 +11,6 @@ CREATE TYPE genders as ENUM (
     'Женщина'
 );
 
-
-
 CREATE TABLE body_shapes (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     name VARCHAR(20) NOT NULL,
@@ -26,22 +24,9 @@ CREATE TABLE emotions (
     danger INT CHECK ( 0 <= danger AND danger <= 10 )
 );
 
-CREATE TABLE people (
-    id BIGSERIAL NOT NULL PRIMARY KEY,
-    first_name VARCHAR(20) NOT NULL,
-    last_name VARCHAR(20) NOT NULL,
-    father_name VARCHAR(20),
-    birthday DATE,
-    max_age INTEGER,
-    action_id BIGINT, --REFERENCES actions(id),
-    body_shape_id BIGINT REFERENCES body_shapes(id),
-    state_id BIGINT, -- REFERENCES states(id),
-    gender genders
-);
-
 CREATE TABLE actions (
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    owner_id BIGINT REFERENCES people(id) NOT NULL,
+    -- owner_id BIGINT REFERENCES people(id) NOT NULL,
     name VARCHAR(20) NOT NULL,
     difficulty difficulties NOT NULL,
     start_time TIMESTAMP,
@@ -50,12 +35,26 @@ CREATE TABLE actions (
 
 CREATE TABLE states (
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    owner_id BIGINT REFERENCES people(id) NOT NULL,
+    -- owner_id BIGINT REFERENCES people(id) NOT NULL,
     name VARCHAR(20) NOT NULL,
     intensity INT CHECK ( 0 <= intensity AND intensity <= 10 ),
     start_time TIMESTAMP,
     end_time TIMESTAMP
 );
+
+CREATE TABLE people (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    first_name VARCHAR(20) NOT NULL,
+    last_name VARCHAR(20) NOT NULL,
+    father_name VARCHAR(20),
+    birthday DATE,
+    max_age INTEGER,
+    action_id BIGINT REFERENCES actions(id),
+    body_shape_id BIGINT REFERENCES body_shapes(id),
+    state_id BIGINT REFERENCES states(id),
+    gender genders
+);
+
 
 ALTER TABLE people ADD FOREIGN KEY (action_id) REFERENCES actions(id);
 ALTER TABLE people ADD FOREIGN KEY (state_id) REFERENCES states(id);

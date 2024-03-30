@@ -1,0 +1,10 @@
+drop table if exists "body_shapes" cascade;
+drop table if exists "people" cascade;
+drop table if exists "actions" cascade;
+drop table if exists "states" cascade;
+drop table if exists "feelings" cascade;
+drop table if exists "creators" cascade;
+drop table if exists "miracles" cascade;
+drop table if exists "emotions" cascade;
+drop type if exists "difficulties";
+drop type if exists "genders";

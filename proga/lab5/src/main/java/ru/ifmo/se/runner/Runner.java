@@ -1,7 +1,5 @@
 package ru.ifmo.se.runner;
 
-import lombok.Getter;
-import lombok.Setter;
 import ru.ifmo.se.command.*;
 import ru.ifmo.se.controller.Invoker;
 import ru.ifmo.se.entity.LabWork;
@@ -16,11 +14,9 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static ru.ifmo.se.csv.CsvHandler.*;
 
@@ -122,7 +118,6 @@ public class Runner {
 
     private String input = "";
     static volatile boolean interceptingWithKeyListener = true;
-
     private String keyListener(){
         JPanel panel = new JPanel();
         JFrame frame = new JFrame("Console Swing Example");
@@ -136,7 +131,8 @@ public class Runner {
             private String matchedString = "";
 
             void updateTerminal(){
-                Arrays.stream(currentCommand.getArgs()).forEach(s -> input = input + " " + s);
+                if (currentCommand != null)
+                    Arrays.stream(currentCommand.getArgs()).forEach(s -> input = input + " " + s);
                 printWriter.print("\u001b[2K\r");
                 printWriter.print("> " + input);
                 printWriter.flush();
@@ -182,6 +178,13 @@ public class Runner {
                     reverseSearchIsActive = true;
                 } else if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_C) {
                     System.exit(0);
+                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT && reverseSearchIsActive) {
+                    if (!matchedString.isEmpty()) {
+                        input = matchedString;
+                    }
+                    updateTerminal();
+                    reverseSearchIsActive = false;
+
                 } else if (e.getKeyCode() == KeyEvent.VK_UP) {
                     currentCommand = historyCmd.getPrevious(currentCommand);
                     if (currentCommand != null) {
@@ -218,7 +221,9 @@ public class Runner {
         frame.pack();
         frame.setVisible(true);
 
-        while (interceptingWithKeyListener) Thread.onSpinWait();
+        while (interceptingWithKeyListener){
+            Thread.onSpinWait();
+        }
 
         return input;
     }
@@ -259,7 +264,7 @@ public class Runner {
         return false;
     }
 
-    public void loadFromCsv(String fileName) throws InvalidCSVException {
+    public void loadFromCsv(String fileName) {
         List<LabWork> labWorks = new ArrayList<>(); // создадим пустой список на случай ошибки
         try {
             // проверка можем ли открыть файл
@@ -308,7 +313,7 @@ public class Runner {
     }
 
     // Пользовательский метод. Запускает инициализации и цикл чтения команд
-    public void run(String fileName) throws InvalidCSVException {
+    public void run(String fileName) {
         loadFromCsv(fileName);
         initAll(fileName);
         runCommands();
