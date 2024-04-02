@@ -3,9 +3,11 @@ package ru.ifmo.se.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
-public class Coordinates {
+public class Coordinates implements Serializable {
 
     private int x;
     private double y; //Максимальное значение поля: 48

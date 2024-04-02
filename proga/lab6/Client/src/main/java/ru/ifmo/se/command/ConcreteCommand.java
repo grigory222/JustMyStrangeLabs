@@ -1,6 +1,7 @@
 package ru.ifmo.se.command;
 
 import lombok.Getter;
+import ru.ifmo.se.receiver.Receiver;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -9,12 +10,12 @@ import java.io.PrintWriter;
 @Getter
 public class ConcreteCommand extends AbstractCommand{
     private final String[] args;
-    ConcreteCommand(String name, BufferedReader reader, PrintWriter printWriter, PrintWriter infoPrinter, String[] args) {
-        super(name, reader, printWriter, infoPrinter);
+    ConcreteCommand(Receiver receiver, String name, BufferedReader reader, PrintWriter printWriter, PrintWriter infoPrinter, String[] args) {
+        super(receiver, name, reader, printWriter, infoPrinter);
         this.args = args;
     }
-    ConcreteCommand(AbstractCommand cmd, String[] args){
-        super(cmd.name, cmd.reader, cmd.printer, cmd.infoPrinter);
+    ConcreteCommand(Receiver receiver, AbstractCommand cmd, String[] args){
+        super(receiver, cmd.name, cmd.reader, cmd.printer, cmd.infoPrinter);
         this.args = args;
     }
 

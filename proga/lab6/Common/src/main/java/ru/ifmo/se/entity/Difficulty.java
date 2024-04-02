@@ -1,6 +1,8 @@
 package ru.ifmo.se.entity;
 
-public enum Difficulty {
+import java.io.Serializable;
+
+public enum Difficulty implements Serializable {
     EASY,
     NORMAL,
     VERY_HARD,

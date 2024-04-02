@@ -8,12 +8,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.ifmo.se.csv.CsvHandler;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LabWork implements Comparable<LabWork>{
+public class LabWork implements Comparable<LabWork>, Serializable {
     @CsvBindByName
     private Integer id;
 

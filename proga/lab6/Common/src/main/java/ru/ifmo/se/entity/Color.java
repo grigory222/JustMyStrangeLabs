@@ -1,7 +1,9 @@
 package ru.ifmo.se.entity;
 
-public enum Color {
+import java.io.Serializable;
+
+public enum Color implements Serializable {
     RED,
     BLACK,
-    BLUE;
+    BLUE
 }

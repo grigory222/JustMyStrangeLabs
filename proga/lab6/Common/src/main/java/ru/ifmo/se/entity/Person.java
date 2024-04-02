@@ -6,11 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.ifmo.se.csv.CsvHandler;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class Person implements Comparable<Person>{
+public class Person implements Comparable<Person>, Serializable {
     private static final Person EMPTY = new Person();
 
     @CsvBindByName(column = "authorName")

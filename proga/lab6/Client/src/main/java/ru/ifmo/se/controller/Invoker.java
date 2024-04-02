@@ -2,7 +2,7 @@ package ru.ifmo.se.controller;
 
 import ru.ifmo.se.command.AbstractCommand;
 import ru.ifmo.se.command.Command;
-import ru.ifmo.se.command.HistoryCommand;
+//import ru.ifmo.se.command.HistoryCommand;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -10,10 +10,10 @@ import java.util.Map;
 public class Invoker {
     // мапа в которой хранится соответсвующий экзепляр класса Command для каждой команды
     private final Map<String, Command> commands;
-    private final HistoryCommand historyCmd;
+    //private final HistoryCommand historyCmd;
     public Invoker(Map<String, Command> commands) {
         this.commands = commands;
-        this.historyCmd = (HistoryCommand) commands.get("history");
+        //this.historyCmd = (HistoryCommand) commands.get("history");
     }
 
     // Парсит команду с аргументами и делегирует выполнение классу Command
@@ -26,7 +26,7 @@ public class Invoker {
             return false;
 
         Command command =  commands.get(parsed[0]);
-        historyCmd.add((AbstractCommand)command, args);
+        //historyCmd.add((AbstractCommand)command, args);
         command.execute(args);
         return true;
     }
