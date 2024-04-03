@@ -30,6 +30,8 @@ public class AddCommand extends AbstractCommand implements Command{
         }
 
         AddReply addReply = receiver.add(labWork);
-        // process reply. is it succ? print result
+        System.out.println(addReply.isSuccess() ? "Success" : "No success.");
+        System.out.println(addReply.getMessage());
+
     }
 }
