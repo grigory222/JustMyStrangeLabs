@@ -2,7 +2,6 @@ package ru.ifmo.se.listener;
 
 import ru.ifmo.se.collection.CollectionHandler;
 import ru.ifmo.se.collection.Receiver;
-import ru.ifmo.se.dto.AddRequest;
 import ru.ifmo.se.dto.Reply;
 import ru.ifmo.se.dto.Request;
 import ru.ifmo.se.entity.LabWork;
@@ -15,13 +14,11 @@ import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.nio.channels.*;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Listener {
     private final int port;
@@ -110,16 +107,19 @@ public class Listener {
         Reply reply = (Reply) key.attachment();
         ByteBuffer buffer = Worker.serialize(reply);
         // сперва запишем длину
-        ByteBuffer tmp = ByteBuffer.wrap(intToBytes(buffer.array().length));
-        channel.write(tmp);
+        var lenBuf = ByteBuffer.wrap(intToBytes(buffer.array().length));
+        while (lenBuf.hasRemaining()){
+            int bytesWritten = channel.write(lenBuf);
+            if (bytesWritten == -1) {
+                throw new IOException();
+            }
+        }
+
+        // теперь запишем сам Reply
         while (buffer.hasRemaining()) {
             int bytesWritten = channel.write(buffer);
-
             if (bytesWritten == -1) {
-                // Если соединение было закрыто
-                channel.close();
-                key.cancel();
-                return;
+                throw new IOException();
             }
         }
     }
@@ -153,8 +153,12 @@ public class Listener {
                         }
                     }
                     if (key.isWritable()) {
-                        write(key);
-                        key.cancel();
+                        try {
+                            write(key);
+                        }catch (IOException e){
+                            key.channel().close();
+                            key.cancel();
+                        }
                     }
                 }
             }
