@@ -56,34 +56,35 @@ public class Listener {
     // получает Worker'а для конкретного запроса. Здесь же происходит десериалзиация
     private Request read(SelectionKey key) throws IOException {
         SocketChannel channel = (SocketChannel) key.channel();
-        ByteBuffer buf = (ByteBuffer) key.attachment();
-        int bytesRead = channel.read(buf);
+        ByteBuffer byteBuf = (ByteBuffer) key.attachment();
+        int bytesRead = channel.read(byteBuf);
         if (bytesRead == -1){
             channel.close();
             return null;
         }
-        buf.flip();
-        int len = buf.getInt();
-        if (buf.remaining() == len){
+        byteBuf.flip();
+        int len = byteBuf.getInt();
+        if (byteBuf.remaining() == len){
             // объект пришёл полностью и его можно обрабатывать, десериализовывать и т.д.
-            ByteArrayInputStream bis = new ByteArrayInputStream(buf.array(), 4, len);
+            ByteArrayInputStream bis = new ByteArrayInputStream(byteBuf.array(), 4, len);
 
             ObjectInputStream ois = new ObjectInputStream(bis);
             try {
                 // считаем реквест. пока не знаем какой именно
                 Request req = (Request)ois.readObject();
-                // переместить в начало объекта чтобы заново считать
-                buf.position(4);
+                // скопируем буфер без его длины
+                byte[] buf = new byte[len];
+                byteBuf.get(buf, 0, len);
                 // получим воркера по имени запроса
                 Worker worker = workersMap.get(req.name);
                 // десериализуем в конкретный класс (уже не в Request, а в AddRequest, например)
-                return worker.deserialize(buf.array());
+                return worker.deserialize(buf);
             } catch (ClassNotFoundException e) {
                 return null;
             }
         } else{
             // вернём указатель на начало и дождемся пока не придёт объект полностью
-            buf.rewind();
+            byteBuf.rewind();
             return null;
         }
     }
