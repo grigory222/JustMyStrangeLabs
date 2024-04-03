@@ -3,6 +3,7 @@ package ru.ifmo.se.network;
 import ru.ifmo.se.dto.Reply;
 import ru.ifmo.se.dto.Request;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -33,7 +34,9 @@ public class Network {
     public static byte[] receive(Socket socket){
         try {
             var is = socket.getInputStream();
-            return is.readAllBytes();
+            var dis = new DataInputStream(is);
+            int len = dis.readInt();
+            return dis.readNBytes(len);
         } catch (IOException e){
             return null;
         }

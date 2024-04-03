@@ -109,7 +109,9 @@ public class Listener {
         SocketChannel channel = (SocketChannel) key.channel();
         Reply reply = (Reply) key.attachment();
         ByteBuffer buffer = Worker.serialize(reply);
-
+        // сперва запишем длину
+        ByteBuffer tmp = ByteBuffer.wrap(intToBytes(buffer.array().length));
+        channel.write(tmp);
         while (buffer.hasRemaining()) {
             int bytesWritten = channel.write(buffer);
 
@@ -120,6 +122,16 @@ public class Listener {
                 return;
             }
         }
+    }
+
+    private byte[] intToBytes(int x) {
+        byte[] res = new byte[]{
+                (byte) ((x >> 24) & 0xFF),
+                (byte) ((x >> 16) & 0xFF),
+                (byte) ((x >> 8) & 0xFF),
+                (byte) (x & 0xFF)
+        };
+        return res;
     }
 
     private void listen() throws IOException {
@@ -136,12 +148,13 @@ public class Listener {
                         Request req = read(key);
                         if (req != null) {
                             Reply reply = workersMap.get(req.name).process(req);
-                            key.attach(reply);
-                            key.interestOps(SelectionKey.OP_WRITE);
+                            var newKey = key.channel().register(selector, SelectionKey.OP_WRITE);
+                            newKey.attach(reply);
                         }
                     }
                     if (key.isWritable()) {
                         write(key);
+                        key.cancel();
                     }
                 }
             }
