@@ -1,15 +1,12 @@
 package ru.ifmo.se.network;
 
-import ru.ifmo.se.dto.Reply;
-import ru.ifmo.se.dto.Request;
+import ru.ifmo.se.dto.requests.Request;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class Network {
     public static Socket connect(InetAddress inetAddress, int port) throws IOException {
@@ -23,9 +20,11 @@ public class Network {
             var byteBuf = ByteBuffer.allocate(Integer.BYTES);
             byteBuf.putInt(buf.length);
             os.write(byteBuf.array());
+            System.out.println("sent length: " + Arrays.toString(byteBuf.array()));
             // теперь основной буфер с данными
             os.write(buf);
         } catch (IOException e){
+            System.out.println("DEBUG CATCHED IOEXCEPTION");
             return false;
         }
         return true;
@@ -40,5 +39,12 @@ public class Network {
         } catch (IOException e){
             return null;
         }
+    }
+
+    public static byte[] serialize(Request request) throws IOException {
+        var bos = new ByteArrayOutputStream();
+        var oos = new ObjectOutputStream(bos);
+        oos.writeObject(request);
+        return bos.toByteArray();
     }
 }

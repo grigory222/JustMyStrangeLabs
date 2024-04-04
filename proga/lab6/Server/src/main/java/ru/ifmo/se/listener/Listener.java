@@ -2,15 +2,12 @@ package ru.ifmo.se.listener;
 
 import ru.ifmo.se.collection.CollectionHandler;
 import ru.ifmo.se.collection.Receiver;
-import ru.ifmo.se.dto.Reply;
-import ru.ifmo.se.dto.Request;
+import ru.ifmo.se.dto.replies.Reply;
+import ru.ifmo.se.dto.requests.Request;
 import ru.ifmo.se.entity.LabWork;
-import ru.ifmo.se.workers.AddWorker;
-import ru.ifmo.se.workers.Worker;
+import ru.ifmo.se.workers.*;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -19,6 +16,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import static ru.ifmo.se.network.Network.*;
 
 public class Listener {
     private final int port;
@@ -39,6 +38,9 @@ public class Listener {
 
     private void initWorkers(){
         workersMap.put("add", new AddWorker(receiver));
+        workersMap.put("add_if_max", new AddIfMaxWorker(receiver));
+        workersMap.put("add_if_min", new AddIfMinWorker(receiver));
+        workersMap.put("show", new ShowWorker(receiver));
     }
 
     private boolean init(){
@@ -56,83 +58,6 @@ public class Listener {
         return true;
     }
 
-    private void accept(SelectionKey key) throws IOException {
-        var ssc = (ServerSocketChannel) key.channel();
-        var sc = ssc.accept();
-        ByteBuffer buf = ByteBuffer.allocate(1024);
-        sc.configureBlocking(false);
-        var newKey = sc.register(key.selector(), SelectionKey.OP_READ);
-        newKey.attach(buf);
-        System.out.println("New client connected from " + sc.getRemoteAddress());
-    }
-
-    // получает Worker'а для конкретного запроса. Здесь же происходит десериалзиация
-    private Request read(SelectionKey key) throws IOException {
-        SocketChannel channel = (SocketChannel) key.channel();
-        ByteBuffer byteBuf = (ByteBuffer) key.attachment();
-        int bytesRead = channel.read(byteBuf);
-        if (bytesRead == -1){
-            channel.close();
-            return null;
-        }
-        byteBuf.flip();
-        int len = byteBuf.getInt();
-        if (byteBuf.remaining() == len){
-            // объект пришёл полностью и его можно обрабатывать, десериализовывать и т.д.
-            ByteArrayInputStream bis = new ByteArrayInputStream(byteBuf.array(), 4, len);
-
-            ObjectInputStream ois = new ObjectInputStream(bis);
-            try {
-                // считаем реквест. пока не знаем какой именно
-                Request req = (Request)ois.readObject();
-                // скопируем буфер без его длины
-                byte[] buf = new byte[len];
-                byteBuf.get(buf, 0, len);
-                // получим воркера по имени запроса
-                Worker worker = workersMap.get(req.name);
-                // десериализуем в конкретный класс (уже не в Request, а в AddRequest, например)
-                return worker.deserialize(buf);
-            } catch (ClassNotFoundException e) {
-                return null;
-            }
-        } else{
-            // вернём указатель на начало и дождемся пока не придёт объект полностью
-            byteBuf.rewind();
-            return null;
-        }
-    }
-
-    private void write(SelectionKey key) throws IOException {
-        SocketChannel channel = (SocketChannel) key.channel();
-        Reply reply = (Reply) key.attachment();
-        ByteBuffer buffer = Worker.serialize(reply);
-        // сперва запишем длину
-        var lenBuf = ByteBuffer.wrap(intToBytes(buffer.array().length));
-        while (lenBuf.hasRemaining()){
-            int bytesWritten = channel.write(lenBuf);
-            if (bytesWritten == -1) {
-                throw new IOException();
-            }
-        }
-
-        // теперь запишем сам Reply
-        while (buffer.hasRemaining()) {
-            int bytesWritten = channel.write(buffer);
-            if (bytesWritten == -1) {
-                throw new IOException();
-            }
-        }
-    }
-
-    private byte[] intToBytes(int x) {
-        byte[] res = new byte[]{
-                (byte) ((x >> 24) & 0xFF),
-                (byte) ((x >> 16) & 0xFF),
-                (byte) ((x >> 8) & 0xFF),
-                (byte) (x & 0xFF)
-        };
-        return res;
-    }
 
     private void listen() throws IOException {
         while(true) {
@@ -145,20 +70,23 @@ public class Listener {
                         accept(key);
                     }
                     if (key.isReadable()) {
-                        Request req = read(key);
+                        Request req = read(key, workersMap);
                         if (req != null) {
                             Reply reply = workersMap.get(req.name).process(req);
-                            var newKey = key.channel().register(selector, SelectionKey.OP_WRITE);
-                            newKey.attach(reply);
+                            key.interestOps(SelectionKey.OP_WRITE);
+                            key.attach(reply);
                         }
                     }
-                    if (key.isWritable()) {
-                        try {
+                    try {
+                        if (key.isWritable()) {
                             write(key);
-                        }catch (IOException e){
-                            key.channel().close();
-                            key.cancel();
+                            ByteBuffer buf = ByteBuffer.allocate(4096);
+                            key.interestOps(SelectionKey.OP_READ);
+                            key.attach(buf);
                         }
+                    }catch (CancelledKeyException | IOException e){
+                        key.channel().close();
+                        key.cancel();
                     }
                 }
             }

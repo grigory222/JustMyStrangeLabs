@@ -1,4 +1,4 @@
-package ru.ifmo.se.dto;
+package ru.ifmo.se.dto.replies;
 
 import lombok.Getter;
 import lombok.Setter;

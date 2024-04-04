@@ -23,7 +23,7 @@ public class Receiver {
         this.printWriter = printWriter;
     }
     public boolean addIfMax(LabWork labWork){
-        if (labWork.compareTo(collectionHandler.getCollection().stream().toList().get(collectionHandler.getCollection().size() - 1)) > 0){
+        if (collectionHandler.getCollection().isEmpty() || labWork.compareTo(collectionHandler.getCollection().stream().toList().get(collectionHandler.getCollection().size() - 1)) > 0){
             add(labWork);
             return true;
         }
@@ -31,7 +31,8 @@ public class Receiver {
     }
 
     public boolean addIfMin(LabWork labWork){
-        if (labWork.compareTo(collectionHandler.getCollection().iterator().next()) < 0){
+
+        if (collectionHandler.getCollection().isEmpty() || labWork.compareTo(collectionHandler.getCollection().iterator().next()) < 0){
             add(labWork);
             return true;
         }
@@ -134,10 +135,12 @@ public class Receiver {
                     print_field_ascending_author : вывести значения поля author всех элементов в порядке возрастания\
                 """);
     }
-    public void show(){
+    public String show(){
+        StringBuilder sb = new StringBuilder();
         for (LabWork lab : collectionHandler.getCollection()){
-            printWriter.println("===============\n" + lab);
+            sb.append("\n===============\n").append(lab);
         }
+        return sb.toString();
     }
     public void info(){
         // вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)
