@@ -1,5 +1,6 @@
 package ru.ifmo.se.network;
 
+import ru.ifmo.se.dto.replies.Reply;
 import ru.ifmo.se.dto.requests.Request;
 
 import java.io.*;
@@ -7,6 +8,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Network {
     public static Socket connect(InetAddress inetAddress, int port) throws IOException {
@@ -47,4 +49,38 @@ public class Network {
         oos.writeObject(request);
         return bos.toByteArray();
     }
+
+
+//    public static <T extends Reply> T sendAndReceive(Socket socket, Request request){
+//        try {
+//            if (!send(socket, serialize(request)))
+//                return null;
+//        } catch (IOException e) {
+//            return null;
+//        }
+//
+//        try {
+//            var bis = new ByteArrayInputStream(Objects.requireNonNull(receive(socket)));
+//            var ois = new ObjectInputStream(bis);
+//            return (T) ois.readObject();
+//        } catch (IOException | NullPointerException | ClassNotFoundException e) {
+//            return null;
+//        }
+//    }
+public static Reply sendAndReceive(Socket socket, Request request){
+    try {
+        if (!send(socket, serialize(request)))
+            return null;
+    } catch (IOException e) {
+        return null;
+    }
+
+    try {
+        var bis = new ByteArrayInputStream(Objects.requireNonNull(receive(socket)));
+        var ois = new ObjectInputStream(bis);
+        return (Reply) ois.readObject();
+    } catch (IOException | NullPointerException | ClassNotFoundException e) {
+        return null;
+    }
+}
 }

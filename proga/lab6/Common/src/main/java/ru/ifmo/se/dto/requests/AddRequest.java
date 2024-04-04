@@ -1,7 +1,9 @@
 package ru.ifmo.se.dto.requests;
 
+import lombok.Getter;
 import ru.ifmo.se.entity.LabWork;
 
+@Getter
 public class AddRequest extends Request {
     public final LabWork labWork;
     public AddRequest(LabWork labWork){
@@ -14,7 +16,4 @@ public class AddRequest extends Request {
         this.labWork = labWork;
     }
 
-    public LabWork getLabWork() {
-        return labWork;
-    }
 }

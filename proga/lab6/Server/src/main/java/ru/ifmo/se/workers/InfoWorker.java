@@ -1,34 +1,35 @@
 package ru.ifmo.se.workers;
 
 import ru.ifmo.se.collection.Receiver;
-import ru.ifmo.se.dto.replies.AddReply;
-import ru.ifmo.se.dto.requests.AddRequest;
 import ru.ifmo.se.dto.replies.Reply;
+import ru.ifmo.se.dto.replies.ShowReply;
+import ru.ifmo.se.dto.requests.InfoRequest;
 import ru.ifmo.se.dto.requests.Request;
+import ru.ifmo.se.dto.requests.ShowRequest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-public class AddWorker extends Worker{
-    public AddWorker(Receiver receiver) {
+public class InfoWorker extends Worker{
+    public InfoWorker(Receiver receiver) {
         super(receiver);
     }
 
     public Request deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
         ObjectInputStream ois = new ObjectInputStream(bis);
-        return (AddRequest) ois.readObject();
+        return (InfoRequest) ois.readObject();
     }
 
     public Reply process(Request request){
-        AddRequest req = (AddRequest) request;
-        AddReply rep = new AddReply();
-        receiver.add(req.getLabWork());
-        rep.setSuccess(true);
-        rep.setMessage("Элемент успешно добавлен в коллекцию");
+        ShowRequest req = (ShowRequest) request;
+        ShowReply rep = new ShowReply();
 
-        System.out.println("[DEBUG] Запрос на добавление элемента в коллекцию");
+        rep.setSuccess(true);
+        rep.setResult(receiver.show());
+
+        System.out.println("[DEBUG] Запрос на показ коллекции");
 
         return rep;
     }

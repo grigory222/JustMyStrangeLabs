@@ -76,13 +76,13 @@ public class Runner {
 //
 //        Command helpCmd = new HelpCommand(receiver, bufferedReader, printWriter, infoPrinter, "help");
 //        Command infoCmd = new InfoCommand(receiver, bufferedReader, printWriter, infoPrinter, "info");
-        Command showCmd = new ShowCommand(receiver, bufferedReader, printWriter, infoPrinter, "show");
+        Command showCmd = new ShowCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "show");
 //        Command printUniqueDifficultyCmd = new PrintUniqueDifficultyCommand(receiver, bufferedReader, printWriter, infoPrinter, "print_unique_difficulty");
 //        Command printFieldAscendingCmd = new PrintFieldAscendingCommand(receiver, bufferedReader, printWriter, infoPrinter, "print_field_ascending_author");
 //
-        Command addCmd = new AddCommand(receiver, bufferedReader, printWriter, infoPrinter, "add");
-        Command addIfMaxCmd = new AddIfMaxCommand(receiver, bufferedReader, printWriter, infoPrinter, "add_if_max");
-        Command addIfMinCmd = new AddIfMinCommand(receiver, bufferedReader, printWriter, infoPrinter, "add_if_min");
+        Command addCmd = new AddCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "add");
+        Command addIfMaxCmd = new AddIfMaxCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "add_if_max");
+        Command addIfMinCmd = new AddIfMinCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "add_if_min");
 //        Command updateCmd = new UpdateCommand(receiver, bufferedReader, printWriter, infoPrinter, "update");
 //        Command removeByIdCmd = new RemoveByIdCommand(receiver, bufferedReader, printWriter, infoPrinter, "remove_by_id");
 //        Command clearCmd = new ClearCommand(receiver, bufferedReader, printWriter, infoPrinter, "clear");

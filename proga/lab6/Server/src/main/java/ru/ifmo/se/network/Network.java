@@ -73,6 +73,7 @@ public class Network {
             // десериализуем в конкретный класс (уже не в Request, а в AddRequest, например)
             return worker.deserialize(buf);
         } catch (ClassNotFoundException e) {
+            System.out.println("Class not found exception");
             return null;
         }
 
