@@ -2,11 +2,10 @@ package ru.ifmo.se.workers;
 
 import ru.ifmo.se.collection.Receiver;
 import ru.ifmo.se.dto.replies.Reply;
+import ru.ifmo.se.dto.requests.AddIfMinRequest;
 import ru.ifmo.se.dto.requests.Request;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 
 public abstract class Worker {
@@ -27,6 +26,11 @@ public abstract class Worker {
 
     }
 
-    public abstract Request deserialize(byte[] bytes) throws IOException, ClassNotFoundException;
+    public static Request deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+        ObjectInputStream ois = new ObjectInputStream(bis);
+        return (Request) ois.readObject();
+    }
+
     public abstract Reply process(Request request);
 }

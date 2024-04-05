@@ -52,24 +52,26 @@ public class Receiver {
         return result.isEmpty() ? null : result.get(0);
     }
 
-    public void update(int id, LabWork newLab){
+    public boolean update(int id, LabWork newLab){
 
         LabWork oldLab = getLabById(id);
         if (oldLab == null)
-            throw new NullPointerException();
+            return false;
 
         newLab.setId(id);
         newLab.setCreationDate(LocalDateTime.now().toLocalDate());
 
         collectionHandler.delete(oldLab);
         collectionHandler.add(newLab);
+        return true;
     }
 
-    public void removeById(int id) {
+    public boolean removeById(int id) {
         LabWork lab = getLabById(id);
         if (lab == null)
-            throw new NullPointerException();
+            return false;
         collectionHandler.delete(lab);
+        return true;
     }
 
     public void clear(){
@@ -102,6 +104,14 @@ public class Receiver {
         return result;
     }
 
+    public String printGroupCountingByCreationDate(){
+        List<LabWork> labs = getGroupCountingByCreationDate();
+        StringBuilder sb = new StringBuilder();
+        for (LabWork lab: labs){
+            sb.append("\n=================\n").append(lab);
+        }
+        return sb.toString();
+    }
 
 //    public boolean saveCollection(String filePath) {
 //        try(FileWriter writer = new FileWriter(filePath)) {
@@ -115,8 +125,8 @@ public class Receiver {
 //    }
 
 
-    public void help(){
-        printWriter.println("""
+    public String help(){
+        return """
                     help : вывести справку по доступным командам
                     info : вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)
                     show : вывести в стандартный поток вывода все элементы коллекции в строковом представлении
@@ -124,7 +134,6 @@ public class Receiver {
                     update id {element} : обновить значение элемента коллекции, id которого равен заданному
                     remove_by_id id : удалить элемент из коллекции по его id
                     clear : очистить коллекцию
-                    save : сохранить коллекцию в файл
                     execute_script file_name : считать и исполнить скрипт из указанного файла. В скрипте содержатся команды в таком же виде, в котором их вводит пользователь в интерактивном режиме.
                     exit : завершить программу (без сохранения в файл)
                     add_if_max {element} : добавить новый элемент в коллекцию, если его значение превышает значение наибольшего элемента этой коллекции
@@ -133,7 +142,7 @@ public class Receiver {
                     group_counting_by_creation_date : сгруппировать элементы коллекции по значению поля creationDate, вывести количество элементов в каждой группе
                     print_unique_difficulty : вывести уникальные значения поля difficulty всех элементов в коллекции
                     print_field_ascending_author : вывести значения поля author всех элементов в порядке возрастания\
-                """);
+                """;
     }
     public String show(){
         StringBuilder sb = new StringBuilder();
@@ -142,19 +151,22 @@ public class Receiver {
         }
         return sb.toString();
     }
-    public void info(){
-        // вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)
-        printWriter.println(collectionHandler.getInfo());
+    public String info(){
+        return collectionHandler.getInfo();
     }
 
-    public List<Difficulty> printUniqueDifficulty(){
+    public String printUniqueDifficulty(){
         // вывести уникальные значения поля difficulty всех элементов в коллекции
         List<Difficulty> result = new ArrayList<>();
         for (Difficulty cur : Difficulty.values())
             if (!collectionHandler.getCollection().stream().filter(labWork -> labWork.getDifficulty() == cur).toList().isEmpty()){
                 result.add(cur);
             }
-        return result;
+        StringBuilder sb = new StringBuilder();
+        for (var difficulty : result){
+            sb.append(difficulty).append("\n");
+        }
+        return sb.toString();
     }
 
     public List<Person> getAuthors(){
@@ -166,4 +178,11 @@ public class Receiver {
         return result;
     }
 
+    public String printFieldAscendingAuthors() {
+        StringBuilder sb = new StringBuilder();
+        for (var man : getAuthors()){
+            sb.append("\n============\n").append(man);
+        }
+        return sb.toString();
+    }
 }

@@ -18,12 +18,6 @@ public class AddIfMinWorker extends Worker{
         super(receiver);
     }
 
-    public Request deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        ObjectInputStream ois = new ObjectInputStream(bis);
-        return (AddIfMinRequest) ois.readObject();
-    }
-
     public Reply process(Request request){
         AddIfMinRequest req = (AddIfMinRequest) request;
         AddIfMinReply rep = new AddIfMinReply();

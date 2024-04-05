@@ -22,23 +22,22 @@ public class Network {
             var byteBuf = ByteBuffer.allocate(Integer.BYTES);
             byteBuf.putInt(buf.length);
             os.write(byteBuf.array());
-            System.out.println("sent length: " + Arrays.toString(byteBuf.array()));
             // теперь основной буфер с данными
             os.write(buf);
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println("DEBUG CATCHED IOEXCEPTION");
             return false;
         }
         return true;
     }
 
-    public static byte[] receive(Socket socket){
+    public static byte[] receive(Socket socket) {
         try {
             var is = socket.getInputStream();
             var dis = new DataInputStream(is);
             int len = dis.readInt();
             return dis.readNBytes(len);
-        } catch (IOException e){
+        } catch (IOException e) {
             return null;
         }
     }
@@ -50,37 +49,20 @@ public class Network {
         return bos.toByteArray();
     }
 
-
-//    public static <T extends Reply> T sendAndReceive(Socket socket, Request request){
-//        try {
-//            if (!send(socket, serialize(request)))
-//                return null;
-//        } catch (IOException e) {
-//            return null;
-//        }
-//
-//        try {
-//            var bis = new ByteArrayInputStream(Objects.requireNonNull(receive(socket)));
-//            var ois = new ObjectInputStream(bis);
-//            return (T) ois.readObject();
-//        } catch (IOException | NullPointerException | ClassNotFoundException e) {
-//            return null;
-//        }
-//    }
-public static Reply sendAndReceive(Socket socket, Request request){
-    try {
-        if (!send(socket, serialize(request)))
+    public static Reply sendAndReceive(Socket socket, Request request) {
+        try {
+            if (!send(socket, serialize(request)))
+                return null;
+        } catch (IOException e) {
             return null;
-    } catch (IOException e) {
-        return null;
-    }
+        }
 
-    try {
-        var bis = new ByteArrayInputStream(Objects.requireNonNull(receive(socket)));
-        var ois = new ObjectInputStream(bis);
-        return (Reply) ois.readObject();
-    } catch (IOException | NullPointerException | ClassNotFoundException e) {
-        return null;
+        try {
+            var bis = new ByteArrayInputStream(Objects.requireNonNull(receive(socket)));
+            var ois = new ObjectInputStream(bis);
+            return (Reply) ois.readObject();
+        } catch (IOException | NullPointerException | ClassNotFoundException e) {
+            return null;
+        }
     }
-}
 }

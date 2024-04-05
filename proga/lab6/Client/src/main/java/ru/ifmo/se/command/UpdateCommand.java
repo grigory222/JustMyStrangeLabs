@@ -25,8 +25,8 @@ public class UpdateCommand extends AbstractCommand implements Command{
         try {
             labWork = LabWorkReader.readLabWork(reader, printer, infoPrinter);
             id = Integer.parseInt(args[0]);
-        } catch (IOException e) {
-            printer.println("Не удалось считать элемент");
+        } catch (Exception e) {
+            printer.println("Ошибка ввода. Используйте:  update <число>");
             return;
         }
 
@@ -37,10 +37,6 @@ public class UpdateCommand extends AbstractCommand implements Command{
 
         UpdateRequest updRequest = new UpdateRequest(id, labWork);
         UpdateReply updReply = (UpdateReply) Network.sendAndReceive(socket, updRequest);
-        if (updReply != null && updReply.isSuccess())
-            infoPrinter.println("Элемент успешно обновлён");
-        else
-            infoPrinter.println("Не удалось обновить элемент в коллекции");
-        infoPrinter.println(updReply != null ? updReply.getMessage() : "");
+        infoPrinter.println(updReply != null ? updReply.getMessage() : "Не удалось обновить элемент в коллекции");
     }
 }

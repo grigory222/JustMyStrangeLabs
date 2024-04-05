@@ -15,12 +15,6 @@ public class AddWorker extends Worker{
         super(receiver);
     }
 
-    public Request deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        ObjectInputStream ois = new ObjectInputStream(bis);
-        return (AddRequest) ois.readObject();
-    }
-
     public Reply process(Request request){
         AddRequest req = (AddRequest) request;
         AddReply rep = new AddReply();

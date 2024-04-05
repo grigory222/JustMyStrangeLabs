@@ -45,7 +45,7 @@ public class Network {
         total -= 4;
         byteBuf.flip();
         int len = byteBuf.getInt();
-        byteBuf.clear();
+        byteBuf.compact();
         // читаем
         while (total != len) {
             int bytesRead = channel.read(byteBuf);
@@ -61,17 +61,7 @@ public class Network {
         ByteArrayInputStream bis = new ByteArrayInputStream(byteBuf.array(), 0, len);
         ObjectInputStream ois = new ObjectInputStream(bis);
         try {
-            // считаем реквест. пока не знаем какой именно
-            Request req = (Request) ois.readObject();
-            // скопируем буфер без его длины
-            byte[] buf = new byte[len];
-            byteBuf.get(buf, 0, len);
-            // получим воркера по имени запроса
-            Worker worker = workersMap.get(req.name);
-            // очистим буфер
-            byteBuf.clear();
-            // десериализуем в конкретный класс (уже не в Request, а в AddRequest, например)
-            return worker.deserialize(buf);
+            return (Request) ois.readObject();
         } catch (ClassNotFoundException e) {
             System.out.println("Class not found exception");
             return null;

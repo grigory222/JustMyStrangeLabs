@@ -17,11 +17,6 @@ public class AddIfMaxWorker extends Worker{
         super(receiver);
     }
 
-    public Request deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        ObjectInputStream ois = new ObjectInputStream(bis);
-        return (AddIfMaxRequest) ois.readObject();
-    }
 
     public Reply process(Request request){
         AddIfMaxRequest req = (AddIfMaxRequest) request;

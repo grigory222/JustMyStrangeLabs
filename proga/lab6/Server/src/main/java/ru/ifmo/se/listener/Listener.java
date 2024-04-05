@@ -11,7 +11,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.channels.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -41,13 +44,20 @@ public class Listener {
         workersMap.put("add_if_max", new AddIfMaxWorker(receiver));
         workersMap.put("add_if_min", new AddIfMinWorker(receiver));
         workersMap.put("show", new ShowWorker(receiver));
+        workersMap.put("help", new HelpWorker(receiver));
+        workersMap.put("info", new InfoWorker(receiver));
+        workersMap.put("group_counting_by_creation_date", new GroupCountingByCreationDateWorker(receiver));
+        workersMap.put("print_field_ascending", new PrintFieldAscendingWorker(receiver));
+        workersMap.put("print_unique_difficulty", new PrintUniqueDifficultyWorker(receiver));
+        workersMap.put("remove_by_id", new RemoveByIdWorker(receiver));
+        workersMap.put("update", new UpdateWorker(receiver));
+        workersMap.put("clear", new ClearWorker(receiver));
     }
 
     private boolean init(){
         initReceiver();
         initWorkers();
         try{
-            selector = Selector.open();
             server = ServerSocketChannel.open();
             server.bind(new InetSocketAddress(port));
             server.configureBlocking(false);
@@ -60,6 +70,7 @@ public class Listener {
 
 
     private void listen() throws IOException {
+
         while(true) {
             selector.select();
             Set<SelectionKey> keys = selector.selectedKeys();
@@ -91,7 +102,17 @@ public class Listener {
                 }
             }
         }
-        //selector.close();
+    }
+
+    private void save(){
+        // CSVHandler.save()...?
+        System.out.println("tipa save");
+    }
+
+    private void exit() throws IOException {
+        selector.close();
+        server.close();
+        System.exit(0);
     }
 
     public void start() throws IOException {

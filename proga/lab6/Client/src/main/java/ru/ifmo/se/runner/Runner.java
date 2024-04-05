@@ -71,39 +71,39 @@ public class Runner {
         Map<String, Command> cmdMap = new HashMap<>();
 
         // создаем экземпляры команд, чтобы положить их в мапу, чтобы инвокер из неё вызывал их
-//        Command exitCmd = new ExitCommand(bufferedReader, printWriter, infoPrinter, "save");
+//        Command exitCmd = new ExitCommand(socket, bufferedReader, printWriter, infoPrinter, "exit");
 //        Command executeScriptCmd = new ExecuteScriptCommand(receiver, bufferedReader, printWriter, infoPrinter, "execute_script");
-//
-//        Command helpCmd = new HelpCommand(receiver, bufferedReader, printWriter, infoPrinter, "help");
-//        Command infoCmd = new InfoCommand(receiver, bufferedReader, printWriter, infoPrinter, "info");
+
+        Command helpCmd = new HelpCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "help");
+        Command infoCmd = new InfoCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "info");
         Command showCmd = new ShowCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "show");
-//        Command printUniqueDifficultyCmd = new PrintUniqueDifficultyCommand(receiver, bufferedReader, printWriter, infoPrinter, "print_unique_difficulty");
-//        Command printFieldAscendingCmd = new PrintFieldAscendingCommand(receiver, bufferedReader, printWriter, infoPrinter, "print_field_ascending_author");
-//
+        Command printUniqueDifficultyCmd = new PrintUniqueDifficultyCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "print_unique_difficulty");
+        Command printFieldAscendingCmd = new PrintFieldAscendingCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "print_field_ascending_author");
+
         Command addCmd = new AddCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "add");
         Command addIfMaxCmd = new AddIfMaxCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "add_if_max");
         Command addIfMinCmd = new AddIfMinCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "add_if_min");
-//        Command updateCmd = new UpdateCommand(receiver, bufferedReader, printWriter, infoPrinter, "update");
-//        Command removeByIdCmd = new RemoveByIdCommand(receiver, bufferedReader, printWriter, infoPrinter, "remove_by_id");
-//        Command clearCmd = new ClearCommand(receiver, bufferedReader, printWriter, infoPrinter, "clear");
-//        Command groupCountingByCreationDateCmd = new GroupCountingByCreationDateCommand(receiver, bufferedReader, printWriter, infoPrinter, "group_counting_by_creation_date");
-//
-//
-//        // кладём команды в мапу
+        Command updateCmd = new UpdateCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "update");
+        Command removeByIdCmd = new RemoveByIdCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "remove_by_id");
+        Command clearCmd = new ClearCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "clear");
+        Command groupCountingByCreationDateCmd = new GroupCountingByCreationDateCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "group_counting_by_creation_date");
+
+
+        // кладём команды в мапу
 //        cmdMap.put("execute_script", executeScriptCmd);
 //        cmdMap.put("exit", exitCmd);
-//        cmdMap.put("help", helpCmd);
-//        cmdMap.put("info", infoCmd);
+        cmdMap.put("help", helpCmd);
+        cmdMap.put("info", infoCmd);
         cmdMap.put("show", showCmd);
-//        cmdMap.put("print_unique_difficulty", printUniqueDifficultyCmd);
-//        cmdMap.put("print_field_ascending_author", printFieldAscendingCmd);
+        cmdMap.put("print_unique_difficulty", printUniqueDifficultyCmd);
+        cmdMap.put("print_field_ascending_author", printFieldAscendingCmd);
         cmdMap.put("add", addCmd);
         cmdMap.put("add_if_max", addIfMaxCmd);
         cmdMap.put("add_if_min", addIfMinCmd);
-//        cmdMap.put("update", updateCmd);
-//        cmdMap.put("remove_by_id", removeByIdCmd);
-//        cmdMap.put("clear", clearCmd);
-//        cmdMap.put("group_counting_by_creation_date", groupCountingByCreationDateCmd);
+        cmdMap.put("update", updateCmd);
+        cmdMap.put("remove_by_id", removeByIdCmd);
+        cmdMap.put("clear", clearCmd);
+        cmdMap.put("group_counting_by_creation_date", groupCountingByCreationDateCmd);
 //        cmdMap.put("history", historyCmd);
 
         return cmdMap;
