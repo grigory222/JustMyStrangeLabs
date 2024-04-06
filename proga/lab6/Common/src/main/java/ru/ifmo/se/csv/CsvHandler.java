@@ -5,31 +5,37 @@ import com.opencsv.enums.CSVReaderNullFieldIndicator;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.ifmo.se.entity.Color;
 import ru.ifmo.se.entity.Difficulty;
 import ru.ifmo.se.entity.LabWork;
+import ru.ifmo.se.entity.readers.LabWorkReader;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class CsvHandler {
-    private static final String[] COLUMNS_ORDER = new String[]{
+    private final String[] COLUMNS_ORDER = new String[]{
             "id", "name", "x", "y", "creationDate", "minimalPoint",
             "tunedInWorks", "difficulty", "authorName", "birthday",
             "height", "weight", "hairColor"
     };
+    private final PrintWriter infoPrinter;
+    private FileWriter fileWriter;
+    @Setter
+    private LinkedHashSet<LabWork> collection;
+
+    public CsvHandler(PrintWriter printWriter){
+        infoPrinter = printWriter;
+    }
 
 
-    public static List<LabWork> parseCSV(String filePath, PrintWriter logger) throws IOException {
-        FileReader fileReader = new FileReader(filePath);
+    private List<LabWork> parseCSV(String fileName, PrintWriter logger) throws IOException {
+        FileReader fileReader = new FileReader(fileName);
 
         CsvToBean<LabWork> csvToBean = new CsvToBeanBuilder<LabWork>(fileReader)
                 .withType(LabWork.class)
@@ -48,7 +54,7 @@ public class CsvHandler {
         return result;
     }
 
-    public static void writeRows(FileWriter writer, List<LabWork> rows) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+    private void writeRows(FileWriter writer, List<LabWork> rows) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
         String headers = String.join(",", COLUMNS_ORDER);
         writer.write(headers+"\n");
 
@@ -63,6 +69,15 @@ public class CsvHandler {
 
         beanToCsv.write(rows);
         writer.close();
+    }
+
+    public void saveToFile(){
+        System.out.println("Файл сохранён");
+        try {
+            writeRows(fileWriter, collection.stream().toList());
+        } catch (IOException | CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
+            infoPrinter.println("Ошибка при записи в файл");
+        }
     }
 
     @NoArgsConstructor
@@ -101,6 +116,62 @@ public class CsvHandler {
         protected Object convert(String value) {
             return Color.valueOf(value);
         }
+    }
+
+    private boolean checkIds(List<LabWork> labs){
+        Set<Integer> ids = new HashSet<>();
+        labs.forEach(x -> ids.add(x.getId()));
+        if (ids.size() == labs.size()){
+            return true;
+        }
+        // update ids
+        for (int i = 0; i < labs.size(); i++){
+            labs.get(i).setId(i+1);
+        }
+        return false;
+    }
+
+    public void loadFromCsv(String fileName, LinkedHashSet<LabWork> collection) throws IOException {
+        List<LabWork> labWorks = new ArrayList<>(); // создадим пустой список на случай ошибки
+        try {
+            // проверка можем ли открыть файл
+            Reader reader = new BufferedReader(new FileReader(fileName));
+            reader.close();
+            // парсинг
+            labWorks = parseCSV(fileName, infoPrinter);
+        } catch (FileNotFoundException e) {
+            infoPrinter.println("Невозможно открыть файл");
+        } catch (IOException e) {
+            infoPrinter.println("Не удаётся прочитать файл");
+        } catch (RuntimeException e){
+            infoPrinter.println(e.getMessage());
+        }
+
+        if (!checkIds(labWorks))
+            infoPrinter.println("Обнаружены повторяющиеся ID в CSV файле. Идентификаторы обновлены.");
+
+        if (validateList(labWorks)){
+            collection.addAll(labWorks);
+        } else{
+            System.err.println("Невалидная коллекция");
+        }
+
+        // после чтения файла, создать FileWriter для записи
+        fileWriter = new FileWriter(fileName);
+    }
+
+    private boolean validateLab(LabWork labWork){
+        boolean res = labWork.getId() > 0;
+        res = res && LabWorkReader.validateName(labWork.getName());
+        res = res && labWork.getMinimalPoint() > 0;
+        res = res && labWork.getCoordinates().getY() - 48.0 <= Double.MIN_VALUE;
+
+        return res;
+    }
+
+    private boolean validateList(List<LabWork> labWorks) {
+        var res = labWorks.stream().filter(this::validateLab).toList();
+        return res.size() >= labWorks.size();
     }
 
 }

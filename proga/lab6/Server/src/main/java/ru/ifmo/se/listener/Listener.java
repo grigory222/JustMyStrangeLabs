@@ -1,23 +1,24 @@
 package ru.ifmo.se.listener;
 
+import org.w3c.dom.ls.LSInput;
 import ru.ifmo.se.collection.CollectionHandler;
 import ru.ifmo.se.collection.Receiver;
+import ru.ifmo.se.consoleReader.ConsoleReader;
 import ru.ifmo.se.dto.replies.Reply;
 import ru.ifmo.se.dto.requests.Request;
 import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.workers.*;
+import ru.ifmo.se.csv.CsvHandler;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.channels.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Scanner;
 import java.util.Set;
 
 import static ru.ifmo.se.network.Network.*;
@@ -30,12 +31,12 @@ public class Listener {
     private CollectionHandler collectionHandler;
     private final HashMap<String, Worker> workersMap = new HashMap<>();
     private Receiver receiver;
+
     public Listener(int port){
         this.port = port;
     }
 
     private void initReceiver(){
-        collectionHandler = new CollectionHandler(collection, LocalDate.now());
         receiver = new Receiver(collectionHandler, new PrintWriter(System.out));
     }
 
@@ -58,8 +59,7 @@ public class Listener {
         initReceiver();
         initWorkers();
         try{
-            server = ServerSocketChannel.open();
-            server.bind(new InetSocketAddress(port));
+            selector = Selector.open();
             server.configureBlocking(false);
             server.register(selector, SelectionKey.OP_ACCEPT);
         } catch (IOException e) {
@@ -70,7 +70,6 @@ public class Listener {
 
 
     private void listen() throws IOException {
-
         while(true) {
             selector.select();
             Set<SelectionKey> keys = selector.selectedKeys();
@@ -104,18 +103,46 @@ public class Listener {
         }
     }
 
-    private void save(){
-        // CSVHandler.save()...?
-        System.out.println("tipa save");
-    }
 
-    private void exit() throws IOException {
+    public void exit() throws IOException {
         selector.close();
         server.close();
         System.exit(0);
     }
 
-    public void start() throws IOException {
+    public ServerSocketChannel choosePort() {
+        Scanner scanner = new Scanner(System.in);
+        ServerSocketChannel serverSocketChannel = null;
+
+        while (true) {
+            System.out.print("Введите номер порта: ");
+            try {
+                int port = Integer.parseInt(scanner.nextLine());
+                serverSocketChannel = ServerSocketChannel.open();
+                serverSocketChannel.socket().bind(new InetSocketAddress(port));
+                break; // Если порт доступен, выходим из цикла
+            } catch (NumberFormatException e) {
+                System.out.println("Неверный формат порта. Пожалуйста, введите целое число.");
+            } catch (IOException e) {
+                System.out.println("Порт занят. Пожалуйста, выберите другой порт.");
+            }
+        }
+
+        return serverSocketChannel;
+    }
+
+
+    public void start(String fileName) throws IOException {
+
+        server = choosePort();
+
+        CsvHandler csv = new CsvHandler(new PrintWriter(System.out));
+        csv.loadFromCsv(fileName, collection);
+        collectionHandler = new CollectionHandler(collection, LocalDate.now(), csv);
+        collectionHandler.sort();
+        Thread consoleReaderThread = new Thread(new ConsoleReader(csv, this));
+        consoleReaderThread.start();
+
         if (init()) {
             listen();
         }

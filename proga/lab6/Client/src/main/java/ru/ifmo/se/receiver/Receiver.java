@@ -16,6 +16,4 @@ public class Receiver{
         this.socket = socket;
     }
 
-
-
 }

@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import ru.ifmo.se.csv.CsvHandler;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor

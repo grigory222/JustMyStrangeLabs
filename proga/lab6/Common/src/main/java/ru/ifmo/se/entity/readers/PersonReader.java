@@ -1,4 +1,4 @@
-package ru.ifmo.se.readers;
+package ru.ifmo.se.entity.readers;
 
 import ru.ifmo.se.entity.Color;
 import ru.ifmo.se.entity.Person;

@@ -3,11 +3,12 @@ package ru.ifmo.se.runner;
 import ru.ifmo.se.command.*;
 import ru.ifmo.se.controller.Invoker;
 import ru.ifmo.se.entity.LabWork;
-import ru.ifmo.se.readers.LabWorkReader;
+import ru.ifmo.se.entity.readers.LabWorkReader;
 import ru.ifmo.se.receiver.Receiver;
 
 import java.io.*;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -26,35 +27,40 @@ public class Runner {
     public static final ArrayList<File> historyCall = new ArrayList<>();
     //private final HistoryCommand historyCmd;
     private final Receiver receiver;
-    private Socket socket;
+    private final Socket socket;
+    private ExecuteScriptCommand executeScriptCmd;
 
 
     // Конструктор без параметров будет использовать PrintWriter с stdout и BufferedReader с stdin
-    public Runner(String host, int port) throws InterruptedException {
-        this(host, port, new PrintWriter(System.out, true), new BufferedReader(new InputStreamReader(System.in)));
+    public Runner() throws InterruptedException {
+        this(new PrintWriter(System.out, true), new BufferedReader(new InputStreamReader(System.in)));
     }
 
-    // Конструктор с явным определением printWriter'a и bufferedReader'а
-    public Runner(String host, int port, PrintWriter printWriter, BufferedReader bufferedReader) throws InterruptedException {
-        int attempt;
-        for (attempt = 1; attempt <= 10; attempt++){
+    public static Socket connectToServer() {
+        Scanner scanner = new Scanner(System.in);
+        Socket socket = null;
+
+        while (true) {
             try {
-                this.socket = connect(InetAddress.getByName(host), port);
-                break;
-            } catch (UnknownHostException e) {
-                printWriter.println("Не существует сервера с таким адресом: " + host + ":" + port);
-                exit(0);
-            } catch (IOException e) {
-                printWriter.print("Не удалось подключиться к серверу. Попытка " + attempt + "/10...");
-                printWriter.flush();
-                Thread.sleep(1000);
-                printWriter.print("\033[2K\r");
+                System.out.print("Введите адрес сервера: ");
+                String host = scanner.nextLine();
+                System.out.print("Введите порт сервера: ");
+                int port = Integer.parseInt(scanner.nextLine());
+                socket = new Socket();
+                socket.connect(new InetSocketAddress(host, port), 1000);
+                break; // Если удалось подключиться к серверу, выходим из цикла
+            } catch (IOException | NumberFormatException e) {
+                System.out.println("Ошибка подключения к серверу. Пожалуйста, проверьте введенные данные.");
             }
         }
-        if (attempt == 11){
-            printWriter.println("Не удалось подключиться к серверу.");
-            exit(0);
-        }
+
+        return socket;
+    }
+
+
+    // Конструктор с явным определением printWriter'a и bufferedReader'а
+    public Runner(PrintWriter printWriter, BufferedReader bufferedReader) throws InterruptedException {
+        this.socket = connectToServer();//connect(InetAddress.getByName(host), port);
         this.receiver = new Receiver(this.socket);
         this.printWriter = printWriter;
         this.bufferedReader = bufferedReader;
@@ -65,14 +71,15 @@ public class Runner {
     // Инициализация отправителя - invoker
     private void initInvoker(){
         invoker = new Invoker(fillCommandMap());
+        executeScriptCmd.setInvoker(invoker);
     }
 
     private Map<String, Command> fillCommandMap(){
         Map<String, Command> cmdMap = new HashMap<>();
 
         // создаем экземпляры команд, чтобы положить их в мапу, чтобы инвокер из неё вызывал их
-//        Command exitCmd = new ExitCommand(socket, bufferedReader, printWriter, infoPrinter, "exit");
-//        Command executeScriptCmd = new ExecuteScriptCommand(receiver, bufferedReader, printWriter, infoPrinter, "execute_script");
+        Command exitCmd = new ExitCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "exit");
+        executeScriptCmd = new ExecuteScriptCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "execute_script");
 
         Command helpCmd = new HelpCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "help");
         Command infoCmd = new InfoCommand(socket, receiver, bufferedReader, printWriter, infoPrinter, "info");
@@ -90,8 +97,8 @@ public class Runner {
 
 
         // кладём команды в мапу
-//        cmdMap.put("execute_script", executeScriptCmd);
-//        cmdMap.put("exit", exitCmd);
+        cmdMap.put("execute_script", executeScriptCmd);
+        cmdMap.put("exit", exitCmd);
         cmdMap.put("help", helpCmd);
         cmdMap.put("info", infoCmd);
         cmdMap.put("show", showCmd);
@@ -160,6 +167,7 @@ public class Runner {
 
     // Пользовательский метод. Запускает инициализации и цикл чтения команд
     public void run() {
+
         initInvoker();
         printWriter.println("Добро пожаловать! Чтобы просмотреть возможные команды используйте help");
         runCommands();

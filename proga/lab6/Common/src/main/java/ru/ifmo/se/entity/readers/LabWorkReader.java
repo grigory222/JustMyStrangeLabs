@@ -1,4 +1,4 @@
-package ru.ifmo.se.readers;
+package ru.ifmo.se.entity.readers;
 
 import ru.ifmo.se.entity.Coordinates;
 import ru.ifmo.se.entity.Difficulty;

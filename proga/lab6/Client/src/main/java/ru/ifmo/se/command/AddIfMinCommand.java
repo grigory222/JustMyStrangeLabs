@@ -1,12 +1,10 @@
 package ru.ifmo.se.command;
 
-import ru.ifmo.se.dto.replies.AddIfMaxReply;
 import ru.ifmo.se.dto.replies.AddIfMinReply;
-import ru.ifmo.se.dto.requests.AddIfMaxRequest;
 import ru.ifmo.se.dto.requests.AddIfMinRequest;
 import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.network.Network;
-import ru.ifmo.se.readers.LabWorkReader;
+import ru.ifmo.se.entity.readers.LabWorkReader;
 import ru.ifmo.se.receiver.Receiver;
 
 import java.io.BufferedReader;

@@ -1,6 +1,7 @@
 package ru.ifmo.se.collection;
 
 import lombok.Getter;
+import ru.ifmo.se.csv.CsvHandler;
 import ru.ifmo.se.entity.LabWork;
 
 import java.time.LocalDate;
@@ -13,15 +14,19 @@ public class CollectionHandler {
     private LinkedHashSet<LabWork> collection;
     private final Queue<Integer> deletedId = new LinkedList<>();
     private final LocalDate initDate;
-    public CollectionHandler(LinkedHashSet<LabWork> collection, LocalDate initDate){
+    private final CsvHandler csv;
+
+    public CollectionHandler(LinkedHashSet<LabWork> collection, LocalDate initDate, CsvHandler csv){
         this.collection = collection;
         this.initDate = initDate;
+        this.csv = csv;
     }
 
     public void sort(){
         List<LabWork> list = new ArrayList<LabWork>(collection);
         Collections.sort(list);
         collection = new LinkedHashSet<>(list);
+        csv.setCollection(collection);
     }
 
     private void updateIds(){

@@ -1,8 +1,8 @@
 package ru.ifmo.se.command;
 
 import ru.ifmo.se.entity.LabWork;
-import ru.ifmo.se.entity.LabWorkReader;
-import ru.ifmo.se.receiver.CollectionReceiver;
+import ru.ifmo.se.readers.LabWorkReader;
+import ru.ifmo.se.receiver.Receiver;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 
 public class UpdateCommand extends AbstractCommand implements Command{
     private final CollectionReceiver receiver;
-    public UpdateCommand(CollectionReceiver receiver, BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter, String name){
+    public UpdateCommand(Receiver receiver, BufferedReader reader, PrintWriter printer, PrintWriter infoPrinter, String name){
         super(name, reader, printer, infoPrinter);
         this.receiver = receiver;
     }
@@ -19,7 +19,7 @@ public class UpdateCommand extends AbstractCommand implements Command{
         int id;
         LabWork labWork;
 
-        printer.println("Введите новые данные для лабораторной работы");
+        printer.println("Введите новые данные для лабороторной работы");
         try {
             if (args.length < 1) throw new NumberFormatException();
             id = Integer.parseInt(args[0]);

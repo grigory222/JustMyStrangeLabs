@@ -1,6 +1,7 @@
 package ru.ifmo.se.workers;
 
 import ru.ifmo.se.collection.Receiver;
+import ru.ifmo.se.csv.CsvHandler;
 import ru.ifmo.se.dto.replies.AddReply;
 import ru.ifmo.se.dto.requests.AddRequest;
 import ru.ifmo.se.dto.replies.Reply;

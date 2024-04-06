@@ -1,16 +1,13 @@
 package ru.ifmo.se.command;
 
-import ru.ifmo.se.dto.replies.AddReply;
 import ru.ifmo.se.dto.replies.UpdateReply;
-import ru.ifmo.se.dto.requests.AddRequest;
 import ru.ifmo.se.dto.requests.UpdateRequest;
 import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.network.Network;
-import ru.ifmo.se.readers.LabWorkReader;
+import ru.ifmo.se.entity.readers.LabWorkReader;
 import ru.ifmo.se.receiver.Receiver;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 

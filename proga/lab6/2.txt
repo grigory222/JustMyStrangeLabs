@@ -1,0 +1,5 @@
+show
+execute_script 1.txt
+lol
+lol
+lol
