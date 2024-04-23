@@ -1,26 +1,22 @@
-CREATE OR REPLACE FUNCTION update_average_age()
+CREATE OR REPLACE FUNCTION update_alerts()
 RETURNS TRIGGER AS $$
-DECLARE
-    avg_age NUMERIC;
 BEGIN
-    -- Вычисляем средний возраст всех людей
-    SELECT AVG(EXTRACT(YEAR FROM age(current_date, p.birthday)))
-    INTO avg_age
-    FROM people p;
-
-    -- Выводим результат на экран
-    RAISE NOTICE 'Average age of people: %', avg_age;
-
+    IF (SELECT danger from emotions where NEW.emotion_id = id) > 8
+    THEN
+        insert into alerts (human, danger, emotion, time) values
+            ( NEW.owner_id,
+              (SELECT danger from emotions where NEW.emotion_id = id),
+              NEW.emotion_id,
+              NOW()
+            );
+    END IF;
+    RAISE NOTICE '%', to_json((SELECT danger from emotions where NEW.emotion_id = id));
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- удалить старый триггер
-DROP TRIGGER update_average_age_trigger ON people;
-
--- создать новый
-CREATE TRIGGER update_average_age_trigger
-AFTER INSERT OR UPDATE OF birthday ON people
+CREATE TRIGGER update_alerts
+AFTER INSERT OR UPDATE ON feelings
 FOR EACH ROW
-EXECUTE FUNCTION update_average_age();
+EXECUTE FUNCTION update_alerts();
 
