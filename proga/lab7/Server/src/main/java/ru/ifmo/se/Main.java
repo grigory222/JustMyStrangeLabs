@@ -11,7 +11,7 @@ import java.sql.Statement;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        Connection con = ConnectionManager.open();
+        Connection con = ConnectionManager.get();
         Statement statement = null;
         try {
             statement = con.createStatement();
