@@ -11,7 +11,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
 
 public class Network {
 
@@ -27,7 +26,7 @@ public class Network {
 
 
     // получает Worker'а для конкретного запроса. Здесь же происходит десериализация
-    public static Request read(SelectionKey key, HashMap<String, Worker> workersMap) throws IOException {
+    public static Request read(SelectionKey key) throws IOException {
         SocketChannel channel = (SocketChannel) key.channel();
         ByteBuffer byteBuf = (ByteBuffer) key.attachment();
 
@@ -69,9 +68,30 @@ public class Network {
 
     }
 
-    public static void write(SelectionKey key) throws IOException {
-        SocketChannel channel = (SocketChannel) key.channel();
-        Response response = (Response) key.attachment();
+//    public static void write(SelectionKey key) throws IOException {
+//        SocketChannel channel = (SocketChannel) key.channel();
+//        Response response = (Response) key.attachment();
+//        ByteBuffer buffer = Worker.serialize(response);
+//        // сперва запишем длину
+//        var lenBuf = ByteBuffer.wrap(intToBytes(buffer.array().length));
+//        while (lenBuf.hasRemaining()) {
+//            int bytesWritten = channel.write(lenBuf);
+//            if (bytesWritten == -1) {
+//                throw new IOException();
+//            }
+//        }
+//
+//        // теперь запишем сам Reply
+//        while (buffer.hasRemaining()) {
+//            int bytesWritten = channel.write(buffer);
+//            if (bytesWritten == -1) {
+//                throw new IOException();
+//            }
+//        }
+//        buffer.clear();
+//    }
+
+    public static void write(SocketChannel channel, Response response) throws IOException {
         ByteBuffer buffer = Worker.serialize(response);
         // сперва запишем длину
         var lenBuf = ByteBuffer.wrap(intToBytes(buffer.array().length));

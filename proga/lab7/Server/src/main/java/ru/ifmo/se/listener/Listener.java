@@ -4,21 +4,22 @@ import ru.ifmo.se.collection.CollectionHandler;
 import ru.ifmo.se.collection.Receiver;
 import ru.ifmo.se.consoleReader.ConsoleReader;
 import ru.ifmo.se.db.DbManager;
-import ru.ifmo.se.dto.responses.Response;
 import ru.ifmo.se.dto.requests.Request;
 import ru.ifmo.se.entity.LabWork;
+import ru.ifmo.se.tasks.ReadTask;
 import ru.ifmo.se.workers.*;
 import ru.ifmo.se.csv.CsvHandler;
 
 import java.io.*;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static ru.ifmo.se.network.Network.*;
 
@@ -31,17 +32,20 @@ public class Listener {
     private final HashMap<String, Worker> workersMap = new HashMap<>();
     private Receiver receiver;
     private DbManager db;
+    private final ExecutorService readThreadPool = Executors.newFixedThreadPool(5);
+    private final ExecutorService processThreadPool = Executors.newFixedThreadPool(5);
+    private final ExecutorService writeThreadPool = Executors.newFixedThreadPool(5);
 
-    public Listener(int port){
+    public Listener(int port) {
         this.port = port;
     }
 
-    private void initReceiver(){
+    private void initReceiver() {
         db = new DbManager();
         receiver = new Receiver(collectionHandler, db);
     }
 
-    private void initWorkers(){
+    private void initWorkers() {
         workersMap.put("add", new AddWorker(receiver));
         workersMap.put("add_if_max", new AddIfMaxWorker(receiver));
         workersMap.put("add_if_min", new AddIfMinWorker(receiver));
@@ -58,13 +62,14 @@ public class Listener {
         workersMap.put("reg", new RegisterWorker(receiver));
     }
 
-    private boolean init(){
+    private boolean init() {
         initReceiver();
         initWorkers();
-        try{
+        try {
             selector = Selector.open();
             server.configureBlocking(false);
             server.register(selector, SelectionKey.OP_ACCEPT);
+
         } catch (IOException e) {
             return false;
         }
@@ -73,33 +78,18 @@ public class Listener {
 
 
     private void listen() throws IOException {
-        while(true) {
+        while (true) {
             selector.select();
             Set<SelectionKey> keys = selector.selectedKeys();
             for (var iter = keys.iterator(); iter.hasNext(); ) {
-                SelectionKey key = iter.next(); iter.remove();
+                SelectionKey key = iter.next();
+                iter.remove();
                 if (key.isValid()) {
                     if (key.isAcceptable()) {
                         accept(key);
                     }
                     if (key.isReadable()) {
-                        Request req = read(key, workersMap);
-                        if (req != null) {
-                            Response response = workersMap.get(req.name).process(req);
-                            key.interestOps(SelectionKey.OP_WRITE);
-                            key.attach(response);
-                        }
-                    }
-                    try {
-                        if (key.isWritable()) {
-                            write(key);
-                            ByteBuffer buf = ByteBuffer.allocate(4096);
-                            key.interestOps(SelectionKey.OP_READ);
-                            key.attach(buf);
-                        }
-                    }catch (CancelledKeyException | IOException e){
-                        key.channel().close();
-                        key.cancel();
+                        readThreadPool.submit(new ReadTask(key, processThreadPool, writeThreadPool, workersMap));
                     }
                 }
             }
@@ -140,7 +130,6 @@ public class Listener {
 
         server = choosePort();
 
-        //ConnectionManage.open();
 
         CsvHandler csv = new CsvHandler(new PrintWriter(System.out));
         csv.loadFromCsv(fileName, collection);
@@ -151,8 +140,7 @@ public class Listener {
 
         if (init()) {
             listen();
-        }
-        else {
+        } else {
             System.out.println("Ошибка инициализации сервера!");
         }
     }
