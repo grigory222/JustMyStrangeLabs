@@ -1,6 +1,6 @@
 package ru.ifmo.se.command;
 
-import ru.ifmo.se.dto.replies.UpdateReply;
+import ru.ifmo.se.dto.responses.UpdateResponse;
 import ru.ifmo.se.dto.requests.UpdateRequest;
 import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.network.Network;
@@ -33,7 +33,7 @@ public class UpdateCommand extends AbstractCommand implements Command{
         }
 
         UpdateRequest updRequest = new UpdateRequest(id, labWork);
-        UpdateReply updReply = (UpdateReply) Network.sendAndReceive(socket, updRequest);
+        UpdateResponse updReply = (UpdateResponse) Network.sendAndReceive(socket, updRequest);
         infoPrinter.println(updReply != null ? updReply.getMessage() : "Не удалось обновить элемент в коллекции");
     }
 }

@@ -1,6 +1,6 @@
 package ru.ifmo.se.network;
 
-import ru.ifmo.se.dto.replies.Reply;
+import ru.ifmo.se.dto.responses.Response;
 import ru.ifmo.se.dto.requests.Request;
 import ru.ifmo.se.workers.Worker;
 
@@ -71,8 +71,8 @@ public class Network {
 
     public static void write(SelectionKey key) throws IOException {
         SocketChannel channel = (SocketChannel) key.channel();
-        Reply reply = (Reply) key.attachment();
-        ByteBuffer buffer = Worker.serialize(reply);
+        Response response = (Response) key.attachment();
+        ByteBuffer buffer = Worker.serialize(response);
         // сперва запишем длину
         var lenBuf = ByteBuffer.wrap(intToBytes(buffer.array().length));
         while (lenBuf.hasRemaining()) {

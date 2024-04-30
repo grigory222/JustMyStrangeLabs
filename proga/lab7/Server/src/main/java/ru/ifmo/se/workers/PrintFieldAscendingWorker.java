@@ -1,11 +1,9 @@
 package ru.ifmo.se.workers;
 
 import ru.ifmo.se.collection.Receiver;
-import ru.ifmo.se.dto.replies.PrintFieldAscendingReply;
-import ru.ifmo.se.dto.replies.PrintUniqueDifficultyReply;
-import ru.ifmo.se.dto.replies.Reply;
+import ru.ifmo.se.dto.responses.PrintFieldAscendingResponse;
+import ru.ifmo.se.dto.responses.Response;
 import ru.ifmo.se.dto.requests.PrintFieldAscendingRequest;
-import ru.ifmo.se.dto.requests.PrintUniqueDifficultyRequest;
 import ru.ifmo.se.dto.requests.Request;
 
 
@@ -14,9 +12,9 @@ public class PrintFieldAscendingWorker extends Worker{
         super(receiver);
     }
 
-    public Reply process(Request request){
+    public Response process(Request request){
         PrintFieldAscendingRequest req = (PrintFieldAscendingRequest) request;
-        PrintFieldAscendingReply rep = new PrintFieldAscendingReply();
+        PrintFieldAscendingResponse rep = new PrintFieldAscendingResponse();
 
         rep.setSuccess(true);
         rep.setResult(receiver.printFieldAscendingAuthors());

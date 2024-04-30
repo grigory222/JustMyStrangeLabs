@@ -1,6 +1,6 @@
 package ru.ifmo.se.command;
 
-import ru.ifmo.se.dto.replies.RemoveByIdReply;
+import ru.ifmo.se.dto.responses.RemoveByIdResponse;
 import ru.ifmo.se.dto.requests.RemoveByIdRequest;
 import ru.ifmo.se.network.Network;
 import ru.ifmo.se.receiver.Receiver;
@@ -24,7 +24,7 @@ public class RemoveByIdCommand extends AbstractCommand implements Command{
         }
 
         RemoveByIdRequest request = new RemoveByIdRequest(id);
-        RemoveByIdReply reply = (RemoveByIdReply) Network.sendAndReceive(socket, request);
+        RemoveByIdResponse reply = (RemoveByIdResponse) Network.sendAndReceive(socket, request);
         if (reply != null && reply.isSuccess())
             infoPrinter.println("Элемент успешно удалён");
         else

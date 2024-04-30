@@ -1,19 +1,17 @@
 package ru.ifmo.se.listener;
 
-import org.w3c.dom.ls.LSInput;
 import ru.ifmo.se.collection.CollectionHandler;
 import ru.ifmo.se.collection.Receiver;
 import ru.ifmo.se.consoleReader.ConsoleReader;
-import ru.ifmo.se.dto.replies.Reply;
+import ru.ifmo.se.db.DbManager;
+import ru.ifmo.se.dto.responses.Response;
 import ru.ifmo.se.dto.requests.Request;
 import ru.ifmo.se.entity.LabWork;
-import ru.ifmo.se.util.ConnectionManager;
 import ru.ifmo.se.workers.*;
 import ru.ifmo.se.csv.CsvHandler;
 
 import java.io.*;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.time.LocalDate;
@@ -32,13 +30,15 @@ public class Listener {
     private CollectionHandler collectionHandler;
     private final HashMap<String, Worker> workersMap = new HashMap<>();
     private Receiver receiver;
+    private DbManager db;
 
     public Listener(int port){
         this.port = port;
     }
 
     private void initReceiver(){
-        receiver = new Receiver(collectionHandler, new PrintWriter(System.out));
+        db = new DbManager();
+        receiver = new Receiver(collectionHandler, db);
     }
 
     private void initWorkers(){
@@ -54,6 +54,8 @@ public class Listener {
         workersMap.put("remove_by_id", new RemoveByIdWorker(receiver));
         workersMap.put("update", new UpdateWorker(receiver));
         workersMap.put("clear", new ClearWorker(receiver));
+        workersMap.put("auth", new AuthWorker(receiver));
+        workersMap.put("reg", new RegisterWorker(receiver));
     }
 
     private boolean init(){
@@ -83,9 +85,9 @@ public class Listener {
                     if (key.isReadable()) {
                         Request req = read(key, workersMap);
                         if (req != null) {
-                            Reply reply = workersMap.get(req.name).process(req);
+                            Response response = workersMap.get(req.name).process(req);
                             key.interestOps(SelectionKey.OP_WRITE);
-                            key.attach(reply);
+                            key.attach(response);
                         }
                     }
                     try {
@@ -108,6 +110,7 @@ public class Listener {
     public void exit() throws IOException {
         selector.close();
         server.close();
+        db.close();
         System.exit(0);
     }
 

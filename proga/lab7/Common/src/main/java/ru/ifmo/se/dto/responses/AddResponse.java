@@ -1,10 +1,10 @@
-package ru.ifmo.se.dto.replies;
+package ru.ifmo.se.dto.responses;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-public class AddReply extends Reply {
+public class AddResponse extends Response {
     private String message;
 }

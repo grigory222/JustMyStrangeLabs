@@ -1,4 +1,6 @@
-package ru.ifmo.se.util;
+package ru.ifmo.se.db;
+
+import ru.ifmo.se.util.PropertiesUtil;
 
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
@@ -8,20 +10,16 @@ import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public final class ConnectionManager {
+final class ConnectionManager {
     private static final String PASSWORD_KEY = "db.password";
     private static final String USERNAME_KEY = "db.username";
     private static final String URL_KEY = "db.url";
     private static final String POOL_SIZE_KEY = "db.pool_size";
     private static final int DEFAULT_POOL_SIZE = 5;
-    private static BlockingQueue<Connection> pool;
-    private static ArrayList<Connection> srcPool;
+    private BlockingQueue<Connection> pool;
+    private ArrayList<Connection> srcPool;
 
-    static {
-        initPool();
-    }
-
-    private static void initPool() {
+    private void initPool() {
         var poolSize = PropertiesUtil.getProperty(POOL_SIZE_KEY);
         var size = poolSize == null ? DEFAULT_POOL_SIZE : Integer.parseInt(poolSize);
         pool = new ArrayBlockingQueue<>(size);
@@ -37,10 +35,11 @@ public final class ConnectionManager {
         }
     }
 
-    private ConnectionManager() {
+    ConnectionManager() {
+        initPool();
     }
 
-    public static Connection get() {
+    public Connection get() {
         try {
             return pool.take();
         } catch (InterruptedException e) {
@@ -48,7 +47,7 @@ public final class ConnectionManager {
         }
     }
 
-    private static Connection open() {
+    private Connection open() {
         try {
             return DriverManager.getConnection(
                     PropertiesUtil.getProperty(URL_KEY),
@@ -60,7 +59,7 @@ public final class ConnectionManager {
         }
     }
 
-    public static void close() {
+    public void closePool() {
         try {
             for (var conn : srcPool) {
                 conn.close();

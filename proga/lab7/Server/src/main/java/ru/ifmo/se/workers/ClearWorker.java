@@ -1,8 +1,8 @@
 package ru.ifmo.se.workers;
 
 import ru.ifmo.se.collection.Receiver;
-import ru.ifmo.se.dto.replies.ClearReply;
-import ru.ifmo.se.dto.replies.Reply;
+import ru.ifmo.se.dto.responses.ClearResponse;
+import ru.ifmo.se.dto.responses.Response;
 import ru.ifmo.se.dto.requests.ClearRequest;
 import ru.ifmo.se.dto.requests.Request;
 
@@ -12,9 +12,9 @@ public class ClearWorker extends Worker{
         super(receiver);
     }
 
-    public Reply process(Request request){
+    public Response process(Request request){
         ClearRequest req = (ClearRequest) request;
-        ClearReply rep = new ClearReply();
+        ClearResponse rep = new ClearResponse();
 
         receiver.clear();
         rep.setSuccess(true);

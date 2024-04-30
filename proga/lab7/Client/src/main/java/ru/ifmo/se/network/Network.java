@@ -1,13 +1,12 @@
 package ru.ifmo.se.network;
 
-import ru.ifmo.se.dto.replies.Reply;
+import ru.ifmo.se.dto.responses.Response;
 import ru.ifmo.se.dto.requests.Request;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.Objects;
 
 public class Network {
@@ -49,7 +48,7 @@ public class Network {
         return bos.toByteArray();
     }
 
-    public static Reply sendAndReceive(Socket socket, Request request) {
+    public static Response sendAndReceive(Socket socket, Request request) {
         try {
             if (!send(socket, serialize(request)))
                 return null;
@@ -60,7 +59,7 @@ public class Network {
         try {
             var bis = new ByteArrayInputStream(Objects.requireNonNull(receive(socket)));
             var ois = new ObjectInputStream(bis);
-            return (Reply) ois.readObject();
+            return (Response) ois.readObject();
         } catch (IOException | NullPointerException | ClassNotFoundException e) {
             return null;
         }

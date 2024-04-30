@@ -1,16 +1,10 @@
 package ru.ifmo.se.workers;
 
 import ru.ifmo.se.collection.Receiver;
-import ru.ifmo.se.dto.replies.AddIfMaxReply;
-import ru.ifmo.se.dto.replies.AddReply;
-import ru.ifmo.se.dto.replies.Reply;
+import ru.ifmo.se.dto.responses.AddIfMaxResponse;
+import ru.ifmo.se.dto.responses.Response;
 import ru.ifmo.se.dto.requests.AddIfMaxRequest;
-import ru.ifmo.se.dto.requests.AddRequest;
 import ru.ifmo.se.dto.requests.Request;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 
 public class AddIfMaxWorker extends Worker{
     public AddIfMaxWorker(Receiver receiver) {
@@ -18,9 +12,9 @@ public class AddIfMaxWorker extends Worker{
     }
 
 
-    public Reply process(Request request){
+    public Response process(Request request){
         AddIfMaxRequest req = (AddIfMaxRequest) request;
-        AddIfMaxReply rep = new AddIfMaxReply();
+        AddIfMaxResponse rep = new AddIfMaxResponse();
         if (receiver.addIfMax(req.getLabWork())) {
             rep.setMessage("Элемент упешно добавлен в коллекцию");
         } else{

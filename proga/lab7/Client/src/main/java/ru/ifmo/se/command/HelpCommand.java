@@ -1,9 +1,7 @@
 package ru.ifmo.se.command;
 
-import ru.ifmo.se.dto.replies.HelpReply;
-import ru.ifmo.se.dto.replies.InfoReply;
+import ru.ifmo.se.dto.responses.HelpResponse;
 import ru.ifmo.se.dto.requests.HelpRequest;
-import ru.ifmo.se.dto.requests.InfoRequest;
 import ru.ifmo.se.network.Network;
 import ru.ifmo.se.receiver.Receiver;
 
@@ -18,9 +16,9 @@ public class HelpCommand extends AbstractCommand implements Command{
 
     public void execute(String[] args) {
         HelpRequest request = new HelpRequest();
-        HelpReply helpReply = (HelpReply) Network.sendAndReceive(socket, request);
-        if (helpReply != null && helpReply.isSuccess())
-            infoPrinter.println(helpReply.getResult());
+        HelpResponse helpResponse = (HelpResponse) Network.sendAndReceive(socket, request);
+        if (helpResponse != null && helpResponse.isSuccess())
+            infoPrinter.println(helpResponse.getResult());
         else
             infoPrinter.println("Не удалось получить справочную информацию");
     }

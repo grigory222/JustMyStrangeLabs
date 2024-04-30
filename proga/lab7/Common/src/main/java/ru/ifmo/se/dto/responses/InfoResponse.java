@@ -1,10 +1,10 @@
-package ru.ifmo.se.dto.replies;
+package ru.ifmo.se.dto.responses;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class PrintFieldAscendingReply extends Reply{
+public class InfoResponse extends Response {
     private String result;
 }

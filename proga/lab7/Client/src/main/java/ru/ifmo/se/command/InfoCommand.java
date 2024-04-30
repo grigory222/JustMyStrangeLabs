@@ -1,7 +1,6 @@
 package ru.ifmo.se.command;
 
-import ru.ifmo.se.dto.replies.InfoReply;
-import ru.ifmo.se.dto.replies.ShowReply;
+import ru.ifmo.se.dto.responses.InfoResponse;
 import ru.ifmo.se.dto.requests.InfoRequest;
 import ru.ifmo.se.network.Network;
 import ru.ifmo.se.receiver.Receiver;
@@ -17,9 +16,9 @@ public class InfoCommand extends AbstractCommand implements Command{
 
     public void execute(String[] args) {
         InfoRequest infoRequest = new InfoRequest();
-        InfoReply infoReply = (InfoReply) Network.sendAndReceive(socket, infoRequest);
-        if (infoReply != null && infoReply.isSuccess())
-            infoPrinter.println(infoReply.getResult());
+        InfoResponse infoResponse = (InfoResponse) Network.sendAndReceive(socket, infoRequest);
+        if (infoResponse != null && infoResponse.isSuccess())
+            infoPrinter.println(infoResponse.getResult());
         else
             infoPrinter.println("Не удалось получить информацию о коллекции");
     }

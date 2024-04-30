@@ -1,9 +1,7 @@
 package ru.ifmo.se.command;
 
-import ru.ifmo.se.dto.replies.ClearReply;
-import ru.ifmo.se.dto.replies.HelpReply;
+import ru.ifmo.se.dto.responses.ClearResponse;
 import ru.ifmo.se.dto.requests.ClearRequest;
-import ru.ifmo.se.dto.requests.HelpRequest;
 import ru.ifmo.se.network.Network;
 import ru.ifmo.se.receiver.Receiver;
 
@@ -18,8 +16,8 @@ public class ClearCommand extends AbstractCommand implements Command{
 
     public void execute(String[] args) {
         ClearRequest request = new ClearRequest();
-        ClearReply clearReply = (ClearReply) Network.sendAndReceive(socket, request);
-        if (clearReply != null && clearReply.isSuccess())
+        ClearResponse clearResponse = (ClearResponse) Network.sendAndReceive(socket, request);
+        if (clearResponse != null && clearResponse.isSuccess())
             infoPrinter.println("Коллекция очищена");
         else
             infoPrinter.println("Не удалось очистить коллекцию");

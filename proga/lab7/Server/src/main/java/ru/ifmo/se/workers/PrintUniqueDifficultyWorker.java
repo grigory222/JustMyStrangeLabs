@@ -1,12 +1,10 @@
 package ru.ifmo.se.workers;
 
 import ru.ifmo.se.collection.Receiver;
-import ru.ifmo.se.dto.replies.PrintUniqueDifficultyReply;
-import ru.ifmo.se.dto.replies.Reply;
-import ru.ifmo.se.dto.replies.ShowReply;
+import ru.ifmo.se.dto.responses.PrintUniqueDifficultyResponse;
+import ru.ifmo.se.dto.responses.Response;
 import ru.ifmo.se.dto.requests.PrintUniqueDifficultyRequest;
 import ru.ifmo.se.dto.requests.Request;
-import ru.ifmo.se.dto.requests.ShowRequest;
 
 
 public class PrintUniqueDifficultyWorker extends Worker{
@@ -14,9 +12,9 @@ public class PrintUniqueDifficultyWorker extends Worker{
         super(receiver);
     }
 
-    public Reply process(Request request){
+    public Response process(Request request){
         PrintUniqueDifficultyRequest req = (PrintUniqueDifficultyRequest) request;
-        PrintUniqueDifficultyReply rep = new PrintUniqueDifficultyReply();
+        PrintUniqueDifficultyResponse rep = new PrintUniqueDifficultyResponse();
 
         rep.setSuccess(true);
         rep.setResult(receiver.printUniqueDifficulty());

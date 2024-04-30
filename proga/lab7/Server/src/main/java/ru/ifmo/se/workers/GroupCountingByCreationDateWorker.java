@@ -1,11 +1,9 @@
 package ru.ifmo.se.workers;
 
 import ru.ifmo.se.collection.Receiver;
-import ru.ifmo.se.dto.replies.GroupCountingByCreationDateReply;
-import ru.ifmo.se.dto.replies.PrintUniqueDifficultyReply;
-import ru.ifmo.se.dto.replies.Reply;
+import ru.ifmo.se.dto.responses.GroupCountingByCreationDateResponse;
+import ru.ifmo.se.dto.responses.Response;
 import ru.ifmo.se.dto.requests.GroupCountingByCreationDateRequest;
-import ru.ifmo.se.dto.requests.PrintUniqueDifficultyRequest;
 import ru.ifmo.se.dto.requests.Request;
 
 
@@ -14,9 +12,9 @@ public class GroupCountingByCreationDateWorker extends Worker{
         super(receiver);
     }
 
-    public Reply process(Request request){
+    public Response process(Request request){
         GroupCountingByCreationDateRequest req = (GroupCountingByCreationDateRequest) request;
-        GroupCountingByCreationDateReply rep = new GroupCountingByCreationDateReply();
+        GroupCountingByCreationDateResponse rep = new GroupCountingByCreationDateResponse();
 
         rep.setSuccess(true);
         rep.setResult(receiver.printGroupCountingByCreationDate());

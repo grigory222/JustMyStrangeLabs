@@ -1,9 +1,7 @@
 package ru.ifmo.se.command;
 
-import ru.ifmo.se.dto.replies.GroupCountingByCreationDateReply;
-import ru.ifmo.se.dto.replies.ShowReply;
+import ru.ifmo.se.dto.responses.GroupCountingByCreationDateResponse;
 import ru.ifmo.se.dto.requests.GroupCountingByCreationDateRequest;
-import ru.ifmo.se.dto.requests.ShowRequest;
 import ru.ifmo.se.network.Network;
 import ru.ifmo.se.receiver.Receiver;
 
@@ -18,7 +16,7 @@ public class GroupCountingByCreationDateCommand extends AbstractCommand implemen
 
     public void execute(String[] args) {
         GroupCountingByCreationDateRequest request = new GroupCountingByCreationDateRequest();
-        GroupCountingByCreationDateReply reply = (GroupCountingByCreationDateReply) Network.sendAndReceive(socket, request);
+        GroupCountingByCreationDateResponse reply = (GroupCountingByCreationDateResponse) Network.sendAndReceive(socket, request);
         if (reply != null && reply.isSuccess())
             infoPrinter.println(reply.getResult());
         else

@@ -1,21 +1,15 @@
 package ru.ifmo.se.runner;
 
+import ru.ifmo.se.auth.Authentificator;
 import ru.ifmo.se.command.*;
 import ru.ifmo.se.controller.Invoker;
-import ru.ifmo.se.entity.LabWork;
-import ru.ifmo.se.entity.readers.LabWorkReader;
 import ru.ifmo.se.receiver.Receiver;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.List;
 import java.util.*;
 
-import static java.lang.System.exit;
-import static ru.ifmo.se.network.Network.connect;
 
 public class Runner {
 
@@ -116,7 +110,6 @@ public class Runner {
         return cmdMap;
     }
 
-
     private void runCommands(){
         String line;
         do{
@@ -138,41 +131,13 @@ public class Runner {
         } while(!line.equals("exit"));
     }
 
-    private boolean checkIds(List<LabWork> labs){
-        Set<Integer> ids = new HashSet<>();
-        labs.forEach(x -> ids.add(x.getId()));
-        if (ids.size() == labs.size()){
-            return true;
-        }
-        // update ids
-        for (int i = 0; i < labs.size(); i++){
-            labs.get(i).setId(i+1);
-        }
-        return false;
-    }
-
-    private boolean validateLab(LabWork labWork){
-        boolean res = labWork.getId() > 0;
-        res = res && LabWorkReader.validateName(labWork.getName());
-        res = res && labWork.getMinimalPoint() > 0;
-        res = res && labWork.getCoordinates().getY() - 48.0 <= Double.MIN_VALUE;
-
-        return res;
-    }
-
-    private boolean validateList(List<LabWork> labWorks) {
-        var res = labWorks.stream().filter(this::validateLab).toList();
-        return res.size() >= labWorks.size();
-    }
-
     // Пользовательский метод. Запускает инициализации и цикл чтения команд
     public void run() {
-
         initInvoker();
+        new Authentificator(printWriter, bufferedReader, socket).menu();
         printWriter.println("Добро пожаловать! Чтобы просмотреть возможные команды используйте help");
         runCommands();
     }
-
 }
 
 

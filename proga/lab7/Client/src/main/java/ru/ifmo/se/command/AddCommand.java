@@ -1,6 +1,6 @@
 package ru.ifmo.se.command;
 
-import ru.ifmo.se.dto.replies.AddReply;
+import ru.ifmo.se.dto.responses.AddResponse;
 import ru.ifmo.se.dto.requests.AddRequest;
 import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.network.Network;
@@ -31,9 +31,9 @@ public class AddCommand extends AbstractCommand implements Command{
             return;
         }
         AddRequest addRequest = new AddRequest(labWork);
-        AddReply addReply = (AddReply) Network.sendAndReceive(socket, addRequest);
-        if (addReply != null && addReply.isSuccess())
-            infoPrinter.println(addReply.getMessage());
+        AddResponse addResponse = (AddResponse) Network.sendAndReceive(socket, addRequest);
+        if (addResponse != null && addResponse.isSuccess())
+            infoPrinter.println(addResponse.getMessage());
         else
             infoPrinter.println("Не удалось добавить элемент в коллекцию");
     }

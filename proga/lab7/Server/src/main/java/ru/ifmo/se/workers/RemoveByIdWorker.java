@@ -1,21 +1,19 @@
 package ru.ifmo.se.workers;
 
 import ru.ifmo.se.collection.Receiver;
-import ru.ifmo.se.dto.replies.RemoveByIdReply;
-import ru.ifmo.se.dto.replies.Reply;
-import ru.ifmo.se.dto.replies.UpdateReply;
+import ru.ifmo.se.dto.responses.RemoveByIdResponse;
+import ru.ifmo.se.dto.responses.Response;
 import ru.ifmo.se.dto.requests.RemoveByIdRequest;
 import ru.ifmo.se.dto.requests.Request;
-import ru.ifmo.se.dto.requests.UpdateRequest;
 
 public class RemoveByIdWorker extends Worker {
     public RemoveByIdWorker(Receiver receiver) {
         super(receiver);
     }
 
-    public Reply process(Request request) {
+    public Response process(Request request) {
         RemoveByIdRequest req = (RemoveByIdRequest) request;
-        RemoveByIdReply rep = new RemoveByIdReply();
+        RemoveByIdResponse rep = new RemoveByIdResponse();
 
         if (receiver.removeById(req.getId())) {
             rep.setSuccess(true);

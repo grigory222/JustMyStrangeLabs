@@ -1,7 +1,6 @@
 package ru.ifmo.se.command;
 
-import ru.ifmo.se.dto.replies.InfoReply;
-import ru.ifmo.se.dto.replies.PrintUniqueDifficultyReply;
+import ru.ifmo.se.dto.responses.PrintUniqueDifficultyResponse;
 import ru.ifmo.se.dto.requests.PrintUniqueDifficultyRequest;
 import ru.ifmo.se.network.Network;
 import ru.ifmo.se.receiver.Receiver;
@@ -17,7 +16,7 @@ public class PrintUniqueDifficultyCommand extends AbstractCommand implements Com
 
     public void execute(String[] args) {
         PrintUniqueDifficultyRequest request = new PrintUniqueDifficultyRequest();
-        PrintUniqueDifficultyReply reply = (PrintUniqueDifficultyReply) Network.sendAndReceive(socket, request);
+        PrintUniqueDifficultyResponse reply = (PrintUniqueDifficultyResponse) Network.sendAndReceive(socket, request);
         if (reply != null && reply.isSuccess())
             infoPrinter.println(reply.getResult());
         else

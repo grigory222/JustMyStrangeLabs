@@ -1,6 +1,6 @@
 package ru.ifmo.se.command;
 
-import ru.ifmo.se.dto.replies.AddIfMinReply;
+import ru.ifmo.se.dto.responses.AddIfMinResponse;
 import ru.ifmo.se.dto.requests.AddIfMinRequest;
 import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.network.Network;
@@ -32,9 +32,9 @@ public class AddIfMinCommand extends AbstractCommand implements Command{
         }
 
         AddIfMinRequest addIfMinRequest = new AddIfMinRequest(labWork);
-        AddIfMinReply addIfMinReply = (AddIfMinReply) Network.sendAndReceive(socket, addIfMinRequest);
-        if (addIfMinReply != null && addIfMinReply.isSuccess())
-            infoPrinter.println(addIfMinReply.getMessage());
+        AddIfMinResponse addIfMinResponse = (AddIfMinResponse) Network.sendAndReceive(socket, addIfMinRequest);
+        if (addIfMinResponse != null && addIfMinResponse.isSuccess())
+            infoPrinter.println(addIfMinResponse.getMessage());
         else
             infoPrinter.println("Не удалось добавить элемент в коллекцию");
     }

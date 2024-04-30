@@ -1,8 +1,7 @@
 package ru.ifmo.se.workers;
 
 import ru.ifmo.se.collection.Receiver;
-import ru.ifmo.se.dto.replies.Reply;
-import ru.ifmo.se.dto.requests.AddIfMinRequest;
+import ru.ifmo.se.dto.responses.Response;
 import ru.ifmo.se.dto.requests.Request;
 
 import java.io.*;
@@ -15,10 +14,10 @@ public abstract class Worker {
         this.receiver = receiver;
     }
 
-    public static ByteBuffer serialize(Reply reply) throws IOException {
+    public static ByteBuffer serialize(Response response) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-        objectOutputStream.writeObject(reply);
+        objectOutputStream.writeObject(response);
         objectOutputStream.flush();
         byte[] serializedData = byteArrayOutputStream.toByteArray();
         objectOutputStream.close();
@@ -32,5 +31,5 @@ public abstract class Worker {
         return (Request) ois.readObject();
     }
 
-    public abstract Reply process(Request request);
+    public abstract Response process(Request request);
 }

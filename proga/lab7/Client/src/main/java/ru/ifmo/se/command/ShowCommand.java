@@ -1,6 +1,6 @@
 package ru.ifmo.se.command;
 
-import ru.ifmo.se.dto.replies.ShowReply;
+import ru.ifmo.se.dto.responses.ShowResponse;
 import ru.ifmo.se.dto.requests.ShowRequest;
 import ru.ifmo.se.network.Network;
 import ru.ifmo.se.receiver.Receiver;
@@ -16,7 +16,7 @@ public class ShowCommand extends AbstractCommand implements Command{
 
     public void execute(String[] args) {
         ShowRequest showRequest = new ShowRequest();
-        ShowReply showReply = (ShowReply) Network.sendAndReceive(socket, showRequest);
+        ShowResponse showReply = (ShowResponse) Network.sendAndReceive(socket, showRequest);
         if (showReply != null && showReply.isSuccess())
             infoPrinter.println(showReply.getResult());
         else

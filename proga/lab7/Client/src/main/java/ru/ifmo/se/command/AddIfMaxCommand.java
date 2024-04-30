@@ -1,6 +1,6 @@
 package ru.ifmo.se.command;
 
-import ru.ifmo.se.dto.replies.AddIfMaxReply;
+import ru.ifmo.se.dto.responses.AddIfMaxResponse;
 import ru.ifmo.se.dto.requests.AddIfMaxRequest;
 import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.network.Network;
@@ -31,9 +31,9 @@ public class AddIfMaxCommand extends AbstractCommand implements Command{
             return;
         }
         AddIfMaxRequest addIfMaxRequest = new AddIfMaxRequest(labWork);
-        AddIfMaxReply addIfMaxReply = (AddIfMaxReply) Network.sendAndReceive(socket, addIfMaxRequest);
-        if (addIfMaxReply != null && addIfMaxReply.isSuccess())
-            infoPrinter.println(addIfMaxReply.getMessage());
+        AddIfMaxResponse addIfMaxResponse = (AddIfMaxResponse) Network.sendAndReceive(socket, addIfMaxRequest);
+        if (addIfMaxResponse != null && addIfMaxResponse.isSuccess())
+            infoPrinter.println(addIfMaxResponse.getMessage());
         else
             infoPrinter.println("Не удалось добавить элемент в коллекцию");
     }

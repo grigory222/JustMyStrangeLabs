@@ -1,24 +1,28 @@
 package ru.ifmo.se.collection;
 
+import ru.ifmo.se.crypto.CryptoUtils;
 import ru.ifmo.se.entity.Difficulty;
 import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.entity.Person;
+import ru.ifmo.se.db.DbManager;
 
-import java.io.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
 public class Receiver {
     private final CollectionHandler collectionHandler;
-    private final PrintWriter printWriter;
-    public Receiver(CollectionHandler collectionHandler, PrintWriter printWriter){
+    private final DbManager db;
+
+    public Receiver(CollectionHandler collectionHandler, DbManager db){
         this.collectionHandler = collectionHandler;
-        this.printWriter = printWriter;
+        this.db = db;
     }
     public boolean addIfMax(LabWork labWork){
         if (collectionHandler.getCollection().isEmpty() || labWork.compareTo(collectionHandler.getCollection().stream().toList().get(collectionHandler.getCollection().size() - 1)) > 0){
@@ -76,20 +80,6 @@ public class Receiver {
         collectionHandler.clear();
     }
 
-//    public boolean executeScript(PrintWriter infoPrinter, File file) throws FileNotFoundException {
-//        List<File> recursion = historyCall.stream().filter(previous -> previous.getName().equals(file.getName())).toList();
-//        if (!recursion.isEmpty()){
-//            infoPrinter.println("Обнаружена рекурсия " + recursion);
-//            return false;
-//        }
-//        PrintWriter scriptPrinter = new PrintWriter("/dev/null");
-//        BufferedReader scriptReader = new BufferedReader(new FileReader(file));
-//        Runner scriptRunner = new Runner(infoPrinter, file, scriptPrinter, scriptReader);
-//        scriptRunner.run(collectionHandler.getCollection(), fileName);
-//        historyCall.remove(historyCall.size() - 1);
-//        return true;
-//    }
-
     public List<LabWork> getGroupCountingByCreationDate() {
         List<LocalDate> allDates = new ArrayList<>();
         List<LabWork> result = new ArrayList<>();
@@ -110,17 +100,6 @@ public class Receiver {
         }
         return sb.toString();
     }
-
-//    public boolean saveCollection(String filePath) {
-//        try(FileWriter writer = new FileWriter(filePath)) {
-//            CsvHandler.writeRows(writer, new ArrayList<>(collectionHandler.getCollection()));
-//        } catch (IOException e) {
-//            return false;
-//        } catch (CsvRequiredFieldEmptyException | CsvDataTypeMismatchException e) {
-//            throw new RuntimeException(e);
-//        }
-//        return true; // успешно записали
-//    }
 
 
     public String help(){
@@ -182,5 +161,56 @@ public class Receiver {
             sb.append("\n============\n").append(man);
         }
         return sb.toString();
+    }
+
+
+
+    private String getSaltByLogin(String login) throws SQLException {
+        try (PreparedStatement statementSalt = db.createStatement("SELECT salt FROM users WHERE login = ?")) {
+            // select salt
+            statementSalt.setString(1, login);
+            ResultSet resultSet = statementSalt.executeQuery();
+            if (resultSet.next())
+                return resultSet.getString("salt");
+        }
+        // пользователя с таким логином не существует
+        return null;
+    }
+
+
+
+    public boolean auth(String login, String password) {
+        try (PreparedStatement statement = db.createStatement("SELECT id FROM users WHERE login = ? AND password_hash = ?")) {
+            String salt = getSaltByLogin(login);
+            if (salt == null)
+                return false;
+
+            statement.setString(1, login);
+            statement.setString(2, CryptoUtils.hash(password, salt, CryptoUtils.getPepper()));
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()){
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
+    // returns:
+    //        -1 - user doesn't exist
+    //       >=0 - amount of added rows
+    public int register(String login, String password) {
+        try (PreparedStatement statement = db.createStatement("INSERT INTO users (login, password_hash, salt) VALUES (?, ?, ?)")) {
+            if (getSaltByLogin(login) != null) {
+                return -1;
+            }
+            statement.setString(1, login);
+            statement.setString(2, CryptoUtils.hash(password, CryptoUtils.generateSalt(), CryptoUtils.getPepper()));
+            statement.setString(3, CryptoUtils.generateSalt());
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

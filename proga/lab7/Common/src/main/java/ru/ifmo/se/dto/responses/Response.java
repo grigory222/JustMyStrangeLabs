@@ -1,4 +1,4 @@
-package ru.ifmo.se.dto.replies;
+package ru.ifmo.se.dto.responses;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +7,6 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-public class Reply implements Serializable {
+public class Response implements Serializable {
     protected boolean success;
 }
