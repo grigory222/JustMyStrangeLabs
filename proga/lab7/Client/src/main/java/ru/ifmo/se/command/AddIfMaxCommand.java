@@ -17,7 +17,7 @@ public class AddIfMaxCommand extends AbstractCommand implements Command{
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
+    public void execute(String[] args, String token) {
         LabWork labWork;
         try {
             labWork = LabWorkReader.readLabWork(reader, printer, infoPrinter);
@@ -30,7 +30,7 @@ public class AddIfMaxCommand extends AbstractCommand implements Command{
             infoPrinter.println("Некорректный ввод! Не удалось добавить элемент");
             return;
         }
-        AddIfMaxRequest addIfMaxRequest = new AddIfMaxRequest(labWork);
+        AddIfMaxRequest addIfMaxRequest = new AddIfMaxRequest(labWork, token);
         AddIfMaxResponse addIfMaxResponse = (AddIfMaxResponse) Network.sendAndReceive(socket, addIfMaxRequest);
         if (addIfMaxResponse != null && addIfMaxResponse.isSuccess())
             infoPrinter.println(addIfMaxResponse.getMessage());

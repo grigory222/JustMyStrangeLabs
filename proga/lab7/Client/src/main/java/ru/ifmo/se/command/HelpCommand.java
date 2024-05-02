@@ -14,8 +14,8 @@ public class HelpCommand extends AbstractCommand implements Command{
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
-        HelpRequest request = new HelpRequest();
+    public void execute(String[] args, String token) {
+        HelpRequest request = new HelpRequest(token);
         HelpResponse helpResponse = (HelpResponse) Network.sendAndReceive(socket, request);
         if (helpResponse != null && helpResponse.isSuccess())
             infoPrinter.println(helpResponse.getResult());

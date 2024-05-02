@@ -18,7 +18,7 @@ public class ExecuteScriptCommand extends AbstractCommand implements Command{
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
+    public void execute(String[] args, String token) {
         if (args.length < 1){
             printer.println("Формат команды: 'execute_script file_name'");
             return;

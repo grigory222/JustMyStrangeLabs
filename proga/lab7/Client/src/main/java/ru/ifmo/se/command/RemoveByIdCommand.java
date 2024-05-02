@@ -14,7 +14,7 @@ public class RemoveByIdCommand extends AbstractCommand implements Command{
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
+    public void execute(String[] args, String token) {
         int id;
         try {
             id = Integer.parseInt(args[0]);
@@ -23,7 +23,7 @@ public class RemoveByIdCommand extends AbstractCommand implements Command{
             return;
         }
 
-        RemoveByIdRequest request = new RemoveByIdRequest(id);
+        RemoveByIdRequest request = new RemoveByIdRequest(id, token);
         RemoveByIdResponse reply = (RemoveByIdResponse) Network.sendAndReceive(socket, request);
         if (reply != null && reply.isSuccess())
             infoPrinter.println("Элемент успешно удалён");

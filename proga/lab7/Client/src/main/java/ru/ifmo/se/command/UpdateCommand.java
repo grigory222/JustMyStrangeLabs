@@ -16,7 +16,7 @@ public class UpdateCommand extends AbstractCommand implements Command{
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
+    public void execute(String[] args, String token) {
         int id;
         LabWork labWork;
         try {
@@ -32,7 +32,7 @@ public class UpdateCommand extends AbstractCommand implements Command{
             return;
         }
 
-        UpdateRequest updRequest = new UpdateRequest(id, labWork);
+        UpdateRequest updRequest = new UpdateRequest(id, labWork, token);
         UpdateResponse updReply = (UpdateResponse) Network.sendAndReceive(socket, updRequest);
         infoPrinter.println(updReply != null ? updReply.getMessage() : "Не удалось обновить элемент в коллекции");
     }

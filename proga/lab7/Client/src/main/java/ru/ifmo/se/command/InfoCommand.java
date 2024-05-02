@@ -14,8 +14,8 @@ public class InfoCommand extends AbstractCommand implements Command{
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
-        InfoRequest infoRequest = new InfoRequest();
+    public void execute(String[] args, String token) {
+        InfoRequest infoRequest = new InfoRequest(token);
         InfoResponse infoResponse = (InfoResponse) Network.sendAndReceive(socket, infoRequest);
         if (infoResponse != null && infoResponse.isSuccess())
             infoPrinter.println(infoResponse.getResult());

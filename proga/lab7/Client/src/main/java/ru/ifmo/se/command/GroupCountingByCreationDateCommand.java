@@ -14,8 +14,8 @@ public class GroupCountingByCreationDateCommand extends AbstractCommand implemen
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
-        GroupCountingByCreationDateRequest request = new GroupCountingByCreationDateRequest();
+    public void execute(String[] args, String token) {
+        GroupCountingByCreationDateRequest request = new GroupCountingByCreationDateRequest(token);
         GroupCountingByCreationDateResponse reply = (GroupCountingByCreationDateResponse) Network.sendAndReceive(socket, request);
         if (reply != null && reply.isSuccess())
             infoPrinter.println(reply.getResult());

@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 
+import static java.lang.System.exit;
+
 public class Network {
     public static Socket connect(InetAddress inetAddress, int port) throws IOException {
         return new Socket(inetAddress, port);
@@ -59,7 +61,13 @@ public class Network {
         try {
             var bis = new ByteArrayInputStream(Objects.requireNonNull(receive(socket)));
             var ois = new ObjectInputStream(bis);
-            return (Response) ois.readObject();
+            var response =  (Response) ois.readObject();
+            if (response.isTokenError()){
+                System.out.println("Ошибка в JWT токене. Попробуйте залогиниться снова");
+                socket.close();
+                exit(0);
+            }
+            return response;
         } catch (IOException | NullPointerException | ClassNotFoundException e) {
             return null;
         }

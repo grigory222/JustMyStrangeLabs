@@ -2,7 +2,7 @@ package ru.ifmo.se.dto.requests;
 
 public class ShowRequest extends Request{
 
-    public ShowRequest() {
-        super("show");
+    public ShowRequest(String token) {
+        super("show", token);
     }
 }

@@ -5,8 +5,8 @@ import lombok.Getter;
 @Getter
 public class RemoveByIdRequest extends Request{
     private final int id;
-    public RemoveByIdRequest(int id){
-        super("remove_by_id");
+    public RemoveByIdRequest(int id, String token){
+        super("remove_by_id", token);
         this.id = id;
     }
 }

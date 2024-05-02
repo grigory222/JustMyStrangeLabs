@@ -9,8 +9,8 @@ public class UpdateRequest extends Request{
     int id;
     LabWork labWork;
 
-    public UpdateRequest(int id, LabWork labWork) {
-        super("update");
+    public UpdateRequest(int id, LabWork labWork, String token) {
+        super("update", token);
         this.id = id;
         this.labWork = labWork;
     }

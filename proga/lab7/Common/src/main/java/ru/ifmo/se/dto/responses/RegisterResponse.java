@@ -7,4 +7,5 @@ import lombok.Setter;
 @Getter
 public class RegisterResponse extends Response{
     private String resultMessage;
+    private String token;
 }

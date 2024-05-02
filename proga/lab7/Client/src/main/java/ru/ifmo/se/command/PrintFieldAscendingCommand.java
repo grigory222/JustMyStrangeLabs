@@ -14,8 +14,8 @@ public class PrintFieldAscendingCommand extends AbstractCommand implements Comma
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
-        PrintFieldAscendingRequest request = new PrintFieldAscendingRequest();
+    public void execute(String[] args, String token) {
+        PrintFieldAscendingRequest request = new PrintFieldAscendingRequest(token);
         PrintFieldAscendingResponse reply = (PrintFieldAscendingResponse) Network.sendAndReceive(socket, request);
         if (reply != null && reply.isSuccess())
             infoPrinter.println(reply.getResult());

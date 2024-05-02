@@ -17,7 +17,7 @@ public class AddIfMinCommand extends AbstractCommand implements Command{
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
+    public void execute(String[] args, String token) {
         LabWork labWork;
         try {
             labWork = LabWorkReader.readLabWork(reader, printer, infoPrinter);
@@ -31,7 +31,7 @@ public class AddIfMinCommand extends AbstractCommand implements Command{
             return;
         }
 
-        AddIfMinRequest addIfMinRequest = new AddIfMinRequest(labWork);
+        AddIfMinRequest addIfMinRequest = new AddIfMinRequest(labWork, token);
         AddIfMinResponse addIfMinResponse = (AddIfMinResponse) Network.sendAndReceive(socket, addIfMinRequest);
         if (addIfMinResponse != null && addIfMinResponse.isSuccess())
             infoPrinter.println(addIfMinResponse.getMessage());

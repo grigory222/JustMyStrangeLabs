@@ -27,7 +27,7 @@ public class Runner {
     private final Receiver receiver;
     private final Socket socket;
     private ExecuteScriptCommand executeScriptCmd;
-
+    private String token;
 
     // Конструктор без параметров будет использовать PrintWriter с stdout и BufferedReader с stdin
     public Runner() throws InterruptedException {
@@ -71,10 +71,10 @@ public class Runner {
     }
 
     // Инициализация отправителя - invoker
-    private void initInvoker(){
-        invoker = new Invoker(fillCommandMap());
-        executeScriptCmd.setInvoker(invoker);
-    }
+//    private void initInvoker(){
+//        invoker = new Invoker(fillCommandMap(), token);
+//        executeScriptCmd.setInvoker(invoker);
+//    }
 
     private Map<String, Command> fillCommandMap(){
         Map<String, Command> cmdMap = new HashMap<>();
@@ -141,8 +141,9 @@ public class Runner {
 
     // Пользовательский метод. Запускает инициализации и цикл чтения команд
     public void run() {
-        initInvoker();
-        new Authentificator(printWriter, bufferedReader, socket).menu();
+        token = new Authentificator(printWriter, bufferedReader, socket).auth();
+        invoker = new Invoker(fillCommandMap(), token);
+        executeScriptCmd.setInvoker(invoker);
         printWriter.println("Добро пожаловать! Чтобы просмотреть возможные команды используйте help");
         runCommands();
     }

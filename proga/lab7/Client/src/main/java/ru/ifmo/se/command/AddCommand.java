@@ -2,6 +2,8 @@ package ru.ifmo.se.command;
 
 import ru.ifmo.se.dto.responses.AddResponse;
 import ru.ifmo.se.dto.requests.AddRequest;
+import ru.ifmo.se.dto.responses.Response;
+import ru.ifmo.se.dto.responses.TokenErrorResponse;
 import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.network.Network;
 import ru.ifmo.se.entity.readers.LabWorkReader;
@@ -17,7 +19,7 @@ public class AddCommand extends AbstractCommand implements Command{
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
+    public void execute(String[] args, String token) {
         LabWork labWork;
         try {
             labWork = LabWorkReader.readLabWork(reader, printer, infoPrinter);
@@ -30,11 +32,13 @@ public class AddCommand extends AbstractCommand implements Command{
             printer.println("Некорректный ввод! Не удалось добавить элемент");
             return;
         }
-        AddRequest addRequest = new AddRequest(labWork);
+
+        AddRequest addRequest = new AddRequest(labWork, token);
         AddResponse addResponse = (AddResponse) Network.sendAndReceive(socket, addRequest);
         if (addResponse != null && addResponse.isSuccess())
             infoPrinter.println(addResponse.getMessage());
-        else
+        else {
             infoPrinter.println("Не удалось добавить элемент в коллекцию");
+        }
     }
 }

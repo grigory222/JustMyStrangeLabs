@@ -8,7 +8,7 @@ public class RegisterRequest extends Request{
     private final String password;
 
     public RegisterRequest(String name, String login, String password) {
-        super(name);
+        super(name, null);
         this.login = login;
         this.password = password;
     }

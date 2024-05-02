@@ -27,9 +27,9 @@ public final class Authentificator {
         this.printWriter = printWriter;
     }
 
-    public void menu() {
-        boolean authenticated = false;
-        while (!authenticated) {
+    public String auth() {
+        String token = null;
+        while (token == null) {
             try {
                 printWriter.println("Выберите действие:");
                 printWriter.println("1. Вход");
@@ -40,16 +40,16 @@ public final class Authentificator {
 
                 switch (choice.trim()) {
                     case "1":
-                        authenticated = login();
+                        token = login();
                         break;
                     case "2":
-                        authenticated = register();
+                        token = register();
                         break;
                     default:
                         printWriter.println("Неверный выбор. Попробуйте снова.");
                 }
 
-                if (authenticated) {
+                if (token != null) {
                     printWriter.println("Вход выполнен успешно!");
                 }
 
@@ -58,10 +58,11 @@ public final class Authentificator {
                 break;
             }
         }
+        return token;
     }
 
-    private boolean login() {
-        boolean authenticated = false;
+    private String login() {
+        String token = null;
         try {
             printWriter.print("Введите логин: "); printWriter.flush();
             login = reader.readLine();
@@ -69,8 +70,8 @@ public final class Authentificator {
             printWriter.print("Введите пароль: "); printWriter.flush();
             password = new String(System.console().readPassword());
 
-            authenticated = remoteAuth(login, password);
-            if (authenticated) {
+            token = remoteAuth(login, password);
+            if (token != null) {
                 printWriter.println("Вход выполнен успешно!");
             } else {
                 printWriter.println("Ошибка аутентификации. Проверьте логин и пароль.");
@@ -79,12 +80,12 @@ public final class Authentificator {
         } catch (IOException e) {
             printWriter.println("Ошибка чтения...");
         }
-        return authenticated;
+        return token;
     }
 
     String result = "";
-    private boolean register() {
-        boolean registered = false;
+    private String register() {
+        String token = null;
         try {
             printWriter.print("Введите желаемый логин: "); printWriter.flush();
             login = reader.readLine();
@@ -99,10 +100,10 @@ public final class Authentificator {
 
             if (!passwordRepeat.equals(password)){
                 printWriter.println("Пароли не совпадают! Попробуйте снова");
-                return false;
+                return null;
             }
-            registered = remoteRegister(login, password);
-            if (registered) {
+            token = remoteRegister(login, password);
+            if (token != null) {
                 printWriter.println("Регистрация выполнена успешно!");
             } else {
                 printWriter.println("Ошибка регистрации");
@@ -112,23 +113,26 @@ public final class Authentificator {
         } catch (IOException e) {
             printWriter.println("Ошибка чтения...");
         }
-        return registered;
+        return token;
     }
 
-    private boolean remoteRegister(String login, String password) {
+    private String remoteRegister(String login, String password) {
         RegisterRequest req = new RegisterRequest("reg", login, password);
         RegisterResponse response = (RegisterResponse) Network.sendAndReceive(socket, req);
-        if (response != null){
+        if (response != null && response.isSuccess()){
             result = response.getResultMessage();
-            return response.isSuccess();
+            return response.getToken();
         }
-        return false;
+        return null;
     }
 
-    private boolean remoteAuth(String login, String password) {
+    private String remoteAuth(String login, String password) {
         AuthRequest req = new AuthRequest("auth", login, password);
         AuthResponse response = (AuthResponse) Network.sendAndReceive(socket, req);
-        return response != null && response.isSuccess();
+        if (response != null && response.isSuccess()){
+            return response.getToken();
+        }
+        return null;
     }
 
 }

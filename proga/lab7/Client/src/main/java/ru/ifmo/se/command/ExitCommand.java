@@ -12,7 +12,7 @@ public class ExitCommand extends AbstractCommand implements Command{
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
+    public void execute(String[] args, String token) {
         try {
             socket.close();
         } catch (IOException ignored) {}

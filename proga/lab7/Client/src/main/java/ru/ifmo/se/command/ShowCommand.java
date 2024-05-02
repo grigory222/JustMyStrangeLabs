@@ -14,8 +14,8 @@ public class ShowCommand extends AbstractCommand implements Command{
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
-        ShowRequest showRequest = new ShowRequest();
+    public void execute(String[] args, String token) {
+        ShowRequest showRequest = new ShowRequest(token);
         ShowResponse showReply = (ShowResponse) Network.sendAndReceive(socket, showRequest);
         if (showReply != null && showReply.isSuccess())
             infoPrinter.println(showReply.getResult());

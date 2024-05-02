@@ -14,8 +14,8 @@ public class ClearCommand extends AbstractCommand implements Command{
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
-        ClearRequest request = new ClearRequest();
+    public void execute(String[] args, String token) {
+        ClearRequest request = new ClearRequest(token);
         ClearResponse clearResponse = (ClearResponse) Network.sendAndReceive(socket, request);
         if (clearResponse != null && clearResponse.isSuccess())
             infoPrinter.println("Коллекция очищена");

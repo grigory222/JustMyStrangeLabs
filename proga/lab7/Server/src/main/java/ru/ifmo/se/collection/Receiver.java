@@ -10,6 +10,7 @@ import ru.ifmo.se.db.DbManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,23 +26,23 @@ public class Receiver {
         this.collectionHandler = collectionHandler;
         this.db = db;
     }
-    public boolean addIfMax(LabWork labWork){
+    public boolean addIfMax(LabWork labWork, long id){
         if (collectionHandler.getCollection().isEmpty() || labWork.compareTo(collectionHandler.getCollection().stream().toList().get(collectionHandler.getCollection().size() - 1)) > 0){
-            add(labWork);
+            add(labWork, id);
             return true;
         }
         return false;
     }
 
-    public boolean addIfMin(LabWork labWork){
+    public boolean addIfMin(LabWork labWork, long id){
 
         if (collectionHandler.getCollection().isEmpty() || labWork.compareTo(collectionHandler.getCollection().iterator().next()) < 0){
-            add(labWork);
+            add(labWork, id);
             return true;
         }
         return false;
     }
-    public void add(LabWork labWork){
+    public void add(LabWork labWork, long id){
         // устновить автогенерируемые поля
 
         labWork.setId(collectionHandler.getNewId());
@@ -182,31 +183,31 @@ public class Receiver {
 
 
 
-    public boolean auth(String login, String password) {
+    public long auth(String login, String password) {
         try (var con = db.getConnection();
              var statement = con.prepareStatement("SELECT id FROM users WHERE login = ? AND password_hash = ?")) {
             String salt = getSaltByLogin(login);
             if (salt == null)
-                return false;
+                return -1;
 
             statement.setString(1, login);
             statement.setString(2, CryptoUtils.hash(password, salt, CryptoUtils.getPepper()));
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()){
-                return true;
+                return resultSet.getLong("id");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return false;
+        return -1;
     }
 
     // returns:
     //        -1 - user doesn't exist
-    //       >=0 - amount of added rows
+    //       >=0 - id
     public int register(String login, String password) {
         try (var con = db.getConnection();
-             var statement = con.prepareStatement("INSERT INTO users (login, password_hash, salt) VALUES (?, ?, ?)")) {
+             var statement = con.prepareStatement("INSERT INTO users (login, password_hash, salt) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             if (getSaltByLogin(login) != null) {
                 return -1;
             }
@@ -214,7 +215,12 @@ public class Receiver {
             statement.setString(1, login);
             statement.setString(2, CryptoUtils.hash(password, salt, CryptoUtils.getPepper()));
             statement.setString(3, salt);
-            return statement.executeUpdate();
+            statement.executeUpdate();
+            var resultSet = statement.getGeneratedKeys();
+            if (resultSet.next())
+                return resultSet.getInt("id");
+            else
+                return -1;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

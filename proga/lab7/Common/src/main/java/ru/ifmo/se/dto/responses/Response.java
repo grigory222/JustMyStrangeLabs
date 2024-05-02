@@ -9,4 +9,5 @@ import java.io.Serializable;
 @Setter
 public class Response implements Serializable {
     protected boolean success;
+    protected boolean tokenError = false;
 }

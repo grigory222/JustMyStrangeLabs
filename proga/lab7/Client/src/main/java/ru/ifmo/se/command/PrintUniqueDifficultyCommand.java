@@ -14,8 +14,8 @@ public class PrintUniqueDifficultyCommand extends AbstractCommand implements Com
         super(receiver, name, reader, printer, infoPrinter, socket);
     }
 
-    public void execute(String[] args) {
-        PrintUniqueDifficultyRequest request = new PrintUniqueDifficultyRequest();
+    public void execute(String[] args, String token) {
+        PrintUniqueDifficultyRequest request = new PrintUniqueDifficultyRequest(token);
         PrintUniqueDifficultyResponse reply = (PrintUniqueDifficultyResponse) Network.sendAndReceive(socket, request);
         if (reply != null && reply.isSuccess())
             infoPrinter.println(reply.getResult());
