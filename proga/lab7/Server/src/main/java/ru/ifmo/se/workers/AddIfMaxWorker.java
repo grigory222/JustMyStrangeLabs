@@ -5,7 +5,6 @@ import ru.ifmo.se.dto.responses.AddIfMaxResponse;
 import ru.ifmo.se.dto.responses.Response;
 import ru.ifmo.se.dto.requests.AddIfMaxRequest;
 import ru.ifmo.se.dto.requests.Request;
-import ru.ifmo.se.dto.responses.TokenErrorResponse;
 import ru.ifmo.se.network.JwtManager;
 
 public class AddIfMaxWorker extends Worker{
@@ -15,7 +14,7 @@ public class AddIfMaxWorker extends Worker{
 
     public Response process(Request request){
         AddIfMaxRequest req = (AddIfMaxRequest) request;
-        long id = jwtManager.decodeJwtToken(req.token);
+        int id = jwtManager.decodeJwtToken(req.token);
         if (id < 0){
             var resp = new AddIfMaxResponse();
             resp.setSuccess(false);

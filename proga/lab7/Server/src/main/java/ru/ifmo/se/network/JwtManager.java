@@ -29,11 +29,11 @@ public class JwtManager {
         }
     }
 
-    public long decodeJwtToken(String token) {
+    public int decodeJwtToken(String token) {
         DecodedJWT decodedJWT;
         try {
             decodedJWT = verifier.verify(token);
-            return decodedJWT.getClaim("id").asLong();
+            return decodedJWT.getClaim("id").asInt();
         } catch (JWTVerificationException exception){
             return -1;
         }

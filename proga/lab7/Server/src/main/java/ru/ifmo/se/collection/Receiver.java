@@ -1,13 +1,11 @@
 package ru.ifmo.se.collection;
 
 import ru.ifmo.se.crypto.CryptoUtils;
-import ru.ifmo.se.db.ConnectionManager;
 import ru.ifmo.se.entity.Difficulty;
 import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.entity.Person;
 import ru.ifmo.se.db.DbManager;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -19,15 +17,15 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class Receiver {
-    private final CollectionHandler collectionHandler;
+    private final CrudCollection crudCollection;
     private final DbManager db;
 
-    public Receiver(CollectionHandler collectionHandler, DbManager db){
-        this.collectionHandler = collectionHandler;
+    public Receiver(CrudCollection crudCollection, DbManager db){
+        this.crudCollection = crudCollection;
         this.db = db;
     }
-    public boolean addIfMax(LabWork labWork, long id){
-        if (collectionHandler.getCollection().isEmpty() || labWork.compareTo(collectionHandler.getCollection().stream().toList().get(collectionHandler.getCollection().size() - 1)) > 0){
+    public boolean addIfMax(LabWork labWork, int id){
+        if (crudCollection.getCollection().isEmpty() || labWork.compareTo(crudCollection.getCollection().stream().toList().get(crudCollection.getCollection().size() - 1)) > 0){
             add(labWork, id);
             return true;
         }
@@ -36,23 +34,25 @@ public class Receiver {
 
     public boolean addIfMin(LabWork labWork, long id){
 
-        if (collectionHandler.getCollection().isEmpty() || labWork.compareTo(collectionHandler.getCollection().iterator().next()) < 0){
+        if (crudCollection.getCollection().isEmpty() || labWork.compareTo(crudCollection.getCollection().iterator().next()) < 0){
             add(labWork, id);
             return true;
         }
         return false;
     }
-    public void add(LabWork labWork, long id){
+    public void add(LabWork labWork, int ownerId){
         // устновить автогенерируемые поля
 
-        labWork.setId(collectionHandler.getNewId());
-        labWork.setCreationDate(LocalDateTime.now().toLocalDate());
-
-        collectionHandler.add(labWork);
+        //labWork.setId(crudCollection.getNewId());
+        //labWork.setCreationDate(LocalDateTime.now().toLocalDate());
+        labWork.setOwnerId(ownerId);
+        int labId = crudCollection.add(labWork);
+        if (labId > 0)                                   // если получилось добавить в БД
+            crudCollection.addToMemory(labWork, labId);  // то добавим в коллекцию в памяти
     }
 
     public LabWork getLabById(int id){
-        List<LabWork> result = collectionHandler.getCollection().stream().filter(lab -> lab.getId() == id).toList();
+        List<LabWork> result = crudCollection.getCollection().stream().filter(lab -> lab.getId() == id).toList();
         return result.isEmpty() ? null : result.get(0);
     }
 
@@ -65,8 +65,8 @@ public class Receiver {
         newLab.setId(id);
         newLab.setCreationDate(LocalDateTime.now().toLocalDate());
 
-        collectionHandler.delete(oldLab);
-        collectionHandler.add(newLab);
+        crudCollection.delete(oldLab);
+        crudCollection.add(newLab);
         return true;
     }
 
@@ -74,23 +74,23 @@ public class Receiver {
         LabWork lab = getLabById(id);
         if (lab == null)
             return false;
-        collectionHandler.delete(lab);
+        crudCollection.delete(lab);
         return true;
     }
 
     public void clear(){
-        collectionHandler.clear();
+        crudCollection.clearq();
     }
 
     public List<LabWork> getGroupCountingByCreationDate() {
         List<LocalDate> allDates = new ArrayList<>();
         List<LabWork> result = new ArrayList<>();
 
-        for (LabWork lab: collectionHandler.getCollection()){
+        for (LabWork lab: crudCollection.getCollection()){
             allDates.add(lab.getCreationDate());
         }
         for (LocalDate date : allDates)
-            result = Stream.concat(result.stream(), collectionHandler.getCollection().stream().filter(lab -> lab.getCreationDate() == date)).toList();
+            result = Stream.concat(result.stream(), crudCollection.getCollection().stream().filter(lab -> lab.getCreationDate() == date)).toList();
         return result;
     }
 
@@ -125,20 +125,20 @@ public class Receiver {
     }
     public String show(){
         StringBuilder sb = new StringBuilder();
-        for (LabWork lab : collectionHandler.getCollection()){
+        for (LabWork lab : crudCollection.getCollection()){
             sb.append("\n===============\n").append(lab);
         }
         return sb.toString();
     }
     public String info(){
-        return collectionHandler.getInfo();
+        return crudCollection.getInfo();
     }
 
     public String printUniqueDifficulty(){
         // вывести уникальные значения поля difficulty всех элементов в коллекции
         List<Difficulty> result = new ArrayList<>();
         for (Difficulty cur : Difficulty.values())
-            if (!collectionHandler.getCollection().stream().filter(labWork -> labWork.getDifficulty() == cur).toList().isEmpty()){
+            if (!crudCollection.getCollection().stream().filter(labWork -> labWork.getDifficulty() == cur).toList().isEmpty()){
                 result.add(cur);
             }
         StringBuilder sb = new StringBuilder();
@@ -150,7 +150,7 @@ public class Receiver {
 
     public List<Person> getAuthors(){
         List<Person> result = new ArrayList<>();
-        for (LabWork lab : collectionHandler.getCollection())
+        for (LabWork lab : crudCollection.getCollection())
             if (lab.getAuthor() != null)
                 result.add(lab.getAuthor());
         Collections.sort(result);

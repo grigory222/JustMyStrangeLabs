@@ -2,8 +2,6 @@ package ru.ifmo.se.command;
 
 import ru.ifmo.se.dto.responses.AddResponse;
 import ru.ifmo.se.dto.requests.AddRequest;
-import ru.ifmo.se.dto.responses.Response;
-import ru.ifmo.se.dto.responses.TokenErrorResponse;
 import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.network.Network;
 import ru.ifmo.se.entity.readers.LabWorkReader;

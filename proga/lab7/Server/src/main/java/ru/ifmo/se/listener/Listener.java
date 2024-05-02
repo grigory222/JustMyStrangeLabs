@@ -1,6 +1,6 @@
 package ru.ifmo.se.listener;
 
-import ru.ifmo.se.collection.CollectionHandler;
+import ru.ifmo.se.collection.CrudCollection;
 import ru.ifmo.se.collection.Receiver;
 import ru.ifmo.se.consoleReader.ConsoleReader;
 import ru.ifmo.se.db.DbManager;
@@ -8,7 +8,6 @@ import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.network.JwtManager;
 import ru.ifmo.se.tasks.ReadTask;
 import ru.ifmo.se.workers.*;
-import ru.ifmo.se.csv.CsvHandler;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -26,11 +25,11 @@ public class Listener {
     private Selector selector;
     private ServerSocketChannel server;
     private final LinkedHashSet<LabWork> collection = new LinkedHashSet<>();
-    private CollectionHandler collectionHandler;
+    private CrudCollection crudCollection;
     private final HashMap<String, Worker> workersMap = new HashMap<>();
     private Receiver receiver;
-    private DbManager db;
-    private JwtManager jwtManager;
+    private final DbManager db = new DbManager();
+    private final JwtManager jwtManager = new JwtManager();
     private final ExecutorService readThreadPool = Executors.newFixedThreadPool(5);
     private final ExecutorService processThreadPool = Executors.newFixedThreadPool(5);
     private final ExecutorService writeThreadPool = Executors.newFixedThreadPool(5);
@@ -41,9 +40,7 @@ public class Listener {
     }
 
     private void initReceiver() {
-        db = new DbManager();
-        jwtManager  = new JwtManager();
-        receiver = new Receiver(collectionHandler, db);
+        receiver = new Receiver(crudCollection, db);
     }
 
     private void initWorkers() {
@@ -79,10 +76,7 @@ public class Listener {
 
 
     private void listen() throws IOException {
-        //Set<SelectionKey> keys = new HashSet<>();
-
         while (true) {
-            //selector.select();
             selector.selectNow();
             Set<SelectionKey> keys = selector.selectedKeys();
 
@@ -138,12 +132,10 @@ public class Listener {
 
         server = choosePort();
 
+        db.loadCollection(collection);
+        crudCollection = new CrudCollection(collection, LocalDate.now(), db);
 
-        CsvHandler csv = new CsvHandler(new PrintWriter(System.out));
-        csv.loadFromCsv(fileName, collection);
-        collectionHandler = new CollectionHandler(collection, LocalDate.now(), csv);
-        collectionHandler.sort();
-        Thread consoleReaderThread = new Thread(new ConsoleReader(csv, this));
+        Thread consoleReaderThread = new Thread(new ConsoleReader(db,this));
         consoleReaderThread.start();
 
         if (init()) {
