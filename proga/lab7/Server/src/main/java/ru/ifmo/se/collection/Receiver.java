@@ -1,6 +1,7 @@
 package ru.ifmo.se.collection;
 
 import ru.ifmo.se.crypto.CryptoUtils;
+import ru.ifmo.se.db.ConnectionManager;
 import ru.ifmo.se.entity.Difficulty;
 import ru.ifmo.se.entity.LabWork;
 import ru.ifmo.se.entity.Person;
@@ -166,7 +167,9 @@ public class Receiver {
 
 
     private String getSaltByLogin(String login) throws SQLException {
-        try (PreparedStatement statementSalt = db.createStatement("SELECT salt FROM users WHERE login = ?")) {
+        //try (PreparedStatement statementSalt = db.createStatement("SELECT salt FROM users WHERE login = ?")) {
+        try (var con = db.getConnection();
+             var statementSalt = con.prepareStatement("SELECT salt FROM users WHERE login = ?")) {
             // select salt
             statementSalt.setString(1, login);
             ResultSet resultSet = statementSalt.executeQuery();
@@ -180,7 +183,8 @@ public class Receiver {
 
 
     public boolean auth(String login, String password) {
-        try (PreparedStatement statement = db.createStatement("SELECT id FROM users WHERE login = ? AND password_hash = ?")) {
+        try (var con = db.getConnection();
+             var statement = con.prepareStatement("SELECT id FROM users WHERE login = ? AND password_hash = ?")) {
             String salt = getSaltByLogin(login);
             if (salt == null)
                 return false;
@@ -201,13 +205,15 @@ public class Receiver {
     //        -1 - user doesn't exist
     //       >=0 - amount of added rows
     public int register(String login, String password) {
-        try (PreparedStatement statement = db.createStatement("INSERT INTO users (login, password_hash, salt) VALUES (?, ?, ?)")) {
+        try (var con = db.getConnection();
+             var statement = con.prepareStatement("INSERT INTO users (login, password_hash, salt) VALUES (?, ?, ?)")) {
             if (getSaltByLogin(login) != null) {
                 return -1;
             }
+            var salt = CryptoUtils.generateSalt();
             statement.setString(1, login);
-            statement.setString(2, CryptoUtils.hash(password, CryptoUtils.generateSalt(), CryptoUtils.getPepper()));
-            statement.setString(3, CryptoUtils.generateSalt());
+            statement.setString(2, CryptoUtils.hash(password, salt, CryptoUtils.getPepper()));
+            statement.setString(3, salt);
             return statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

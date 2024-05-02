@@ -9,7 +9,6 @@ import ru.ifmo.se.network.Network;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
 
 
 public final class Authentificator {

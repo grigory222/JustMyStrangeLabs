@@ -14,12 +14,11 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.channels.*;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static ru.ifmo.se.network.Network.*;
 
@@ -35,6 +34,8 @@ public class Listener {
     private final ExecutorService readThreadPool = Executors.newFixedThreadPool(5);
     private final ExecutorService processThreadPool = Executors.newFixedThreadPool(5);
     private final ExecutorService writeThreadPool = Executors.newFixedThreadPool(5);
+    private final Map<SocketChannel, ReentrantLock> locksMap = new HashMap<>();
+
 
     public Listener(int port) {
         this.port = port;
@@ -78,29 +79,35 @@ public class Listener {
 
 
     private void listen() throws IOException {
+        //Set<SelectionKey> keys = new HashSet<>();
+
         while (true) {
-            selector.select();
+            //selector.select();
+            selector.selectNow();
             Set<SelectionKey> keys = selector.selectedKeys();
+
             for (var iter = keys.iterator(); iter.hasNext(); ) {
                 SelectionKey key = iter.next();
                 iter.remove();
                 if (key.isValid()) {
                     if (key.isAcceptable()) {
-                        accept(key);
+                        var newKey = accept(key);
+                        locksMap.put((SocketChannel) newKey.channel(), new ReentrantLock());
                     }
                     if (key.isReadable()) {
-                        readThreadPool.submit(new ReadTask(key, processThreadPool, writeThreadPool, workersMap));
+                        var attachment = key.attachment();
+                        key.channel().register(selector, 0).attach(attachment);
+                        readThreadPool.submit(new ReadTask(key, processThreadPool, writeThreadPool, workersMap, locksMap.get(key.channel())));
                     }
                 }
             }
         }
     }
 
-
     public void exit() throws IOException {
         selector.close();
         server.close();
-        db.close();
+        db.closePool();
         System.exit(0);
     }
 
@@ -111,7 +118,8 @@ public class Listener {
         while (true) {
             System.out.print("Введите номер порта: ");
             try {
-                int port = Integer.parseInt(scanner.nextLine());
+                //int port = Integer.parseInt(scanner.nextLine());
+                int port = 5252;
                 serverSocketChannel = ServerSocketChannel.open();
                 serverSocketChannel.socket().bind(new InetSocketAddress(port));
                 break; // Если порт доступен, выходим из цикла

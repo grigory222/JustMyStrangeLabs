@@ -14,7 +14,7 @@ import java.nio.channels.SocketChannel;
 
 public class Network {
 
-    public static void accept(SelectionKey key) throws IOException {
+    public static SelectionKey accept(SelectionKey key) throws IOException {
         var ssc = (ServerSocketChannel) key.channel();
         var sc = ssc.accept();
         ByteBuffer buf = ByteBuffer.allocate(4096);
@@ -22,6 +22,7 @@ public class Network {
         var newKey = sc.register(key.selector(), SelectionKey.OP_READ);
         newKey.attach(buf);
         System.out.println("New client connected from " + sc.getRemoteAddress());
+        return newKey;
     }
 
 
@@ -29,6 +30,9 @@ public class Network {
     public static Request read(SelectionKey key) throws IOException {
         SocketChannel channel = (SocketChannel) key.channel();
         ByteBuffer byteBuf = (ByteBuffer) key.attachment();
+
+        if (byteBuf == null)
+            throw new RuntimeException();
 
         // считаем длину входящего пакета - 4 байта
         int total = 0;

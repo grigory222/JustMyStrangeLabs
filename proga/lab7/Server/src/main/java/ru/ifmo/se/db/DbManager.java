@@ -1,16 +1,15 @@
 package ru.ifmo.se.db;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.Connection;
 
 public class DbManager {
     private final ConnectionManager connectionManager = new ConnectionManager();
 
-    public PreparedStatement createStatement(String sql) throws SQLException {
-        return connectionManager.get().prepareStatement(sql);
+    public void closePool(){
+        connectionManager.closePool();
     }
 
-    public void close(){
-        connectionManager.closePool();
+    public Connection getConnection() {
+        return connectionManager.get();
     }
 }

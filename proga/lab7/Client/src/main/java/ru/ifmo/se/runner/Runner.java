@@ -6,9 +6,13 @@ import ru.ifmo.se.controller.Invoker;
 import ru.ifmo.se.receiver.Receiver;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.*;
+
+import static ru.ifmo.se.network.Network.connect;
 
 
 public class Runner {
@@ -53,8 +57,12 @@ public class Runner {
 
 
     // Конструктор с явным определением printWriter'a и bufferedReader'а
-    public Runner(PrintWriter printWriter, BufferedReader bufferedReader) throws InterruptedException {
-        this.socket = connectToServer();//connect(InetAddress.getByName(host), port);
+    public Runner(PrintWriter printWriter, BufferedReader bufferedReader)  {
+        try {
+            this.socket = connect(InetAddress.getByName("localhost"), 5252); //connectToServer();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         this.receiver = new Receiver(this.socket);
         this.printWriter = printWriter;
         this.bufferedReader = bufferedReader;
