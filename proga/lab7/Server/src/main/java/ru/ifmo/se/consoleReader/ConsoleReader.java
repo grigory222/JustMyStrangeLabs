@@ -26,20 +26,12 @@ public class ConsoleReader implements Runnable {
             // Бесконечный цикл для чтения ввода до тех пор, пока не будет введено "exit"
             String input;
             while (!(input = reader.readLine()).equals("exit")) {
-                if (input.equals("save")) {
-                    db.saveCollection();
-                }
+
             }
-            db.saveCollection(); // сохранить при выходе
             reader.close();
-            exit();
+            listener.exit();
         } catch (IOException e) {
             System.out.println("Ошибка чтения ввода из stdin");
         }
-    }
-
-    private void exit() throws IOException {
-        listener.exit();
-        System.exit(0);
     }
 }

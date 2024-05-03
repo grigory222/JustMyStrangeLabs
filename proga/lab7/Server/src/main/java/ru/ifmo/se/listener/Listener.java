@@ -21,7 +21,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import static ru.ifmo.se.network.Network.*;
 
 public class Listener {
-    private final int port;
     private Selector selector;
     private ServerSocketChannel server;
     private final LinkedHashSet<LabWork> collection = new LinkedHashSet<>();
@@ -35,8 +34,7 @@ public class Listener {
     private final ExecutorService writeThreadPool = Executors.newFixedThreadPool(5);
     private final Map<SocketChannel, ReentrantLock> locksMap = new HashMap<>();
 
-    public Listener(int port) {
-        this.port = port;
+    public Listener() {
     }
 
     private void initReceiver() {
@@ -76,7 +74,7 @@ public class Listener {
 
 
     private void listen() throws IOException {
-        while (true) {
+        while (selector.isOpen()) {
             selector.selectNow();
             Set<SelectionKey> keys = selector.selectedKeys();
 
@@ -99,7 +97,8 @@ public class Listener {
     }
 
     public void exit() throws IOException {
-        selector.close();
+        selector.wakeup();
+        //selector.close();
         server.close();
         db.closePool();
         System.exit(0);
@@ -112,8 +111,8 @@ public class Listener {
         while (true) {
             System.out.print("Введите номер порта: ");
             try {
-                //int port = Integer.parseInt(scanner.nextLine());
-                int port = 5252;
+                int port = Integer.parseInt(scanner.nextLine());
+                //int port = 5252;
                 serverSocketChannel = ServerSocketChannel.open();
                 serverSocketChannel.socket().bind(new InetSocketAddress(port));
                 break; // Если порт доступен, выходим из цикла
@@ -128,7 +127,7 @@ public class Listener {
     }
 
 
-    public void start(String fileName) throws IOException {
+    public void start() throws IOException {
 
         server = choosePort();
 

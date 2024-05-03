@@ -14,7 +14,7 @@ public class AddWorker extends Worker{
 
     public Response process(Request request){
         AddRequest req = (AddRequest) request;
-        long id = jwtManager.decodeJwtToken(req.token);
+        int id = jwtManager.decodeJwtToken(req.token);
         if (id < 0){
             var resp = new AddResponse();
             resp.setSuccess(false);
@@ -23,9 +23,13 @@ public class AddWorker extends Worker{
         }
 
         AddResponse rep = new AddResponse();
-        receiver.add(req.getLabWork(), id);
-        rep.setSuccess(true);
-        rep.setMessage("Элемент успешно добавлен в коллекцию");
+        if (receiver.add(req.getLabWork(), id)) {
+            rep.setSuccess(true);
+            rep.setMessage("Элемент успешно добавлен в коллекцию");
+        } else{
+            rep.setSuccess(false);
+            rep.setMessage("Не удалось добавить элемент");
+        }
 
         System.out.println("[DEBUG] Запрос на добавление элемента в коллекцию");
 

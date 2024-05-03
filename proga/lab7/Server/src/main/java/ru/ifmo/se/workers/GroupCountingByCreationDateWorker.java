@@ -17,7 +17,7 @@ public class GroupCountingByCreationDateWorker extends Worker{
     public Response process(Request request){
         GroupCountingByCreationDateRequest req = (GroupCountingByCreationDateRequest) request;
         GroupCountingByCreationDateResponse rep = new GroupCountingByCreationDateResponse();
-        long id = jwtManager.decodeJwtToken(req.token);
+        int id = jwtManager.decodeJwtToken(req.token);
         if (id < 0){
             var resp = new GroupCountingByCreationDateResponse();
             resp.setSuccess(false);

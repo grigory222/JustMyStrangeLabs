@@ -16,15 +16,15 @@ public class UpdateWorker extends Worker {
     public Response process(Request request) {
         UpdateRequest req = (UpdateRequest) request;
         UpdateResponse rep = new UpdateResponse();
-        long id = jwtManager.decodeJwtToken(req.token);
-        if (id < 0){
+        int ownerId = jwtManager.decodeJwtToken(req.token);
+        if (ownerId < 0){
             var resp = new UpdateResponse();
             resp.setSuccess(false);
             resp.setTokenError(true);
             return resp;
         }
 
-        if (receiver.update(req.getId(), req.getLabWork())) {
+        if (receiver.update(ownerId, req.getId(), req.getLabWork())) {
             rep.setSuccess(true);
             rep.setMessage("Элемент успешно обновлён");
         } else{

@@ -10,9 +10,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -20,73 +20,80 @@ public class Receiver {
     private final CrudCollection crudCollection;
     private final DbManager db;
 
-    public Receiver(CrudCollection crudCollection, DbManager db){
+    public Receiver(CrudCollection crudCollection, DbManager db) {
         this.crudCollection = crudCollection;
         this.db = db;
     }
-    public boolean addIfMax(LabWork labWork, int id){
-        if (crudCollection.getCollection().isEmpty() || labWork.compareTo(crudCollection.getCollection().stream().toList().get(crudCollection.getCollection().size() - 1)) > 0){
+
+    public synchronized boolean addIfMax(LabWork labWork, int id) {
+        if (crudCollection.getCollection().isEmpty() || labWork.compareTo(crudCollection.getCollection().stream().toList().get(crudCollection.getCollection().size() - 1)) > 0) {
             add(labWork, id);
             return true;
         }
         return false;
     }
 
-    public boolean addIfMin(LabWork labWork, long id){
-
-        if (crudCollection.getCollection().isEmpty() || labWork.compareTo(crudCollection.getCollection().iterator().next()) < 0){
+    public synchronized boolean addIfMin(LabWork labWork, int id) {
+        if (crudCollection.getCollection().isEmpty() || labWork.compareTo(crudCollection.getCollection().iterator().next()) < 0) {
             add(labWork, id);
             return true;
         }
         return false;
     }
-    public void add(LabWork labWork, int ownerId){
-        // устновить автогенерируемые поля
 
-        //labWork.setId(crudCollection.getNewId());
-        //labWork.setCreationDate(LocalDateTime.now().toLocalDate());
+    public synchronized boolean add(LabWork labWork, int ownerId) {
         labWork.setOwnerId(ownerId);
         int labId = crudCollection.add(labWork);
-        if (labId > 0)                                   // если получилось добавить в БД
-            crudCollection.addToMemory(labWork, labId);  // то добавим в коллекцию в памяти
+        if (labId > 0) { // если получилось добавить в БД
+            labWork.setId(labId);
+            crudCollection.addToMemory(labWork);    // то добавим в коллекцию в памяти
+            return true;
+        }
+        return false;
     }
 
-    public LabWork getLabById(int id){
+    public synchronized LabWork getLabById(int id) {
         List<LabWork> result = crudCollection.getCollection().stream().filter(lab -> lab.getId() == id).toList();
         return result.isEmpty() ? null : result.get(0);
     }
 
-    public boolean update(int id, LabWork newLab){
-
-        LabWork oldLab = getLabById(id);
-        if (oldLab == null)
+    public synchronized boolean update(int ownerId, int labId, LabWork newLab) {
+        LabWork lab = getLabById(labId);
+        if (lab.getOwnerId() != ownerId) {
             return false;
-
-        newLab.setId(id);
-        newLab.setCreationDate(LocalDateTime.now().toLocalDate());
-
-        crudCollection.delete(oldLab);
-        crudCollection.add(newLab);
+        }
+        if (crudCollection.update(newLab)) { // если успешно обновили в БД, то обновить и в памяти
+            crudCollection.deleteFromMemory(lab);
+            crudCollection.addToMemory(newLab);
+        }
         return true;
     }
 
-    public boolean removeById(int id) {
-        LabWork lab = getLabById(id);
-        if (lab == null)
+    public synchronized boolean removeById(int ownerId, int labId) {
+        LabWork lab = getLabById(labId);
+        if (lab == null || lab.getOwnerId() != ownerId) {
             return false;
-        crudCollection.delete(lab);
-        return true;
+        }
+        if (crudCollection.delete(labId)) {
+            crudCollection.deleteFromMemory(lab);
+            return true;
+        }
+        return false;
     }
 
-    public void clear(){
-        crudCollection.clearq();
+    public synchronized boolean clear(int ownerId) {
+        if (crudCollection.clear(ownerId)) {
+            crudCollection.clearFromMemory(ownerId);
+            return true;
+        }
+        return false;
     }
 
-    public List<LabWork> getGroupCountingByCreationDate() {
+    public synchronized List<LabWork> getGroupCountingByCreationDate() {
         List<LocalDate> allDates = new ArrayList<>();
         List<LabWork> result = new ArrayList<>();
 
-        for (LabWork lab: crudCollection.getCollection()){
+        for (LabWork lab : crudCollection.getCollection()) {
             allDates.add(lab.getCreationDate());
         }
         for (LocalDate date : allDates)
@@ -94,17 +101,17 @@ public class Receiver {
         return result;
     }
 
-    public String printGroupCountingByCreationDate(){
+    public synchronized String printGroupCountingByCreationDate() {
         List<LabWork> labs = getGroupCountingByCreationDate();
         StringBuilder sb = new StringBuilder();
-        for (LabWork lab: labs){
+        for (LabWork lab : labs) {
             sb.append("\n=================\n").append(lab);
         }
         return sb.toString();
     }
 
 
-    public String help(){
+    public String help() {
         return """
                     help : вывести справку по доступным командам
                     info : вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)
@@ -123,32 +130,34 @@ public class Receiver {
                     print_field_ascending_author : вывести значения поля author всех элементов в порядке возрастания\
                 """;
     }
-    public String show(){
+
+    public synchronized String show() {
         StringBuilder sb = new StringBuilder();
-        for (LabWork lab : crudCollection.getCollection()){
+        for (LabWork lab : crudCollection.getCollection()) {
             sb.append("\n===============\n").append(lab);
         }
         return sb.toString();
     }
-    public String info(){
+
+    public synchronized String info() {
         return crudCollection.getInfo();
     }
 
-    public String printUniqueDifficulty(){
+    public synchronized String printUniqueDifficulty() {
         // вывести уникальные значения поля difficulty всех элементов в коллекции
         List<Difficulty> result = new ArrayList<>();
         for (Difficulty cur : Difficulty.values())
-            if (!crudCollection.getCollection().stream().filter(labWork -> labWork.getDifficulty() == cur).toList().isEmpty()){
+            if (!crudCollection.getCollection().stream().filter(labWork -> labWork.getDifficulty() == cur).toList().isEmpty()) {
                 result.add(cur);
             }
         StringBuilder sb = new StringBuilder();
-        for (var difficulty : result){
+        for (var difficulty : result) {
             sb.append(difficulty).append("\n");
         }
         return sb.toString();
     }
 
-    public List<Person> getAuthors(){
+    public synchronized List<Person> getAuthors() {
         List<Person> result = new ArrayList<>();
         for (LabWork lab : crudCollection.getCollection())
             if (lab.getAuthor() != null)
@@ -157,17 +166,16 @@ public class Receiver {
         return result;
     }
 
-    public String printFieldAscendingAuthors() {
+    public synchronized String printFieldAscendingAuthors() {
         StringBuilder sb = new StringBuilder();
-        for (var man : getAuthors()){
+        for (var man : getAuthors()) {
             sb.append("\n============\n").append(man);
         }
         return sb.toString();
     }
 
 
-
-    private String getSaltByLogin(String login) throws SQLException {
+    private synchronized String getSaltByLogin(String login) throws SQLException {
         //try (PreparedStatement statementSalt = db.createStatement("SELECT salt FROM users WHERE login = ?")) {
         try (var con = db.getConnection();
              var statementSalt = con.prepareStatement("SELECT salt FROM users WHERE login = ?")) {
@@ -182,8 +190,7 @@ public class Receiver {
     }
 
 
-
-    public long auth(String login, String password) {
+    public synchronized long auth(String login, String password) {
         try (var con = db.getConnection();
              var statement = con.prepareStatement("SELECT id FROM users WHERE login = ? AND password_hash = ?")) {
             String salt = getSaltByLogin(login);
@@ -193,7 +200,7 @@ public class Receiver {
             statement.setString(1, login);
             statement.setString(2, CryptoUtils.hash(password, salt, CryptoUtils.getPepper()));
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()){
+            if (resultSet.next()) {
                 return resultSet.getLong("id");
             }
         } catch (SQLException e) {
@@ -205,7 +212,7 @@ public class Receiver {
     // returns:
     //        -1 - user doesn't exist
     //       >=0 - id
-    public int register(String login, String password) {
+    public synchronized int register(String login, String password) {
         try (var con = db.getConnection();
              var statement = con.prepareStatement("INSERT INTO users (login, password_hash, salt) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             if (getSaltByLogin(login) != null) {

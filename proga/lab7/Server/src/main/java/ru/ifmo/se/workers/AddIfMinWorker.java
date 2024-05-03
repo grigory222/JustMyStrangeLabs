@@ -14,7 +14,7 @@ public class AddIfMinWorker extends Worker{
 
     public Response process(Request request){
         AddIfMinRequest req = (AddIfMinRequest) request;
-        long id = jwtManager.decodeJwtToken(req.token);
+        int id = jwtManager.decodeJwtToken(req.token);
         if (id < 0){
             var resp = new AddIfMinResponse();
             resp.setSuccess(false);

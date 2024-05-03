@@ -17,7 +17,7 @@ public class ClearWorker extends Worker{
     public Response process(Request request){
         ClearRequest req = (ClearRequest) request;
         ClearResponse rep = new ClearResponse();
-        long id = jwtManager.decodeJwtToken(req.token);
+        int id = jwtManager.decodeJwtToken(req.token);
         if (id < 0){
             var resp = new ClearResponse();
             resp.setSuccess(false);
@@ -25,8 +25,7 @@ public class ClearWorker extends Worker{
             return resp;
         }
 
-        receiver.clear();
-        rep.setSuccess(true);
+        rep.setSuccess(receiver.clear(id));
 
         System.out.println("[DEBUG] Запрос на очистку коллекции");
 

@@ -39,7 +39,7 @@ public final class ConnectionManager {
         initPool();
     }
 
-    public Connection get() {
+    public synchronized Connection get() {
         try {
             return pool.take();
         } catch (InterruptedException e) {

@@ -27,15 +27,12 @@ public class ReadTask implements Runnable{
     @Override
     public void run() {
         try {
-            //lock.lock();
             Request req = Network.read(key);
             var attachment = key.attachment();
             key.channel().register(key.selector(), SelectionKey.OP_READ, attachment);
             processThreadPool.submit(new ProcessTask(req, key, workersMap, writeThreadPool, lock));
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            //lock.unlock();
         }
     }
 }

@@ -17,7 +17,7 @@ public class ShowWorker extends Worker{
     public Response process(Request request){
         ShowRequest req = (ShowRequest) request;
         ShowResponse rep = new ShowResponse();
-        long id = jwtManager.decodeJwtToken(req.token);
+        int id = jwtManager.decodeJwtToken(req.token);
         if (id < 0){
             var resp = new ShowResponse();
             resp.setSuccess(false);

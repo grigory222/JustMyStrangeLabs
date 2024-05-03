@@ -58,23 +58,14 @@ public class Runner {
 
     // Конструктор с явным определением printWriter'a и bufferedReader'а
     public Runner(PrintWriter printWriter, BufferedReader bufferedReader)  {
-        try {
-            this.socket = connect(InetAddress.getByName("localhost"), 5252); //connectToServer();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        //this.socket = connect(InetAddress.getByName("localhost"), 5252); //connectToServer();
+        this.socket = connectToServer();
         this.receiver = new Receiver(this.socket);
         this.printWriter = printWriter;
         this.bufferedReader = bufferedReader;
         this.infoPrinter = printWriter;
         //historyCmd = new HistoryCommand("history", bufferedReader, printWriter, infoPrinter);
     }
-
-    // Инициализация отправителя - invoker
-//    private void initInvoker(){
-//        invoker = new Invoker(fillCommandMap(), token);
-//        executeScriptCmd.setInvoker(invoker);
-//    }
 
     private Map<String, Command> fillCommandMap(){
         Map<String, Command> cmdMap = new HashMap<>();

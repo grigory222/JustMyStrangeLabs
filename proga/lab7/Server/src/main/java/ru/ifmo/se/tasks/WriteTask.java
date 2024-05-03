@@ -26,13 +26,9 @@ public class WriteTask implements Runnable{
     @Override
     public void run() {
         try {
-            //lock.lock();
             Network.write((SocketChannel) key.channel(), response);
-            //key.channel().register(key.selector(), SelectionKey.OP_READ);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            //lock.unlock();
         }
     }
 }

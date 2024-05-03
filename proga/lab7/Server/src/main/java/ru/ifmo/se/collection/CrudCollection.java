@@ -4,9 +4,7 @@ import lombok.Getter;
 import ru.ifmo.se.db.DbManager;
 import ru.ifmo.se.entity.LabWork;
 
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -15,7 +13,7 @@ import java.util.*;
 public class CrudCollection {
 
     @Getter
-    private LinkedHashSet<LabWork> collection;
+    private volatile LinkedHashSet<LabWork> collection;
     private final LocalDate initDate;
     private final DbManager db;
 
@@ -41,38 +39,134 @@ public class CrudCollection {
     }
 
     public int add(LabWork element){
-        String sql = "insert into labworks (owner_id, name, coordx, coordy, creationdate, minimalpoint, tuneditworks, difficulty, author) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (var con = db.getConnection();
-             var statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
-            statement.setInt(1, element.getOwnerId());
-            statement.setString(2, element.getName());
-            statement.setInt(3, element.getCoordinates().getX());
-            statement.setDouble(4, element.getCoordinates().getY());
-            statement.setTime(5, new Timestamp(LocalDateTime.now().toLocalTime().get);
-            statement.setTimestamp();
-        } catch (SQLException e) {
+        String insertLabSql = "insert into labworks (owner_id, name, coordx, coordy, creationdate, minimalpoint, tuneditworks, difficulty, author) values (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String insertAuthorSql = "insert into authors (name, birthday, height, weight, haircolor) values (?, ?, ?, ?, ?);";
+        Connection con = null;
+        PreparedStatement statementLab;
+        PreparedStatement statementAuthor;
+        try {
+            con = db.getConnection();
+            statementLab = con.prepareStatement(insertLabSql, Statement.RETURN_GENERATED_KEYS);
+            statementAuthor = con.prepareStatement(insertAuthorSql, Statement.RETURN_GENERATED_KEYS);
+
+            con.setAutoCommit(false);
+
+            statementLab.setInt(1, element.getOwnerId());
+            statementLab.setString(2, element.getName());
+            statementLab.setInt(3, element.getCoordinates().getX());
+            statementLab.setDouble(4, element.getCoordinates().getY());
+            statementLab.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            statementLab.setInt(6, element.getMinimalPoint());
+            statementLab.setLong(7, element.getTunedInWorks());
+            statementLab.setObject(8, element.getDifficulty().toString(), java.sql.Types.OTHER);
+            statementLab.setNull(9, Types.INTEGER);
+            if (element.getAuthor() != null){
+                // вставить автора
+                var author = element.getAuthor();
+                statementAuthor.setString(1, author.getAuthorName());
+                statementAuthor.setTimestamp(2, new Timestamp(author.getBirthday().getTime()));
+                statementAuthor.setInt(3, author.getHeight());
+                statementAuthor.setDouble(4, author.getWeight());
+                statementAuthor.setObject(5, author.getHairColor().toString(), java.sql.Types.OTHER);
+
+                statementAuthor.executeUpdate();
+                var rs = statementAuthor.getGeneratedKeys();
+                if (rs.next()) {
+                    element.getAuthor().setId(rs.getInt(1));  // получить сгенерированный id из БД и записать в Author
+                } else{
+                    throw new RuntimeException("Не удалось вставить автора в БД");
+                }
+                // установить связь
+                statementLab.setInt(9, element.getAuthor().getId());
+            }
+
+            statementLab.executeUpdate();
+            con.commit();
+
+            var rs = statementLab.getGeneratedKeys();
+            if (rs.next()) {
+                element.setId(rs.getInt(1)); // получить сгенерированный id из БД и записать в Labwork
+            } else{
+                throw new RuntimeException("Не удалось вставить лабораторную работу в БД");
+            }
+
+            return element.getId();
+        } catch (Exception e) {
+            try{
+                assert con != null : "Connection in 'add' method equals null";
+                System.out.println("Произошла ошибка при добавлении элемента\n" + e.getMessage());
+                con.rollback();
+            } catch(Exception ignored){}
             return -1;
         }
     }
 
-    public void addToMemory(LabWork element, int labId){
-        element.setId(labId);
+    public void addToMemory(LabWork element){
         collection.add(element);
     }
 
+    public boolean update(LabWork lab) {
+        String sql = "UPDATE labworks " +
+                "SET owner_id = ?," +
+                "    name = ?," +
+                "    coordx = ?," +
+                "    coordy = ?," +
+                "    creationdate = ?," +
+                "    minimalpoint = ?," +
+                "    tuneditworks = ?," +
+                "    difficulty = ?," +
+                "    author = ?" +
+                "WHERE id = ?;";
+        try (var con = db.getConnection();
+             var stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, lab.getOwnerId());
+            stmt.setString(2, lab.getName());
+            stmt.setInt(3, lab.getCoordinates().getX());
+            stmt.setDouble(4, lab.getCoordinates().getY());
+            stmt.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setInt(6, lab.getMinimalPoint());
+            stmt.setLong(7, lab.getTunedInWorks());
+            stmt.setObject(8, lab.getDifficulty().toString(), java.sql.Types.OTHER);
+            stmt.setInt(9, lab.getAuthor().getId());
+            stmt.setInt(10, lab.getId());
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Ошибка при обновлении элемента коллекции " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean delete(int labId) {
+        String sql = "DELETE FROM labworks WHERE id = ?;";
+        try (var con = db.getConnection();
+             var stmt = con.prepareStatement(sql)){
+            stmt.setInt(1, labId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
     public void deleteFromMemory(LabWork element){
-        //deletedId.add(element.getId());
         collection.remove(element);
         updateIdsToMemory();
     }
 
-    public void clearFromMemory(){
-        collection.clear();
+    public boolean clear(int ownerId) {
+        String sql = "DELETE FROM labworks WHERE owner_id = ?;";
+        try (var con = db.getConnection();
+             var stmt = con.prepareStatement(sql)){
+            stmt.setInt(1, ownerId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
-    //public Integer getNewId() {
-    //    return collection.size() + 1;
-    //}
+    public void clearFromMemory(int ownerId){
+        collection.removeIf(element -> element.getOwnerId() == ownerId);
+    }
 
     public String getInfo(){
         return "Тип коллекции: " + collection.getClass() + "\n" +

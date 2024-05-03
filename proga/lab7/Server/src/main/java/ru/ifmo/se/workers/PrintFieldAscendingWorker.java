@@ -17,7 +17,7 @@ public class PrintFieldAscendingWorker extends Worker{
     public Response process(Request request){
         PrintFieldAscendingRequest req = (PrintFieldAscendingRequest) request;
         PrintFieldAscendingResponse rep = new PrintFieldAscendingResponse();
-        long id = jwtManager.decodeJwtToken(req.token);
+        int id = jwtManager.decodeJwtToken(req.token);
         if (id < 0){
             var resp = new PrintFieldAscendingResponse();
             resp.setSuccess(false);

@@ -17,7 +17,7 @@ public class InfoWorker extends Worker{
     public Response process(Request request){
         InfoRequest req = (InfoRequest) request;
         InfoResponse rep = new InfoResponse();
-        long id = jwtManager.decodeJwtToken(req.token);
+        int id = jwtManager.decodeJwtToken(req.token);
         if (id < 0){
             var resp = new InfoResponse();
             resp.setSuccess(false);

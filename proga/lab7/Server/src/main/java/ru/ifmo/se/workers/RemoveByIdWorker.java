@@ -16,7 +16,7 @@ public class RemoveByIdWorker extends Worker {
     public Response process(Request request) {
         RemoveByIdRequest req = (RemoveByIdRequest) request;
         RemoveByIdResponse rep = new RemoveByIdResponse();
-        long id = jwtManager.decodeJwtToken(req.token);
+        int id = jwtManager.decodeJwtToken(req.token);
         if (id < 0){
             var resp = new RemoveByIdResponse();
             resp.setSuccess(false);
@@ -24,7 +24,7 @@ public class RemoveByIdWorker extends Worker {
             return resp;
         }
 
-        if (receiver.removeById(req.getId())) {
+        if (receiver.removeById(id, req.getId())) {
             rep.setSuccess(true);
             rep.setMessage("Элемент успешно удалён");
         } else{
