@@ -9,6 +9,7 @@ import ru.ifmo.se.network.Network;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Scanner;
 
 
 public final class Authentificator {
@@ -68,12 +69,10 @@ public final class Authentificator {
             login = reader.readLine();
 
             printWriter.print("Введите пароль: "); printWriter.flush();
-            password = new String(System.console().readPassword());
-
+            //password = new String(System.console().readPassword());
+            password = new Scanner(System.in).nextLine();
             token = remoteAuth(login, password);
-            if (token != null) {
-                printWriter.println("Вход выполнен успешно!");
-            } else {
+            if (token == null){
                 printWriter.println("Ошибка аутентификации. Проверьте логин и пароль.");
             }
 

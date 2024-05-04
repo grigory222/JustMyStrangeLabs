@@ -26,7 +26,8 @@ public class Network {
             // теперь основной буфер с данными
             os.write(buf);
         } catch (IOException e) {
-            System.out.println("DEBUG CATCHED IOEXCEPTION");
+            //System.out.println("DEBUG CATCHED IOEXCEPTION");
+            System.out.println("Сокет закрыт");
             return false;
         }
         return true;

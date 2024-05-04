@@ -1,5 +1,6 @@
 package ru.ifmo.se.db;
 
+import lombok.Getter;
 import ru.ifmo.se.entity.*;
 
 import java.sql.Connection;
@@ -10,21 +11,22 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.LinkedHashSet;
 
+@Getter
 public class DbManager {
-    private final ConnectionManager connectionManager = new ConnectionManager();
+    public final ConnectionManager connectionManager = new ConnectionManager();
 
     public void closePool(){
         connectionManager.closePool();
     }
 
-    public Connection getConnection() {
-        return connectionManager.get();
-    }
+    //public Connection getConnection() {
+    //    return connectionManager.get();
+    //}
 
     public void loadCollection(LinkedHashSet<LabWork> collection) {
         String sql = "select labworks.*, authors.*, authors.id AS author_id, authors.name AS author_name from labworks " +
                      "left join authors on labworks.author = authors.id;";
-        try(var con = getConnection();
+        try(var con = connectionManager.get();
             var stmt = con.prepareStatement(sql)){
             var rs = stmt.executeQuery();
 

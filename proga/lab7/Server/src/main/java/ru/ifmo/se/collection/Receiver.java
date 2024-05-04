@@ -25,7 +25,7 @@ public class Receiver {
         this.db = db;
     }
 
-    public synchronized boolean addIfMax(LabWork labWork, int id) {
+    public boolean addIfMax(LabWork labWork, int id) {
         if (crudCollection.getCollection().isEmpty() || labWork.compareTo(crudCollection.getCollection().stream().toList().get(crudCollection.getCollection().size() - 1)) > 0) {
             add(labWork, id);
             return true;
@@ -33,7 +33,7 @@ public class Receiver {
         return false;
     }
 
-    public synchronized boolean addIfMin(LabWork labWork, int id) {
+    public boolean addIfMin(LabWork labWork, int id) {
         if (crudCollection.getCollection().isEmpty() || labWork.compareTo(crudCollection.getCollection().iterator().next()) < 0) {
             add(labWork, id);
             return true;
@@ -41,7 +41,7 @@ public class Receiver {
         return false;
     }
 
-    public synchronized boolean add(LabWork labWork, int ownerId) {
+    public boolean add(LabWork labWork, int ownerId) {
         labWork.setOwnerId(ownerId);
         int labId = crudCollection.add(labWork);
         if (labId > 0) { // если получилось добавить в БД
@@ -52,36 +52,38 @@ public class Receiver {
         return false;
     }
 
-    public synchronized LabWork getLabById(int id) {
+    public LabWork getLabById(int id) {
         List<LabWork> result = crudCollection.getCollection().stream().filter(lab -> lab.getId() == id).toList();
         return result.isEmpty() ? null : result.get(0);
     }
 
-    public synchronized boolean update(int ownerId, int labId, LabWork newLab) {
+    public boolean update(int ownerId, int labId, LabWork newLab) {
         LabWork lab = getLabById(labId);
         if (lab.getOwnerId() != ownerId) {
             return false;
         }
-        if (crudCollection.update(newLab)) { // если успешно обновили в БД, то обновить и в памяти
+        newLab.setOwnerId(ownerId);
+        newLab.setId(labId);
+        if (crudCollection.update(labId, newLab)) { // если успешно обновили в БД, то обновить и в памяти
             crudCollection.deleteFromMemory(lab);
             crudCollection.addToMemory(newLab);
         }
         return true;
     }
 
-    public synchronized boolean removeById(int ownerId, int labId) {
+    public boolean removeById(int ownerId, int labId) {
         LabWork lab = getLabById(labId);
         if (lab == null || lab.getOwnerId() != ownerId) {
             return false;
         }
-        if (crudCollection.delete(labId)) {
+        if (crudCollection.delete(lab, labId)) {
             crudCollection.deleteFromMemory(lab);
             return true;
         }
         return false;
     }
 
-    public synchronized boolean clear(int ownerId) {
+    public boolean clear(int ownerId) {
         if (crudCollection.clear(ownerId)) {
             crudCollection.clearFromMemory(ownerId);
             return true;
@@ -89,7 +91,7 @@ public class Receiver {
         return false;
     }
 
-    public synchronized List<LabWork> getGroupCountingByCreationDate() {
+    public List<LabWork> getGroupCountingByCreationDate() {
         List<LocalDate> allDates = new ArrayList<>();
         List<LabWork> result = new ArrayList<>();
 
@@ -101,7 +103,7 @@ public class Receiver {
         return result;
     }
 
-    public synchronized String printGroupCountingByCreationDate() {
+    public String printGroupCountingByCreationDate() {
         List<LabWork> labs = getGroupCountingByCreationDate();
         StringBuilder sb = new StringBuilder();
         for (LabWork lab : labs) {
@@ -131,7 +133,7 @@ public class Receiver {
                 """;
     }
 
-    public synchronized String show() {
+    public String show() {
         StringBuilder sb = new StringBuilder();
         for (LabWork lab : crudCollection.getCollection()) {
             sb.append("\n===============\n").append(lab);
@@ -139,11 +141,11 @@ public class Receiver {
         return sb.toString();
     }
 
-    public synchronized String info() {
+    public String info() {
         return crudCollection.getInfo();
     }
 
-    public synchronized String printUniqueDifficulty() {
+    public String printUniqueDifficulty() {
         // вывести уникальные значения поля difficulty всех элементов в коллекции
         List<Difficulty> result = new ArrayList<>();
         for (Difficulty cur : Difficulty.values())
@@ -157,7 +159,7 @@ public class Receiver {
         return sb.toString();
     }
 
-    public synchronized List<Person> getAuthors() {
+    public List<Person> getAuthors() {
         List<Person> result = new ArrayList<>();
         for (LabWork lab : crudCollection.getCollection())
             if (lab.getAuthor() != null)
@@ -166,7 +168,7 @@ public class Receiver {
         return result;
     }
 
-    public synchronized String printFieldAscendingAuthors() {
+    public String printFieldAscendingAuthors() {
         StringBuilder sb = new StringBuilder();
         for (var man : getAuthors()) {
             sb.append("\n============\n").append(man);
@@ -175,9 +177,9 @@ public class Receiver {
     }
 
 
-    private synchronized String getSaltByLogin(String login) throws SQLException {
+    private String getSaltByLogin(String login) throws SQLException {
         //try (PreparedStatement statementSalt = db.createStatement("SELECT salt FROM users WHERE login = ?")) {
-        try (var con = db.getConnection();
+        try (var con = db.connectionManager.get();
              var statementSalt = con.prepareStatement("SELECT salt FROM users WHERE login = ?")) {
             // select salt
             statementSalt.setString(1, login);
@@ -190,8 +192,8 @@ public class Receiver {
     }
 
 
-    public synchronized long auth(String login, String password) {
-        try (var con = db.getConnection();
+    public long auth(String login, String password) {
+        try (var con = db.connectionManager.get();
              var statement = con.prepareStatement("SELECT id FROM users WHERE login = ? AND password_hash = ?")) {
             String salt = getSaltByLogin(login);
             if (salt == null)
@@ -212,8 +214,8 @@ public class Receiver {
     // returns:
     //        -1 - user doesn't exist
     //       >=0 - id
-    public synchronized int register(String login, String password) {
-        try (var con = db.getConnection();
+    public int register(String login, String password) {
+        try (var con = db.connectionManager.get();
              var statement = con.prepareStatement("INSERT INTO users (login, password_hash, salt) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             if (getSaltByLogin(login) != null) {
                 return -1;
