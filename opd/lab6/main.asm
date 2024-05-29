@@ -41,13 +41,13 @@ main:   DI     ; Запрет прерываний чтобы обеспечит
       JUMP main
 
 int2:  DI    ; Обработка прерывания на ВУ-2
-     LD X ; DEBUG
-     HLT
+     ;LD X ; DEBUG
+     ;HLT
      IN 4
   	NOP
   	SUB X
      ST X
-     HLT ; NOP
+     NOP
      EI
      IRET
 
@@ -59,7 +59,7 @@ int3: DI
       ADD X
       SUB #10
       OUT 6
-      HLT ;NOP
+      NOP
       POP
       EI
       IRET

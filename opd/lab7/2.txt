@@ -1,0 +1,78 @@
+test_all_res: word ?
+test1_res: word ?
+test2_res: word ?
+test3_res: word ?
+x: word 0x552
+test1_expected: word 10896      ; 0x0F13
+test2_expected: word 0x5520    ; 0x0F14
+test3_expected: word 0x0          ; 0x0F1F
+
+
+start:
+	CALL test1
+	CALL test2
+	CALL test3
+	CALL test_all
+	HLT
+
+test1:
+	LD x
+	WORD 0x0F13 ; *8
+	BVS false
+	CMP test1_expected
+	BNE false
+		CLA
+		INC
+		ST test1_res
+		RET
+	false:
+		CLA
+		ST test1_res
+		RET
+
+test2:
+	LD x
+	WORD 0x0F14 ; *16
+	BVS false2 
+	CMP test2_expected
+	BNE false2
+		CLA
+		INC
+		ST test2_res
+		RET
+	false2:
+		CLA
+		ST test2_res
+		RET
+
+test3:
+	LD x
+	WORD 0x0F1F ; *2^15
+	BVC false3
+	CMP test3_expected
+	BNE false3
+		CLA
+		INC
+		ST test3_res
+		RET
+	false3:
+		CLA
+		ST test3_res
+		RET
+
+
+test_all:
+	LD test1_res
+	BZS false4
+	LD test2_res
+	BZS false4
+	LD test3_res
+	BZS false4
+		CLA
+		INC
+		ST test_all_res
+		RET
+	false4:
+		CLA
+		ST test_all_res
+		RET
