@@ -23,7 +23,7 @@ public class AreaCheckServlet extends HttpServlet {
         try {
             validator.validateParams(request.getParameter("x"), request.getParameter("y"), request.getParameter("r"));
         } catch (ValidationException e) {
-            // forward куда-то...
+            request.setAttribute("errorMessage", e.getMessage());
             request.getRequestDispatcher("./error.jsp").forward(request, response);
         }
 
