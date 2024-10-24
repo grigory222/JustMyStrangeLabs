@@ -1,5 +1,7 @@
 "use strict";
 
+//import {drawGraph, drawPoint, handleCanvasClick} from './graph'
+
 const state = {
     x: undefined,
     y: undefined,
@@ -181,4 +183,18 @@ function setValuesToRow(row, ...values){
 
 window.addEventListener('load', () => {
     restoreFromSessionStorage();
+    const canvas = document.getElementById("myCanvas");
+    let R = 100;
+    drawGraph(canvas, R);
+    canvas.addEventListener("click", function (event) {
+        const { graphX, graphY } = handleCanvasClick(event, R);
+
+        // Преобразуем графические координаты в координаты для рисования на canvas
+        const rect = canvas.getBoundingClientRect();
+        const canvasX = event.clientX - rect.left;
+        const canvasY = event.clientY - rect.top;
+
+        // Рисуем точку на графике
+        drawPoint("myCanvas", canvasX, canvasY, "red");
+    });
 });

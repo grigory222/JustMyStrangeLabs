@@ -8,14 +8,14 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>My test</title>
-    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="static/styles/main.css">
 </head>
 
 <body>
 <nav class="navbar">
     <label>ЛР №2</label>
     <a href="#">
-        <img src="img/yoda.webp" class="logo-img">
+        <img src="static/img/yoda.webp" class="logo-img">
     </a>
     <div class="my-name">
         <label>Воронов Григорий</label>
@@ -27,35 +27,7 @@
     <div class="content">
         <div class="inner-container">
             <div class="graph-container">
-                <svg width="300" height="300" viewBox="-150 -150 300 300">
-                    <!-- Оси -->
-                    <line x1="-150" y1="0" x2="150" y2="0" />
-                    <line x1="0" y1="-150" x2="0" y2="150" />
-                    <!-- Стрелки -->
-                    <polygon points="-5,-140 0, -150 5,-140" class="arrow"/>
-                    <polygon points="140,5 150,0 140,-5"  class="arrow"/>
-
-                    <!-- Четверть круга -->
-                    <path d="M 0 0 A 100 100 0 0 1 100 100 L 0 100 Z" transform="rotate(90 0 0) translate(0, -100)"/>
-
-                    <!-- Прямоугольник -->
-                    <rect x="-100" y="-50" width="100" height="50" />
-
-                    <!-- Треугольник -->
-                    <polygon points="0, -50 50, 0 0, 0" />
-
-                    <!-- Деления и метки по осям -->
-                    <text x="110" y="15" font-size="14">R</text>
-                    <text x="-130" y="15" font-size="14">-R</text>
-                    <text x="55" y="15" font-size="14">R/2</text>
-                    <text x="-75" y="15" font-size="14">-R/2</text>
-
-                    <text x="5" y="-110" font-size="14">R</text>
-                    <text x="5" y="100" font-size="14">-R</text>
-                    <text x="5" y="55" font-size="14">-R/2</text>
-                    <text x="5" y="-55" font-size="14">R/2</text>
-
-                </svg>
+                <canvas id="myCanvas" width="300" height="300"></canvas>
             </div>
             <form action="${pageContext.request.contextPath}/controller" method="GET" id="data-form" class="form">
                 <fieldset id="xs">
@@ -120,6 +92,7 @@
 <footer id="copyright">
     <label></label>
 </footer>
-<script src="index.js"></script>
+<script src="static/js/index.js"></script>
+<script src="static/js/graph.js"></script>
 </body>
 </html>
