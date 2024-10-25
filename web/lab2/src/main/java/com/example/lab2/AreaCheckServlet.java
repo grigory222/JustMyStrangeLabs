@@ -25,11 +25,12 @@ public class AreaCheckServlet extends HttpServlet {
         } catch (ValidationException e) {
             request.setAttribute("errorMessage", e.getMessage());
             request.getRequestDispatcher("./error.jsp").forward(request, response);
+            return;
         }
 
-        int x = Integer.parseInt(request.getParameter("x"));
+        float x = Float.parseFloat(request.getParameter("x"));
         float y = Float.parseFloat(request.getParameter("y"));
-        int r = Integer.parseInt(request.getParameter("r"));
+        float r = Float.parseFloat(request.getParameter("r"));
         Instant startTime = Instant.now();
         boolean isInside = calculator.calculate(x, y, r);
         Instant endTime = Instant.now();
