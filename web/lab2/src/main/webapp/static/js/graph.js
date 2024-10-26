@@ -82,8 +82,9 @@ function drawGraph(canvas, R) {
             const x = parseFloat(cells[0].innerText); // Получаем значение x
             const y = parseFloat(cells[1].innerText); // Получаем значение y
             const r = parseFloat(cells[2].innerText); // Получаем значение r, если нужно
-            console.log(x, y, r)
-            drawPoint(x, y, r, "red");
+            const color = cells[5].innerText == "Попадание" ? "green" : "red";
+            console.log(x, y, r, color);
+            drawPoint(x, y, r, color);
         }
     }
 
@@ -152,7 +153,7 @@ async function handleClick(event, canvas, R, pixelsR) {
 
     try {
         const localNow = new Date().toString();
-        fetch(`http://localhost:8080/controller?x=${x}&y=${y}&r=${state.r}`, {
+        fetch(`http://localhost:8080/lab2/controller?x=${x}&y=${y}&r=${state.r}`, {
             method: "GET"
         }).then(async response => {
             if (!response.ok) {

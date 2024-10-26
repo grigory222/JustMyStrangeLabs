@@ -14,8 +14,28 @@ const table = document.getElementById("result-table");
 const error = document.getElementById("error");
 const possibleXs = new Set([-2, -1.5, -1, -0.5, 0, 0.5, 1.5, 2]);
 
-document.getElementById("xs").addEventListener("change", (ev) => {
-    state.x = parseFloat(ev.target.value);
+
+const buttons = document.querySelectorAll("#xs button");
+const selectedXDisplay = document.getElementById("selected-x");
+const form = document.getElementById("data-form");
+
+buttons.forEach(button => {
+    button.addEventListener("click", (ev) => {
+        state.x = parseFloat(ev.target.value);
+        selectedXDisplay.textContent = state.x; // Обновляем отображение текущего выбора
+
+        // Создаем/обновляем скрытое поле для x
+        let hiddenInput = form.querySelector('input[name="x"]');
+        if (!hiddenInput) {
+            hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "x";
+            form.appendChild(hiddenInput);
+        }
+        hiddenInput.value = state.x; // Устанавливаем текущее значение x
+
+        console.log('Выбран X:', state.x);
+    });
 });
 
 document.getElementById("y").addEventListener("change", (ev) => {

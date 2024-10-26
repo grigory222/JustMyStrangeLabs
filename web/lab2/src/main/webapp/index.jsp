@@ -32,16 +32,17 @@
             <form action="${pageContext.request.contextPath}/controller" method="GET" id="data-form" class="form">
                 <fieldset id="xs">
                     <legend>Выберите X:</legend>
-                    <label><input type="radio" name="x" value="-2">&nbsp;&nbsp;-2&nbsp;&nbsp;</label>
-                    <label><input type="radio" name="x" value="-1.5">&nbsp;-1.5&nbsp;&nbsp;</label>
-                    <label><input type="radio" name="x" value="-1">&nbsp;&nbsp;-1&nbsp;&nbsp;</label>
-                    <label><input type="radio" name="x" value="-0.5">&nbsp;-0.5&nbsp;&nbsp;</label>
-                    <label><input type="radio" name="x" value="0">&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;</label>
-                    <label><input type="radio" name="x" value="0.5">&nbsp;&nbsp;0.5&nbsp;&nbsp;</label>
-                    <label><input type="radio" name="x" value="1">&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;</label>
-                    <label><input type="radio" name="x" value="1.5">&nbsp;&nbsp;1.5&nbsp;&nbsp;</label>
-                    <label><input type="radio" name="x" value="2">&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;</label>
+                    <button type="button" class="btn" value="-2">-2</button>
+                    <button type="button" class="btn" value="-1.5">-1.5</button>
+                    <button type="button" class="btn" value="-1">-1</button>
+                    <button type="button" class="btn" value="-0.5">-0.5</button>
+                    <button type="button" class="btn" value="0">0</button>
+                    <button type="button" class="btn" value="0.5">0.5</button>
+                    <button type="button" class="btn" value="1">1</button>
+                    <button type="button" class="btn" value="1.5">1.5</button>
+                    <button type="button" class="btn" value="2">2</button>
                 </fieldset>
+                <label id="current-selection">Текущий выбор X: <span id="selected-x">не выбран</span></label>
 
                 <label for="y" class="label-for-y">Введите Y: <input id="y" name="y" required></label>
                 <label for="r" class="label-for-r">Введите R: <input id="r" name="r" required></label>

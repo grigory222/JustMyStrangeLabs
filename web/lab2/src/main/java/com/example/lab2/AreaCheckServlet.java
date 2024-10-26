@@ -39,7 +39,7 @@ public class AreaCheckServlet extends HttpServlet {
 
         HttpSession session = request.getSession();
         ResultsBean results = (ResultsBean) session.getAttribute("results");
-        if (results == null){
+        if (results == null) {
             results = new ResultsBean();
             session.setAttribute("results", results);
         }

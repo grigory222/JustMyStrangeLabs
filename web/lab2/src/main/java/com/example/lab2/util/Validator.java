@@ -10,6 +10,15 @@ public class Validator {
         if (x != null && !x.isEmpty()) {
             if (y != null && !y.isEmpty()) {
                 if (r != null && !r.isEmpty()) {
+                    try {
+                        float r_ = Float.parseFloat(r);
+                        if (r_ < 2 || r_ > 5) {
+                            throw new ValidationException("r must be in range [2;5]");
+                        }
+                    } catch (NumberFormatException var6) {
+                        throw new ValidationException("r must be a float");
+                    }
+
                     float x_;
                     try {
                         x_ = Float.parseFloat(x);
@@ -29,14 +38,6 @@ public class Validator {
                         throw new ValidationException("y must be a float");
                     }
 
-                    try {
-                        float r_ = Float.parseFloat(r);
-                        if (r_ < 2 || r_ > 5) {
-                            throw new ValidationException("r must be in range [2;5]");
-                        }
-                    } catch (NumberFormatException var6) {
-                        throw new ValidationException("r must be a float");
-                    }
                 } else {
                     throw new ValidationException("r is empty");
                 }
