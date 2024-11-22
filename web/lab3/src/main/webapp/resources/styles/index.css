@@ -1,0 +1,108 @@
+/* Центрируем все элементы формы */
+.form-container {
+    display: flex;
+    flex-direction: column;  /* Выстраиваем элементы по вертикали */
+    gap: 20px;               /* Расстояние между элементами */
+    align-items: center;     /* Центрируем все элементы внутри контейнера */
+    margin: 20px;
+}
+
+/* Центрируем элементы в каждой панели (например, для x и y) */
+.form-group, .radio-group {
+    display: flex;
+    justify-content: center;  /* Центрируем элементы по горизонтали */
+    align-items: center;      /* Центрируем элементы по вертикали */
+    flex-direction: column;   /* Выравнивание элементов по вертикали */
+    width: 100%;              /* Для полной ширины контейнера */
+}
+
+/* Добавим отступы для полей x и y */
+#xValue, #yValue {
+    margin: 10px 0;  /* Отступы сверху и снизу */
+}
+
+/* Центрируем текст */
+.text-center {
+    text-align: center;
+}
+
+/* Скрытые элементы */
+.hidden {
+    display: none;
+}
+
+/* Ввод текста */
+.input-text {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Сообщения об ошибках */
+.error-message {
+    color: #d32f2f;
+    background-color: #ffebee;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #f44336;
+    margin-top: 10px; /* Увеличьте отступ сверху */
+    font-size: 14px;
+}
+
+/* Слайдер */
+.slider {
+    width: 80%; /* Измените на фиксированную ширину */
+    margin: 10px auto; /* Центрирование */
+}
+
+/* Радио-кнопки */
+.radio-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Кнопка отправки */
+.submit-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
+
+/* Таблица */
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border: 2px solid #ddd; /* Добавляем внешнюю границу для таблицы */
+}
+
+.results-table th, .results-table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd; /* Добавляем границы ячеек */
+}
+
+.table-header {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    border: 2px solid #ddd; /* Добавляем границу к заголовкам */
+}
+
+.table-row:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table-row:nth-child(odd) {
+    background-color: #ffffff;
+}

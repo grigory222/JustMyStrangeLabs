@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>My test</title>
+    <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/styles/main.css" />
+    <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/styles/jquery-ui.css" />
+    <script type="text/javascript" src="resources/js/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="resources/js/jquery-ui.min.js"></script>
+</h:head>
+<h:body>
+    <div class="navbar">
+        <h:outputLabel value="ЛР №3" />
+        <h:link value=" ">
+            <h:graphicImage library="img" name="yoda.webp" alt="Logo" styleClass="logo-img" />
+        </h:link>
+        <div class="my-name">
+            <h:outputLabel value="Воронов Григорий" />
+            <h:outputLabel value="P3216" />
+        </div>
+    </div>
+
+    <h:panelGroup layout="block">
+<!--        <h:panelGroup layout="block" class="side-image left" />-->
+        <h:panelGroup layout="block" styleClass="content">
+            <h:panelGroup layout="block" styleClass="inner-container">
+                <h:panelGroup layout="block" class="graph-container" >
+                    <canvas id="myCanvas" width="300" height="300"> </canvas>
+                </h:panelGroup>
+                <h:form id="input-form" styleClass="form-container">
+                    <!-- X Input -->
+                    <h:panelGroup layout="block" styleClass="form-group">
+                        <h:outputText id="xValueLabel" styleClass="text-center" value="X: [-5, 5]"/>
+                        <h:inputText id="xValue" value="#{xBean.x}" maxlength="7" styleClass="input-text">
+                            <f:validateDoubleRange minimum="-5" maximum="5"/>
+                        </h:inputText>
+                        <h:message for="xValue" styleClass="error-message"/>
+                    </h:panelGroup>
+
+                    <!-- Y Slider -->
+                    <h:panelGroup layout="block" styleClass="form-group">
+                        <h:outputLabel for="yValue" value="Y: [-4;4]" styleClass="text-center"/>
+                        <p:inputText id="yValue" value="#{yBean.y}" maxlength="8" styleClass="hidden">
+                            <f:validateDoubleRange minimum="-4" maximum="4"/>
+                        </p:inputText>
+                        <p:slider for="yValue" minValue="-4" maxValue="4" step="1"> </p:slider>
+
+                        <h:message for="yValue" styleClass="error-message"/>
+                    </h:panelGroup>
+
+                    <!-- R Radio Buttons -->
+                    <h:panelGroup styleClass="radio-group">
+                        <h:outputLabel for="rValue" value="R: {1, 2, 3, 4, 5}" styleClass="text-center"/>
+                        <h:selectOneRadio id="rValue" value="#{rBean.r}" onchange="updateR(event)">
+                            <f:selectItem itemLabel="1" itemValue="1"/>
+                            <f:selectItem itemLabel="2" itemValue="2"/>
+                            <f:selectItem itemLabel="3" itemValue="3"/>
+                            <f:selectItem itemLabel="4" itemValue="4"/>
+                            <f:selectItem itemLabel="5" itemValue="5"/>
+                        </h:selectOneRadio>
+                        <h:message for="rValue" styleClass="error-message"/>
+                    </h:panelGroup>
+
+                    <!-- Submit Button -->
+                    <h:commandButton value="Check" id="submit-button" styleClass="submit-button">
+                        <f:ajax execute="@form"
+                                listener="#{resultsControllerBean.addResult(xBean.x, yBean.y, rBean.r)}"
+                                render="@form results-table"
+                                onclick="checkR()"
+                                />
+                    </h:commandButton>
+                </h:form>
+            </h:panelGroup>
+            <div id="error"></div>
+            <h:dataTable id="results-table" var="result" value="#{resultsControllerBean.results}"
+                         styleClass="results-table" headerClass="table-header" rowClasses="table-row">
+                <!-- Столбец X -->
+                <h:column>
+                    <f:facet name="header">
+                        <h:outputText value="X"/>
+                    </f:facet>
+                    <h:outputText value="#{result.x}"/>
+                </h:column>
+
+                <!-- Столбец Y -->
+                <h:column>
+                    <f:facet name="header">
+                        <h:outputText value="Y"/>
+                    </f:facet>
+                    <h:outputText value="#{result.y}"/>
+                </h:column>
+
+                <!-- Столбец R -->
+                <h:column>
+                    <f:facet name="header">
+                        <h:outputText value="R"/>
+                    </f:facet>
+                    <h:outputText value="#{result.r}"/>
+                </h:column>
+
+                <!-- Столбец результата -->
+                <h:column>
+                    <f:facet name="header">
+                        <h:outputText value="Result"/>
+                    </f:facet>
+                    <h:outputText value="#{result.result}"/>
+                </h:column>
+            </h:dataTable>
+        </h:panelGroup>
+<!--        <h:panelGroup layout="block" class="side-image right" />-->
+    </h:panelGroup>
+
+
+
+
+<h:outputScript library="js" name="index.js" />
+<h:outputScript library="js" name="graph.js" />
+</h:body>
+</html>
