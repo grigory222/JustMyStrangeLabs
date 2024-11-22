@@ -6,95 +6,22 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:f="http://java.sun.com/jsf/core">
 
 <h:head>
     <title>Test for managed beans</title>
     <h:outputStylesheet name="styles/index.css" />
+    <h:outputScript name="js/index.js" />
 </h:head>
 
 <h:body>
-    <h:panelGroup layout="block" styleClass="fixed" style="top: 44.2%; left:52.9%;">
-        <h:link styleClass="bg-transparent hover:bg-purple-600 text-white px-4 h-104 w-16 rounded opacity-0 hover:opacity-80 hover:shadow-lg glow col-start-2 row-start-2 transform rotate-5 flex items-center justify-center"
-                value="~Teleport to main~" outcome="goToMain"/>
+    <div class="date-time-container">
+        <div class="date-display" id="currentDate"></div>
+        <div class="time-display" id="currentTime"></div>
+    </div>
+    <h:panelGroup layout="block" styleClass="fixed">
+        <h:link value="Teleport to main" outcome="goToMain" styleClass="link-center"/>
     </h:panelGroup>
-<!--    <h:form id="input-form" styleClass="form-container">-->
-<!--        &lt;!&ndash; X Input &ndash;&gt;-->
-<!--        <h:panelGroup styleClass="form-group">-->
-<!--            <h:outputText id="xValueLabel" styleClass="text-center" value="X: [-5, 5]"/>-->
-<!--            <h:inputText id="xValue" value="#{xBean.x}" maxlength="7" styleClass="input-text">-->
-<!--                <f:validateDoubleRange minimum="-5" maximum="5"/>-->
-<!--            </h:inputText>-->
-<!--            <h:message for="xValue" styleClass="error-message"/>-->
-<!--        </h:panelGroup>-->
-
-<!--        &lt;!&ndash; Y Slider &ndash;&gt;-->
-<!--        <h:panelGroup styleClass="form-group">-->
-<!--            <h:outputLabel for="yValue" value="Y: [-4;4]" styleClass="text-center"/>-->
-<!--            <p:slider id="ySlider" value="#{yBean.y}" minValue="-4" maxValue="4" step="1" for="yValue" styleClass="slider"/>-->
-<!--            <h:inputText id="yValue" value="#{yBean.y}" maxlength="8" styleClass="hidden">-->
-<!--                <f:validateDoubleRange minimum="-4" maximum="4"/>-->
-<!--            </h:inputText>-->
-<!--            <h:message for="yValue" styleClass="error-message"/>-->
-<!--        </h:panelGroup>-->
-
-<!--        &lt;!&ndash; R Radio Buttons &ndash;&gt;-->
-<!--        <h:panelGroup styleClass="radio-group">-->
-<!--            <h:outputLabel for="rValue" value="R: (1, 2, 3, 4, 5)" styleClass="text-center"/>-->
-<!--            <p:selectOneRadio id="rValue" value="#{rBean.r}">-->
-<!--                <f:selectItem itemLabel="1" itemValue="1"/>-->
-<!--                <f:selectItem itemLabel="2" itemValue="2"/>-->
-<!--                <f:selectItem itemLabel="3" itemValue="3"/>-->
-<!--                <f:selectItem itemLabel="4" itemValue="4"/>-->
-<!--                <f:selectItem itemLabel="5" itemValue="5"/>-->
-<!--            </p:selectOneRadio>-->
-<!--            <h:message for="rValue" styleClass="error-message"/>-->
-<!--        </h:panelGroup>-->
-
-<!--        &lt;!&ndash; Submit Button &ndash;&gt;-->
-<!--        <h:commandButton value="Check" styleClass="submit-button">-->
-<!--            <f:ajax execute="@form"-->
-<!--                    listener="#{resultsControllerBean.addResult(xBean.x, yBean.y, rBean.r)}"-->
-<!--                    render="@form results-table"/>-->
-<!--        </h:commandButton>-->
-<!--    </h:form>-->
-
-
-<!--    <h:dataTable id="results-table" var="result" value="#{resultsControllerBean.results}"-->
-<!--                 styleClass="results-table" headerClass="table-header" rowClasses="table-row">-->
-<!--        &lt;!&ndash; Столбец X &ndash;&gt;-->
-<!--        <h:column>-->
-<!--            <f:facet name="header">-->
-<!--                <h:outputText value="X"/>-->
-<!--            </f:facet>-->
-<!--            <h:outputText value="#{result.x}"/>-->
-<!--        </h:column>-->
-
-<!--        &lt;!&ndash; Столбец Y &ndash;&gt;-->
-<!--        <h:column>-->
-<!--            <f:facet name="header">-->
-<!--                <h:outputText value="Y"/>-->
-<!--            </f:facet>-->
-<!--            <h:outputText value="#{result.y}"/>-->
-<!--        </h:column>-->
-
-<!--        &lt;!&ndash; Столбец R &ndash;&gt;-->
-<!--        <h:column>-->
-<!--            <f:facet name="header">-->
-<!--                <h:outputText value="R"/>-->
-<!--            </f:facet>-->
-<!--            <h:outputText value="#{result.r}"/>-->
-<!--        </h:column>-->
-
-<!--        &lt;!&ndash; Столбец результата &ndash;&gt;-->
-<!--        <h:column>-->
-<!--            <f:facet name="header">-->
-<!--                <h:outputText value="Result"/>-->
-<!--            </f:facet>-->
-<!--            <h:outputText value="#{result.result}"/>-->
-<!--        </h:column>-->
-<!--    </h:dataTable>-->
 
 </h:body>
 
