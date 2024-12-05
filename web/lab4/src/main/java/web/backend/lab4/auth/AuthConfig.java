@@ -1,10 +1,8 @@
 package web.backend.lab4.auth;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Base64;
 import java.util.Properties;
 
-import javax.crypto.spec.SecretKeySpec;
 
 public class AuthConfig {
     private static final String CONFIG_FILE_PATH = "auth.properties";

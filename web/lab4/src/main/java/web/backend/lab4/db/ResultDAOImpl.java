@@ -1,5 +1,7 @@
 package web.backend.lab4.db;
 
+import jakarta.ejb.Stateless;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaQuery;
 import web.backend.lab4.entity.ResultEntity;
 import jakarta.persistence.EntityManager;
@@ -12,8 +14,10 @@ import java.util.Collection;
  * Implementation of the ResultDAO interface using JPA (Java Persistence API).
  * Handles database operations for ResultEntity objects.
  */
+@Stateless
 public class ResultDAOImpl implements ResultDAO {
-    private final EntityManager entityManager = JPAUtils.getFactory().createEntityManager();
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void addNewResult(ResultEntity result) {

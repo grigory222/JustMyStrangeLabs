@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ResultEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "point-sequence-generator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "result-sequence-generator")
     @SequenceGenerator(name = "result-sequence-generator", sequenceName = "s408402.results_table_id_seq", allocationSize = 1)
     private long id;
 

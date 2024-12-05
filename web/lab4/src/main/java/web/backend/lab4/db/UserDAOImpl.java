@@ -2,6 +2,7 @@ package web.backend.lab4.db;
 
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import web.backend.lab4.entity.ResultEntity;
 import web.backend.lab4.entity.UserEntity;
@@ -10,7 +11,8 @@ import java.util.Optional;
 
 @Stateless
 public class UserDAOImpl implements UserDAO{
-    private final EntityManager entityManager = JPAUtils.getFactory().createEntityManager();
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void addNewUser(UserEntity user) {
