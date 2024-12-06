@@ -4,21 +4,19 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
-import web.backend.lab4.entity.ResultEntity;
 import web.backend.lab4.entity.UserEntity;
 
 import java.util.Optional;
 
 @Stateless
 public class UserDAOImpl implements UserDAO{
-    @PersistenceContext
+    @PersistenceContext(name="idk")
     private EntityManager entityManager;
 
     @Override
     public void addNewUser(UserEntity user) {
-        entityManager.getTransaction().begin();
         entityManager.persist(user);
-        entityManager.getTransaction().commit();
+        entityManager.flush();
     }
 
     @Override

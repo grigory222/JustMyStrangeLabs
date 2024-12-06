@@ -3,6 +3,7 @@ package web.backend.lab4.db;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.transaction.Transactional;
 import web.backend.lab4.entity.ResultEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -16,14 +17,13 @@ import java.util.Collection;
  */
 @Stateless
 public class ResultDAOImpl implements ResultDAO {
-    @PersistenceContext
+    @PersistenceContext(name="idk")
     private EntityManager entityManager;
 
     @Override
     public void addNewResult(ResultEntity result) {
-        entityManager.getTransaction().begin();
         entityManager.persist(result);
-        entityManager.getTransaction().commit();
+        entityManager.flush();
     }
 
     @Override
