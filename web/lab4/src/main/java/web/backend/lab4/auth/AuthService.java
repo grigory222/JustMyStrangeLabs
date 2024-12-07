@@ -2,8 +2,12 @@ package web.backend.lab4.auth;
 
 import jakarta.ejb.EJB;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Produces;
 import lombok.extern.slf4j.Slf4j;
 import web.backend.lab4.db.UserDAO;
+import web.backend.lab4.dto.ErrorDTO;
+import web.backend.lab4.dto.UserDTO;
 import web.backend.lab4.entity.UserEntity;
 
 import jakarta.ws.rs.Consumes;
@@ -21,30 +25,22 @@ public class AuthService {
     @Inject
     private JwtProvider jwtProvider;
 
-    private static final AuthValidator validator = new AuthValidator();
-
 
     @POST
     @Path("/signup")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-    public Response signup(UserEntity user){
-        if (userDAO.getUserByUsername(user.getUsername()).isPresent()) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response signup(@Valid UserDTO userDTO){
+        if (userDAO.getUserByUsername(userDTO.getUsername()).isPresent()) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("User with this name already exists")
+                    .entity(ErrorDTO.of("User with this name already exists"))
                     .build();
         }
 
-        // validate name & password
-        if (!validator.validateName(user.getUsername())){
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Username must be between 4 and 16 characters")
-                    .build();
-        }
-        if (!validator.validatePassword(user.getPassword())){
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Password must be between 4 and 16 characters")
-                    .build();
-        }
+        UserEntity user = UserEntity.builder()
+                        .username(userDTO.getUsername())
+                        .password(PasswordHasher.hashPassword(userDTO.getPassword().toCharArray()))
+                        .build();
 
         userDAO.addNewUser(user);
         log.info("Successfully added user: {}", user);

@@ -6,7 +6,7 @@ import java.util.Properties;
 
 public class AuthConfig {
     private static final String CONFIG_FILE_PATH = "auth.properties";
-    private static Properties properties = new Properties();
+    private static final Properties properties = new Properties();
 
     static {
         try (InputStream file = AuthConfig.class.getClassLoader().getResourceAsStream(CONFIG_FILE_PATH)) {
