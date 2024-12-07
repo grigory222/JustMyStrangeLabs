@@ -25,7 +25,6 @@ public class AuthService {
     @Inject
     private JwtProvider jwtProvider;
 
-
     @POST
     @Path("/signup")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
@@ -59,8 +58,6 @@ public class AuthService {
 
                 String refreshToken = jwtProvider.generateRefreshToken(user.getUsername(), user.getId());
                 String accessToken = jwtProvider.generateAccessToken(user.getUsername(), user.getId());
-
-
 
                 NewCookie refreshTokenCookie = new NewCookie.Builder("refresh_token")
                         .value(refreshToken)
@@ -125,12 +122,30 @@ public class AuthService {
         }
     }
 
-//
-//    @POST
-//    @Path("/logout")
-//    public Response signupUser(){
-//
-//    }
-//
+    @POST
+    @Path("/logout")
+    public Response logout() {
+        // Установка "пустых" токенов с истекшим сроком
+        NewCookie accessTokenCookie = new NewCookie.Builder("access_token")
+                .value("")
+                .maxAge(0) // Удалить cookie
+                .path("/")
+                .httpOnly(true)
+                .build();
+
+        NewCookie refreshTokenCookie = new NewCookie.Builder("refresh_token")
+                .value("")
+                .maxAge(0) // Удалить cookie
+                .path("/")
+                .httpOnly(true)
+                .build();
+
+        // Ответ для клиента
+        return Response.ok()
+                .cookie(accessTokenCookie, refreshTokenCookie)
+                .entity("{\"message\": \"Logged out successfully\"}")
+                .build();
+    }
+
 
 }
