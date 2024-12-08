@@ -1,9 +1,9 @@
 import {BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
-import {Main} from "./Main.jsx";
-import {Login} from "./Login.jsx";
-import {Register} from "./Register.jsx";
-import {PageNotFound} from "./PageNotFound.jsx";
-import {Navbar} from "./Navbar.jsx";
+import {MainPage} from "./pages/MainPage.jsx";
+import {LoginPage} from "./pages/LoginPage.jsx";
+import {RegisterPage} from "./pages/RegisterPage.jsx";
+import {NotFoundPage} from "./pages/NotFoundPage.jsx";
+import {Navbar} from "./components/Navbar.jsx";
 
 function App() {
   return (
@@ -12,15 +12,15 @@ function App() {
         <Routes>
             <Route
                 path="/main"
-                element={<Main />}
+                element={<MainPage />}
             />
             <Route
                 path="/login"
-                element={<Login />}
+                element={<LoginPage />}
             />
             <Route
                 path="/register"
-                element={<Register />}
+                element={<RegisterPage />}
             />
             <Route
                 path="/*"
@@ -28,7 +28,7 @@ function App() {
             />
             <Route
                 path="/404"
-                element={<PageNotFound />}
+                element={<NotFoundPage />}
             />
         </Routes>
       </Router>

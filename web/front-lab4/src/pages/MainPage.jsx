@@ -1,5 +1,5 @@
 
-export function Main(){
+export function MainPage(){
     return (
         <div>
             asdasd
