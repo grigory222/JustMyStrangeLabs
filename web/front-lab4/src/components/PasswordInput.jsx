@@ -1,15 +1,17 @@
-import Grid from "@mui/material/Grid2";
-import Typography from "@mui/material/Typography";
 import {FormControl, InputAdornment, InputLabel, OutlinedInput} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
-import {useState} from "react";
+//import {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {changeShowPassword} from "../storage/ShowPasswordSlice.js";
 
 
 export function PasswordInput(){
-    const [showPassword, setShowPassword] = useState(false);
+    //const [showPassword, setShowPassword] = useState(false);
+    const showPassword = useSelector(state => state.showPassword.showPassword);
+    const dispatch = useDispatch();
 
-    const handleClickShowPassword = () => setShowPassword((show) => !show);
+    const handleClickShowPassword = () => dispatch(changeShowPassword());
 
     const handleMouseDownPassword = (event) => {
         event.preventDefault();

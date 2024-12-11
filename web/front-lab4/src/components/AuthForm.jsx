@@ -12,12 +12,12 @@ AuthForm.propTypes = {
     isLogin: PropTypes.bool.isRequired,
 };
 
-const MyPaperBox = styled(Paper)(({elevation, theme}) => ({
+export const MyPaperBox = styled(Paper)(({elevation, theme}) => ({
     // backgroundColor: '#fff',
     padding: theme.spacing(3),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    elevation: elevation
+    elevation: elevation,
 }));
 
 function submitHandler() {
