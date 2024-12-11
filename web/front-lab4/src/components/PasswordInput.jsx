@@ -8,7 +8,7 @@ import {changeShowPassword} from "../storage/ShowPasswordSlice.js";
 
 export function PasswordInput(){
     //const [showPassword, setShowPassword] = useState(false);
-    const showPassword = useSelector(state => state.showPassword.showPassword);
+    const showPassword = useSelector(state => state.reducer.showPassword.showPassword);
     const dispatch = useDispatch();
 
     const handleClickShowPassword = () => dispatch(changeShowPassword());

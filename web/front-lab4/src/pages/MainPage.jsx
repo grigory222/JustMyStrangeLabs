@@ -3,27 +3,27 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {InputPointForm} from "../components/InputPointForm.jsx";
 import {ResultsDataGrid} from "../components/ResultsDataGrid.jsx";
-
-
-function submitHandler() {
-
-}
+import {useSendPointMutation} from "../api/myLegendaryApi.js";
 
 
 export function MainPage() {
 
+    const [sendPoint] = useSendPointMutation();
+    sendPoint({x: 123, y: 123, r:123}).then(result => {console.log(result);});
+    console.log('fuck');
+
     return (
         <Box container
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: 4,
-                borderRadius: 10,
-                mx: 10,
-                my: 5,
-            }}
+             sx={{
+                 display: 'flex',
+                 flexDirection: 'column',
+                 alignItems: 'center',
+                 justifyContent: 'center',
+                 boxShadow: 4,
+                 borderRadius: 10,
+                 mx: 10,
+                 my: 5,
+             }}
         >
             <Typography sx={{
                 display: 'flex',
@@ -46,7 +46,7 @@ export function MainPage() {
                 <MyPaperBox
                     id="graph-box"
                     sx={{
-                        width: { md: 1/3, xs: '66%' },
+                        width: {md: 1 / 3, xs: '66%'},
                         mx: 5,
                         my: 5,
                         borderRadius: 5,
@@ -58,19 +58,19 @@ export function MainPage() {
 
                 <MyPaperBox
                     id="form-box"
-                    onSubmit={submitHandler}
+                    onSubmit={()=>{}}
                     sx={{
-                        width: { md: 1/3, xs: '66%' },
+                        width: {md: 1 / 3, xs: '66%'},
                         mx: 5,
                         my: 5,
                         borderRadius: 5,
                         boxShadow: 1
                     }}
                 >
-                    <InputPointForm />
+                    <InputPointForm/>
                 </MyPaperBox>
             </Box>
-            <div style={{width:'100%'}}>
+            <div style={{width: '100%'}}>
                 <ResultsDataGrid/>
             </div>
 
