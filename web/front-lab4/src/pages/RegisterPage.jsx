@@ -1,7 +1,7 @@
+import {AuthForm} from "../components/AuthForm.jsx";
+
 export function RegisterPage() {
     return (
-        <div>
-            register page
-        </div>
+        <AuthForm isLogin={false}/>
     )
 }

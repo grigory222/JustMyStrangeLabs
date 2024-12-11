@@ -21,7 +21,7 @@ export function PasswordInput(){
 
     return (<>
             <FormControl variant="outlined" fullWidth>
-                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                <InputLabel htmlFor="outlined-adornment-password">Пароль</InputLabel>
                 <OutlinedInput
                     id="outlined-adornment-password"
                     required={true}
