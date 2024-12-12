@@ -23,13 +23,13 @@ public class ResultEntity {
     private UserEntity user;
 
     @Column(name = "x")
-    private double x;
+    private int x;
 
     @Column(name = "y")
     private double y;
 
     @Column(name = "r")
-    private double r;
+    private int r;
 
     @Column(name = "result")
     private boolean result;

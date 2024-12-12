@@ -1,5 +1,4 @@
 package web.backend.lab4.dto;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

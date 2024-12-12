@@ -8,7 +8,7 @@ import jakarta.ws.rs.core.NewCookie;
 import lombok.extern.slf4j.Slf4j;
 import web.backend.lab4.auth.JwtProvider;
 import web.backend.lab4.auth.PasswordHasher;
-import web.backend.lab4.db.UserDAO;
+import web.backend.lab4.dao.UserDAO;
 import web.backend.lab4.dto.ErrorDTO;
 import web.backend.lab4.dto.UserDTO;
 import web.backend.lab4.entity.UserEntity;

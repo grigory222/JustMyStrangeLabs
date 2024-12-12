@@ -1,4 +1,4 @@
-package web.backend.lab4.db;
+package web.backend.lab4.dao;
 
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;

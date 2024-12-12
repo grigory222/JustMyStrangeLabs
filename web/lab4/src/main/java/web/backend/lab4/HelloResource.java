@@ -5,11 +5,8 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
-import web.backend.lab4.db.ResultDAO;
-import web.backend.lab4.db.UserDAO;
-import web.backend.lab4.entity.ResultEntity;
-import web.backend.lab4.entity.UserEntity;
-import web.backend.lab4.util.Calculator;
+import web.backend.lab4.dao.ResultDAO;
+import web.backend.lab4.dao.UserDAO;
 
 
 @Path("/hello-world")

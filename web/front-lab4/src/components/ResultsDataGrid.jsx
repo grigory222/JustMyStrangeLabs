@@ -49,7 +49,6 @@ const columns = [
 
 export function ResultsDataGrid() {
     const rows = useSelector(state => state.reducer.results.array);
-    //const dispatcher = useDispatch();
 
     return (<DataGrid
         rows={rows}

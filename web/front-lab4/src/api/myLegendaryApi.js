@@ -6,11 +6,12 @@ export const myLegendaryApi = createApi({
     reducerPath: 'myLegendaryApi',
     baseQuery: fetchBaseQuery({baseUrl: 'http://localhost:8080/lab4-1.0-SNAPSHOT/api/'}),
     endpoints: (builder) => ({
-        getPokemonByName: builder.query({
-            query: (name) => `pokemon/${name}`,
-        }),
-        getPokemonById: builder.query({
-            query: (id) => `pokemon/${id}`,
+        getPoints: builder.query({
+            query: () => ({
+                url: "point/get",
+                method: 'GET',
+                credentials: "include"
+            }),
         }),
         sendPoint: builder.mutation({
             query: (point) => ({
@@ -20,7 +21,11 @@ export const myLegendaryApi = createApi({
                 headers: {
                     'Content-Type': 'application/json', // Important to specify the correct content type
                 },
-                credentials: "include"
+                credentials: "include",
+                transformResponse: (response, meta) => ({
+                    data: response,
+                    status: meta?.response?.status, // Attach status code
+                }),
             })
         })
     }),
