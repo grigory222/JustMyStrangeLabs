@@ -3,14 +3,25 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {InputPointForm} from "../components/InputPointForm.jsx";
 import {ResultsDataGrid} from "../components/ResultsDataGrid.jsx";
-import {useSendPointMutation} from "../api/myLegendaryApi.js";
+import {useGetPokemonByNameQuery, useSendPointMutation} from "../api/myLegendaryApi.js";
 
 
 export function MainPage() {
 
-    const [sendPoint] = useSendPointMutation();
-    sendPoint({x: 123, y: 123, r:123}).then(result => {console.log(result);});
-    console.log('fuck');
+    const [sendPoint, response] = useSendPointMutation();
+
+    const formSubmitHandler = async (e) => {
+        e.preventDefault();
+        try {
+            alert('here2');
+            await sendPoint({ x:1, y:1, r:1 }).unwrap();
+            alert("success");
+            console.log(response);
+        } catch (err) {
+            console.error(err);
+            alert("err");
+        }
+    };
 
     return (
         <Box container
@@ -58,7 +69,7 @@ export function MainPage() {
 
                 <MyPaperBox
                     id="form-box"
-                    onSubmit={()=>{}}
+                    onSubmit={formSubmitHandler}
                     sx={{
                         width: {md: 1 / 3, xs: '66%'},
                         mx: 5,
