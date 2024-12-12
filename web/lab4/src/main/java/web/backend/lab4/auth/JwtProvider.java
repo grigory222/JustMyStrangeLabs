@@ -16,7 +16,8 @@ import java.util.Date;
 @Slf4j
 @ApplicationScoped
 public class JwtProvider {
-    public static final int ACCESS_TOKEN_EXPIRATION = 2 * 60; // 2 minutes
+    // DEBUG VALUE RN
+    public static final int ACCESS_TOKEN_EXPIRATION = 2 * 60 * 60; // 2 minutes
     public static final int REFRESH_TOKEN_EXPIRATION = 24 * 60 * 60; // 24 hours
 
     private final Algorithm algorithm;

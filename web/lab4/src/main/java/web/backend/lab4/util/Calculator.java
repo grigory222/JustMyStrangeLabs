@@ -9,7 +9,7 @@ public class Calculator {
     private Calculator() {
     }
 
-    public boolean calculate(Double x, Integer y, Integer r) {
+    public boolean calculate(int x, double y, int r) {
         if (x <= 0 && y >= 0 && x*x + y*y <= r*r){
             return true;
         }

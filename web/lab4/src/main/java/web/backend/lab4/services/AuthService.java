@@ -1,4 +1,4 @@
-package web.backend.lab4.auth;
+package web.backend.lab4.services;
 
 import jakarta.ejb.EJB;
 import jakarta.inject.Inject;
@@ -6,6 +6,8 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.NewCookie;
 import lombok.extern.slf4j.Slf4j;
+import web.backend.lab4.auth.JwtProvider;
+import web.backend.lab4.auth.PasswordHasher;
 import web.backend.lab4.db.UserDAO;
 import web.backend.lab4.dto.ErrorDTO;
 import web.backend.lab4.dto.UserDTO;

@@ -13,8 +13,7 @@ export function MainPage() {
     const formSubmitHandler = async (e) => {
         e.preventDefault();
         try {
-            alert('here2');
-            await sendPoint({ x:1, y:1, r:1 }).unwrap();
+            await sendPoint({ x:1, y:5.123123, r:1 }).unwrap();
             alert("success");
             console.log(response);
         } catch (err) {

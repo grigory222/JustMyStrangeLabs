@@ -4,6 +4,7 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import web.backend.lab4.entity.UserEntity;
 
 import java.util.Optional;
@@ -26,6 +27,7 @@ public class UserDAOImpl implements UserDAO{
     }
 
     @Override
+    @Transactional
     public Optional<UserEntity> getUserByUsername(String username) {
         TypedQuery<UserEntity> query = entityManager
                 .createQuery("SELECT u FROM UserEntity u WHERE u.username = :username", UserEntity.class);
