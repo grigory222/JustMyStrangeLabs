@@ -6,7 +6,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {changeShowPassword} from "../storage/ShowPasswordSlice.js";
 
 
-export function PasswordInput(){
+export function PasswordInput({value, onChange}) {
     //const [showPassword, setShowPassword] = useState(false);
     const showPassword = useSelector(state => state.reducer.showPassword.showPassword);
     const dispatch = useDispatch();
@@ -28,6 +28,8 @@ export function PasswordInput(){
                     id="outlined-adornment-password"
                     required={true}
                     type={showPassword ? 'text' : 'password'}
+                    value={value}
+                    onChange={onChange}
                     endAdornment={
                         <InputAdornment position="end">
                             <IconButton

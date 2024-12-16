@@ -66,6 +66,8 @@ public class AuthService {
                         .maxAge(JwtProvider.REFRESH_TOKEN_EXPIRATION)
                         .path("/")
                         .httpOnly(true)
+                        .sameSite(NewCookie.SameSite.NONE)
+                        .secure(true)
                         .build();
 
                 NewCookie accessTokenCookie = new NewCookie.Builder("access_token")
@@ -73,10 +75,16 @@ public class AuthService {
                         .maxAge(JwtProvider.ACCESS_TOKEN_EXPIRATION)
                         .path("/")
                         .httpOnly(true)
+                        .sameSite(NewCookie.SameSite.NONE)
+                        .secure(true)
                         .build();
-
+                NewCookie abc = new NewCookie.Builder("abc").value("123").path("/")
+                        .httpOnly(true)
+                        .sameSite(NewCookie.SameSite.NONE)
+                        .secure(true).build();
                 return Response.ok()
                         .cookie(accessTokenCookie, refreshTokenCookie)
+                        .cookie(abc)
                         .build();
             }
         }
@@ -111,6 +119,8 @@ public class AuthService {
                     .maxAge(JwtProvider.ACCESS_TOKEN_EXPIRATION)
                     .path("/")
                     .httpOnly(true)
+                    .sameSite(NewCookie.SameSite.NONE)
+                    .secure(true)
                     .build();
 
             // Возвращаем успешный ответ без тела, но с cookie
@@ -133,6 +143,8 @@ public class AuthService {
                 .maxAge(0) // Удалить cookie
                 .path("/")
                 .httpOnly(true)
+                .sameSite(NewCookie.SameSite.NONE)
+                .secure(true)
                 .build();
 
         NewCookie refreshTokenCookie = new NewCookie.Builder("refresh_token")
@@ -140,6 +152,8 @@ public class AuthService {
                 .maxAge(0) // Удалить cookie
                 .path("/")
                 .httpOnly(true)
+                .sameSite(NewCookie.SameSite.NONE)
+                .secure(true)
                 .build();
 
         // Ответ для клиента

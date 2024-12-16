@@ -45,7 +45,6 @@ export function MainPage() {
             return;
         }
 
-
         try {
             const response = await sendPoint({x, y: parseFloat(y), r}).unwrap()
             const id = Number(getLastRowId()) + 1;

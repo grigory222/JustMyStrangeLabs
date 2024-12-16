@@ -22,10 +22,17 @@ export const myLegendaryApi = createApi({
                     'Content-Type': 'application/json', // Important to specify the correct content type
                 },
                 credentials: "include",
-                transformResponse: (response, meta) => ({
-                    data: response,
-                    status: meta?.response?.status, // Attach status code
-                }),
+            })
+        }),
+        login: builder.mutation({
+            query: (credentials) => ({
+                url: "auth/login",
+                method: "POST",
+                body: JSON.stringify(credentials),
+                headers: {
+                    'Content-Type': 'application/json', // Important to specify the correct content type
+                },
+                credentials: "include",
             })
         })
     }),
@@ -33,4 +40,4 @@ export const myLegendaryApi = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const {useGetPokemonByNameQuery, useSendPointMutation} = myLegendaryApi
+export const {useGetPokemonByNameQuery, useSendPointMutation, useLoginMutation} = myLegendaryApi

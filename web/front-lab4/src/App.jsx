@@ -4,23 +4,25 @@ import {LoginPage} from "./pages/LoginPage.jsx";
 import {RegisterPage} from "./pages/RegisterPage.jsx";
 import {NotFoundPage} from "./pages/NotFoundPage.jsx";
 import {Navbar} from "./components/Navbar.jsx";
+import {useSelector} from "react-redux";
 
 function App() {
+    const isLogged = useSelector(state => state.reducer.auth.isLogged);
   return (
       <Router>
         <Navbar/>
         <Routes>
             <Route
                 path="/main"
-                element={<MainPage />}
+                element={isLogged ? <MainPage /> : <Navigate to="/login" />}
             />
             <Route
                 path="/login"
-                element={<LoginPage />}
+                element={!isLogged ? <LoginPage /> : <Navigate to="/main" />}
             />
             <Route
                 path="/register"
-                element={<RegisterPage />}
+                element={!isLogged ? <RegisterPage /> : <Navigate to="/main" />}
             />
             <Route
                 path="/*"
