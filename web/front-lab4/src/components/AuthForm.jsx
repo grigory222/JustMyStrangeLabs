@@ -48,6 +48,7 @@ export function AuthForm(props) {
                 const payload = await login({username: formData.username, password: formData.password}).unwrap()
                 console.log("payload", payload)
                 dispatch(setLoggedIn(true));
+                navigate('/main');
             }
         } catch (error) {
             setAlert(true);

@@ -33,12 +33,11 @@ const columns = [
     {
         field: 'result',
         headerName: 'Результат',
-        description: 'This column has a value getter and is not sortable.',
+        description: 'This column is not sortable.',
         sortable: false,
         flex: 2,
         headerAlign: 'center',
         align: 'center',
-        //valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
     },
 ];
 

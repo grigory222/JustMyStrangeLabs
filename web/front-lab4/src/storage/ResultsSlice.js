@@ -11,8 +11,11 @@ export const resultsSlice = createSlice({
         addResult: (state, action) => {
             state.array.push(action.payload);
         },
+        clearResults: (state) => {
+            state.array = [];
+        }
     }
 })
 
-export const {addResult} = resultsSlice.actions;
+export const {clearResults, addResult} = resultsSlice.actions;
 export default resultsSlice.reducer;

@@ -5,7 +5,7 @@ import {InputPointForm} from "../components/InputPointForm.jsx";
 import {ResultsDataGrid} from "../components/ResultsDataGrid.jsx";
 import {useGetPointsQuery, useSendPointMutation} from "../api/myLegendaryApi.js";
 import {useDispatch, useSelector} from "react-redux";
-import {addResult} from "../storage/ResultsSlice.js";
+import {addResult, clearResults} from "../storage/ResultsSlice.js";
 import {useEffect, useState} from "react";
 import {Alert} from "@mui/material";
 
@@ -22,16 +22,23 @@ export function MainPage() {
     const [alert, setAlert] = useState(false);
     const [alertContent, setAlertContent] = useState('');
 
-    const { data } = useGetPointsQuery(); // RTK Query для получения данных
+    const isLoggedIn = useSelector(state => state.reducer.auth.isLogged);
+
+    const {data, error, isLoading} = useGetPointsQuery(); // RTK Query для получения данных
+
+
     // Загружаем данные в Redux при успешном ответе API
     useEffect(() => {
-        if (data) {
-            // Очистка старых результатов и добавление новых
-            data.forEach((item, index) => {
-                dispatch(addResult({ id: index + 1, ...item }));
-            });
+        console.log("use efffect");
+        if (rows.length === 0) {
+            if (isLoggedIn && !isLoading && data) {
+                dispatch(clearResults())
+                data.forEach((item, index) => {
+                    dispatch(addResult({id: index + 1, ...item}));
+                });
+            }
         }
-    }, [data, dispatch]);
+    }, [isLoggedIn, isLoading, data, dispatch]);
 
     const getLastRowId = () => {
         return rows.length > 0 ? rows[rows.length - 1].id : 0;
@@ -59,10 +66,8 @@ export function MainPage() {
         try {
             const response = await sendPoint({x, y: parseFloat(y), r}).unwrap()
             const id = Number(getLastRowId()) + 1;
-            dispatch(addResult({id, x, y: parseFloat(y), r}));
+            dispatch(addResult({id, x, y: parseFloat(y), r, result: response.result}));
             console.log('fulfilled: ' + JSON.stringify(response));
-            console.log("Status Code:", response.meta.response.status); // Access status code from metadata
-            console.log("Response Data:", response.data); // Access response body
         } catch (err) {
             setAlert(true);
             setAlertContent(err.message);
