@@ -9,7 +9,7 @@ import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import {useDispatch} from "react-redux";
-import {useLoginMutation} from "../api/myLegendaryApi.js";
+import {useLoginMutation, useSignupMutation} from "../api/myLegendaryApi.js";
 import {setLoggedIn} from "../storage/IsLoggedSlice.js";
 
 AuthForm.propTypes = {
@@ -30,11 +30,13 @@ export function AuthForm(props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const dispatch = useDispatch();
     const [login] = useLoginMutation();
+    const [signup] = useSignupMutation();
     const [alert, setAlert] = useState(false);
     const [alertContent, setAlertContent] = useState('');
     const [formData, setFormData] = useState({
         username: '',
         password: '',
+        password_confirmation: '',
     });
 
     const formSubmitHandler = async (e) => {
@@ -42,17 +44,34 @@ export function AuthForm(props) {
 
         if (isSubmitting) return; // Предотвращаем повторное нажатие
         setIsSubmitting(true);
-
+        setAlert(false);
         try {
             if (isLogin) {
-                const payload = await login({username: formData.username, password: formData.password}).unwrap()
-                console.log("payload", payload)
+                await login({username: formData.username, password: formData.password}).unwrap()
                 dispatch(setLoggedIn(true));
                 navigate('/main');
+            } else{
+                console.log(formData.password)
+                console.log(formData.password_confirmation)
+                if (formData.password === formData.password_confirmation) {
+                    console.log("asdasd");
+
+                    await signup({username: formData.username, password: formData.password}).unwrap()
+                    await login({username: formData.username, password: formData.password}).unwrap()
+                    dispatch(setLoggedIn(true));
+
+                    navigate('/main');
+                } else{
+                    setAlert(true);
+                    setAlertContent("Пароли не совпадают");
+                }
             }
         } catch (error) {
             setAlert(true);
-            setAlertContent(error.data.error);
+            if ('error' in error.data)
+                setAlertContent(error.data.error);
+            if ('errorMessage' in error.data)
+                setAlertContent(error.data.errorMessage);
             console.log(error.data.error);
         }
         setIsSubmitting(false);
@@ -111,7 +130,10 @@ export function AuthForm(props) {
                                 <Typography>Повтор</Typography>
                             </Grid>
                             <Grid item size={{xs: 12, md: 9}}>
-                                <PasswordInput></PasswordInput>
+                                <PasswordInput
+                                    value={formData.password_confirmation}
+                                    onChange={(e) => setFormData({...formData, password_confirmation: e.target.value})}
+                                ></PasswordInput>
                             </Grid>
                         </>)
                         : null}

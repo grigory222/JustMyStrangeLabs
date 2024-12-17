@@ -12,6 +12,7 @@ import {Link as RouterLink} from 'react-router-dom';
 import {useDispatch, useSelector} from "react-redux";
 import {useLogoutMutation} from "../api/myLegendaryApi.js";
 import {setLoggedIn} from "../storage/IsLoggedSlice.js";
+import {clearResults} from "../storage/ResultsSlice.js";
 
 
 const pages = ['Главная'];
@@ -46,6 +47,9 @@ export function Navbar() {
                 const payload = await logout().unwrap()
                 console.log("payload", payload)
                 dispatch(setLoggedIn(false));
+                console.log("clearing results")
+                dispatch(clearResults());
+                console.log("clearing results2")
             } catch (error) {
                 console.log(error.data.error);
             }

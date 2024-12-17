@@ -64,7 +64,7 @@ export const myLegendaryApi = createApi({
                 method: "POST",
                 body: JSON.stringify(point),
                 headers: {
-                    'Content-Type': 'application/json', // Important to specify the correct content type
+                    'Content-Type': 'application/json',
                 },
                 credentials: "include",
             })
@@ -75,7 +75,18 @@ export const myLegendaryApi = createApi({
                 method: "POST",
                 body: JSON.stringify(credentials),
                 headers: {
-                    'Content-Type': 'application/json', // Important to specify the correct content type
+                    'Content-Type': 'application/json',
+                },
+                credentials: "include",
+            })
+        }),
+        signup: builder.mutation({
+            query: (credentials) => ({
+                url: "auth/signup",
+                method: "POST",
+                body: JSON.stringify(credentials),
+                headers: {
+                    'Content-Type': 'application/json',
                 },
                 credentials: "include",
             })
@@ -92,4 +103,4 @@ export const myLegendaryApi = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const {useGetPointsQuery, useSendPointMutation, useLoginMutation, useLogoutMutation} = myLegendaryApi
+export const {useGetPointsQuery, useSendPointMutation, useLoginMutation, useLogoutMutation, useSignupMutation} = myLegendaryApi

@@ -24,15 +24,17 @@ export function MainPage() {
 
     const isLoggedIn = useSelector(state => state.reducer.auth.isLogged);
 
-    const {data, error, isLoading} = useGetPointsQuery(); // RTK Query для получения данных
+    const {data, error, isLoading, refetch} = useGetPointsQuery(); // RTK Query для получения данных
 
 
     // Загружаем данные в Redux при успешном ответе API
     useEffect(() => {
         console.log("use efffect");
-        if (rows.length === 0) {
-            if (isLoggedIn && !isLoading && data) {
-                dispatch(clearResults())
+        console.log();
+        refetch();
+        if (isLoggedIn && !isLoading) {
+            dispatch(clearResults())
+            if (data) {
                 data.forEach((item, index) => {
                     dispatch(addResult({id: index + 1, ...item}));
                 });

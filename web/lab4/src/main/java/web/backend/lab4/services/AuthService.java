@@ -78,13 +78,9 @@ public class AuthService {
                         .sameSite(NewCookie.SameSite.NONE)
                         .secure(true)
                         .build();
-                NewCookie abc = new NewCookie.Builder("abc").value("123").path("/")
-                        .httpOnly(true)
-                        .sameSite(NewCookie.SameSite.NONE)
-                        .secure(true).build();
+
                 return Response.ok()
                         .cookie(accessTokenCookie, refreshTokenCookie)
-                        .cookie(abc)
                         .build();
             }
         }
