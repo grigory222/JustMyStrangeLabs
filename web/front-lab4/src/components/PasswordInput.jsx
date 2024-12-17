@@ -4,7 +4,12 @@ import {Visibility, VisibilityOff} from "@mui/icons-material";
 //import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {changeShowPassword} from "../storage/ShowPasswordSlice.js";
+import PropTypes from "prop-types";
 
+PasswordInput.propTypes = {
+    value: PropTypes.number,
+    onChange: PropTypes.func,
+}
 
 export function PasswordInput({value, onChange}) {
     //const [showPassword, setShowPassword] = useState(false);

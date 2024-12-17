@@ -20,10 +20,10 @@ const xValues = [
 ];
 
 const rValues = [
-    {label: -3},
-    {label: -2},
-    {label: -1},
-    {label:  0},
+    // {label: -3},
+    // {label: -2},
+    // {label: -1},
+    // {label:  0},
     {label:  1},
     {label:  2},
     {label:  3},
@@ -31,8 +31,7 @@ const rValues = [
     {label:  5},
 ];
 
-export function InputPointForm({formData, setFormData, formSubmitHandler, errorMessage}) {
-
+export function InputPointForm({formData, setFormData, formSubmitHandler, errorMessage, xValue, setXValue}) {
 
     const handleYChange = (event) => {
         const value = event.target.value;
@@ -54,9 +53,13 @@ export function InputPointForm({formData, setFormData, formSubmitHandler, errorM
                     <Autocomplete
                         disablePortal
                         options={xValues}
+                        value={xValues.find((option) => option.label === xValue) || null} // Привязка состояния
                         sx={{ width: '100%' , flexShrink: true, pr: 5}}
                         renderInput={(params) => <TextField {...params} label="Координата X"/>}
-                        onChange={(event, newValue) => setFormData((prev) => ({ ...prev, x: newValue?.label ?? null }))}
+                        onChange={(event, newValue) => {
+                            setXValue(newValue?.label ?? null); // Обновляем состояние Autocomplete
+                            setFormData((prev) => ({ ...prev, x: newValue?.label ?? null }));
+                        }}
                     />
                 </Grid>
                 <Grid item size={3} display='flex' alignItems='center'  justifyContent='center' sx={{mt: 3}}>Y:</Grid>
@@ -100,5 +103,7 @@ InputPointForm.propTypes = {
     }).isRequired, // formData должен быть объектом с заданной структурой
     setFormData: PropTypes.func.isRequired, // setFormData — это функция
     formSubmitHandler: PropTypes.func.isRequired, // formSubmitHandler — это функция
-    errorMessage: PropTypes.string
+    errorMessage: PropTypes.string,
+    xValue: PropTypes.number,
+    setXValue: PropTypes.func.isRequired,
 };

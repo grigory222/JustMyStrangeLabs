@@ -8,6 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {addResult, clearResults} from "../storage/ResultsSlice.js";
 import {useEffect, useState} from "react";
 import {Alert} from "@mui/material";
+import {GraphCanvas} from "../components/GraphCanvas.jsx";
 
 
 export function MainPage() {
@@ -24,8 +25,8 @@ export function MainPage() {
 
     const isLoggedIn = useSelector(state => state.reducer.auth.isLogged);
 
-    const {data, error, isLoading, refetch} = useGetPointsQuery(); // RTK Query для получения данных
-
+    const {data, isLoading, refetch} = useGetPointsQuery(); // RTK Query для получения данных
+    const [xValue, setXValue] = useState(null); // Состояние для Autocomplete X
 
     // Загружаем данные в Redux при успешном ответе API
     useEffect(() => {
@@ -111,7 +112,7 @@ export function MainPage() {
 
                 }}
             >
-                <MyPaperBox
+                <GraphCanvas
                     id="graph-box"
                     sx={{
                         width: {md: 1 / 3, xs: '66%'},
@@ -120,9 +121,13 @@ export function MainPage() {
                         borderRadius: 5,
                         boxShadow: 1
                     }}
+                    r={formData.r ? formData.r : 5}
+                    formData={formData}
+                    setFormData={setFormData}
+                    formSubmitHandler={formSubmitHandler}
+                    setXAutocomplete={setXValue}
                 >
-                    {/* Содержимое для graph-box */}
-                </MyPaperBox>
+                </GraphCanvas>
 
                 <MyPaperBox
                     sx={{
@@ -138,6 +143,8 @@ export function MainPage() {
                         setFormData={setFormData}
                         formSubmitHandler={formSubmitHandler}
                         errorMessage={errorMessage}
+                        xValue={xValue} // Передаем значение для Autocomplete
+                        setXValue={setXValue} // Позволяет обновлять x из формы
                     />
                 </MyPaperBox>
             </Box>
