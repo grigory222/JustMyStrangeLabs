@@ -21,6 +21,7 @@ public class AuthFilter implements jakarta.ws.rs.container.ContainerRequestFilte
     private static final Set<String> SKIP_PATHS = new HashSet<>(Arrays.asList(
             "/auth/signup",
             "/auth/login",
+            "/auth/logout",
             "/auth/refresh"));
 
     @Override

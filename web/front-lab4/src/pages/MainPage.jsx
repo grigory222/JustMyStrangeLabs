@@ -3,10 +3,10 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {InputPointForm} from "../components/InputPointForm.jsx";
 import {ResultsDataGrid} from "../components/ResultsDataGrid.jsx";
-import {useSendPointMutation} from "../api/myLegendaryApi.js";
+import {useGetPointsQuery, useSendPointMutation} from "../api/myLegendaryApi.js";
 import {useDispatch, useSelector} from "react-redux";
 import {addResult} from "../storage/ResultsSlice.js";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Alert} from "@mui/material";
 
 
@@ -21,6 +21,17 @@ export function MainPage() {
     const [errorMessage, setErrorMessage] = useState('');
     const [alert, setAlert] = useState(false);
     const [alertContent, setAlertContent] = useState('');
+
+    const { data } = useGetPointsQuery(); // RTK Query для получения данных
+    // Загружаем данные в Redux при успешном ответе API
+    useEffect(() => {
+        if (data) {
+            // Очистка старых результатов и добавление новых
+            data.forEach((item, index) => {
+                dispatch(addResult({ id: index + 1, ...item }));
+            });
+        }
+    }, [data, dispatch]);
 
     const getLastRowId = () => {
         return rows.length > 0 ? rows[rows.length - 1].id : 0;

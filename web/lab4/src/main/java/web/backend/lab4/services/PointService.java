@@ -62,8 +62,8 @@ public class PointService {
 
     }
 
+    @GET
     @Path("/get")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPoints(@CookieParam("access_token") String accessToken) {
         Long userId = jwtProvider.getUserIdFromToken(accessToken);

@@ -2,7 +2,7 @@ import {createSlice} from "@reduxjs/toolkit";
 import Cookies from 'js-cookie';
 
 const initialState = {
-    isLogged: Cookies.get('abc') != null || Cookies.get('abc') !== undefined,
+    isLogged: true,
     refresh_token: Cookies.get('refresh_token'),
     access_token: Cookies.get('access_token'),
 }

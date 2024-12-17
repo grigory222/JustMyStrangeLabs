@@ -8,7 +8,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {Avatar, Container, Menu, MenuItem, Tooltip} from "@mui/material";
 import HomeIcon from '@mui/icons-material/Home';
 import {useState} from "react";
-import { Link as RouterLink } from 'react-router-dom';
+import {Link as RouterLink} from 'react-router-dom';
+import {useDispatch, useSelector} from "react-redux";
+import {useLogoutMutation} from "../api/myLegendaryApi.js";
+import {setLoggedIn} from "../storage/IsLoggedSlice.js";
 
 
 const pages = ['Главная'];
@@ -18,9 +21,12 @@ const pageRoutes = {
     [settings[0]]: 'logout'
 };
 
-export function Navbar(){
+export function Navbar() {
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
+    const dispatch = useDispatch();
+    const [logout] = useLogoutMutation();
+    const isLogged = useSelector(state => state.reducer.auth.isLogged);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -34,7 +40,16 @@ export function Navbar(){
         setAnchorElNav(null);
     };
 
-    const handleCloseUserMenu = () => {
+    const handleCloseUserMenu = async (setting) => {
+        if (setting === 'Выход') {
+            try {
+                const payload = await logout().unwrap()
+                console.log("payload", payload)
+                dispatch(setLoggedIn(false));
+            } catch (error) {
+                console.log(error.data.error);
+            }
+        }
         setAnchorElUser(null);
     };
 
@@ -42,14 +57,14 @@ export function Navbar(){
         <AppBar position="static">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <HomeIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                    <HomeIcon sx={{display: {xs: 'none', md: 'flex'}, mr: 1}}/>
                     <Typography
                         variant="h6"
                         noWrap
                         component="a"
                         sx={{
                             mr: 2,
-                            display: { xs: 'none', md: 'flex' },
+                            display: {xs: 'none', md: 'flex'},
                             fontWeight: 300,
                             letterSpacing: '.1rem',
                             color: 'inherit',
@@ -58,7 +73,7 @@ export function Navbar(){
                         ЛР №4
                     </Typography>
 
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                    <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
                         <IconButton
                             size="large"
                             aria-label="account of current user"
@@ -67,7 +82,7 @@ export function Navbar(){
                             onClick={handleOpenNavMenu}
                             color="inherit"
                         >
-                            <MenuIcon />
+                            <MenuIcon/>
                         </IconButton>
                         <Menu
                             id="menu-appbar"
@@ -83,7 +98,7 @@ export function Navbar(){
                             }}
                             open={Boolean(anchorElNav)}
                             onClose={handleCloseNavMenu}
-                            sx={{ display: { xs: 'block', md: 'none' } }}
+                            sx={{display: {xs: 'block', md: 'none'}}}
                         >
                             {pages.map((page) => (
                                 <MenuItem key={page} onClick={handleCloseNavMenu}>
@@ -91,7 +106,7 @@ export function Navbar(){
                                         component={RouterLink}
                                         to={pageRoutes[page]}
                                         onClick={handleCloseNavMenu}
-                                        sx={{ color: 'inherit', textTransform: 'none' }}
+                                        sx={{color: 'inherit', textTransform: 'none'}}
                                     >
                                         {page}
                                     </Button>
@@ -106,7 +121,7 @@ export function Navbar(){
                         href="#app-bar-with-responsive-menu"
                         sx={{
                             mr: 2,
-                            display: { xs: 'flex', md: 'none' },
+                            display: {xs: 'flex', md: 'none'},
                             flexGrow: 1,
                             fontWeight: 300,
                             letterSpacing: '.1rem',
@@ -116,53 +131,53 @@ export function Navbar(){
                     >
                         ЛР №4
                     </Typography>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                    <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
                         {pages.map((page) => (
                             <Button
                                 key={page}
                                 component={RouterLink}
                                 to={pageRoutes[page]}
                                 onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
+                                sx={{my: 2, color: 'white', display: 'block'}}
                             >
                                 {page}
                             </Button>
                         ))}
                     </Box>
-                    <Box sx={{ flexGrow: 0 }}>
+                    <Box sx={{flexGrow: 0}}>
                         <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="123" src="/static/images/man.png" />
+                            <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
+                                <Avatar alt="123" src="/static/images/man.png"/>
                             </IconButton>
                         </Tooltip>
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Button
-                                        component={RouterLink}
-                                        to={pageRoutes[setting]}
-                                        sx={{ color: 'inherit', textTransform: 'none' }}
-                                    >
-                                        {setting}
-                                    </Button>
-                                </MenuItem>
-                            ))}
-                        </Menu>
+                        {!isLogged ? null :
+                            <Menu
+                                sx={{mt: '45px'}}
+                                id="menu-appbar"
+                                anchorEl={anchorElUser}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={Boolean(anchorElUser)}
+                                onClose={handleCloseUserMenu}
+                            >
+                                {settings.map((setting) => (
+                                    <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
+                                        <Button
+                                            component={RouterLink}
+                                            sx={{color: 'inherit', textTransform: 'none'}}
+                                        >
+                                            {setting}
+                                        </Button>
+                                    </MenuItem>
+                                ))}
+                            </Menu>}
                     </Box>
                 </Toolbar>
             </Container>
