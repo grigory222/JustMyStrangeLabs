@@ -44,7 +44,7 @@ export function InputPointForm({formData, setFormData, formSubmitHandler, errorM
     return (
         <Box
             component='form'
-            onSubmit={formSubmitHandler}
+            onSubmit={()=>formSubmitHandler({source: 'form'})}
         >
             <Grid container sx={{fontFamily: 'Arial'}}>
                 <Grid item size={12} fullWidth><Typography>Введите данные</Typography></Grid>

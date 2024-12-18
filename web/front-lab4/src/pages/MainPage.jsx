@@ -47,15 +47,25 @@ export function MainPage() {
         return rows.length > 0 ? rows[rows.length - 1].id : 0;
     };
 
-    const formSubmitHandler = async (e) => {
+    const formSubmitHandler = async (e, data) => {
         e.preventDefault();
-
         if (isSubmitting) return; // Предотвращаем повторное нажатие
         setIsSubmitting(true);
 
-        const {x, y, r} = formData;
-        if (x === null || r === null || y === '') {
-            setAlert(true);
+        let x, y, r;
+        r = formData.r;
+        const {newX, newY, source} = data;
+        console.log('source: ', source);
+        if (source === 'form'){
+            x = formData.x;
+            y = formData.y;
+        }
+        else {
+            x = newX; y = newY;
+        }
+
+        console.log(x, y, r);
+        if (x === null || r === null || y === null || y === '' || x === undefined || r === undefined || y === undefined) {            setAlert(true);
             setAlertContent("Должны быть заполнены все поля")
             setIsSubmitting(false);
             return;

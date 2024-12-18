@@ -1,6 +1,6 @@
 const graphScale = 20;
 
-export function drawGraph(canvas, r) {
+export function drawGraph(canvas, r, rows) {
     let R = graphScale * r// тут R в пикселах
 
     const ctx = canvas.getContext("2d");
@@ -75,20 +75,14 @@ export function drawGraph(canvas, r) {
     }
 
     function drawPoints(){
-        // const table = document.getElementById("results-table");
-        // const rows = table.getElementsByTagName("tr");
-        //
-        // // Проходим по всем строкам, пропуская заголовок
-        // for (let i = 1; i < rows.length; i++) {
-        //     const cells = rows[i].getElementsByTagName("td");
-        //     const x = parseFloat(cells[0].innerText); // Получаем значение x
-        //     const y = parseFloat(cells[1].innerText); // Получаем значение y
-        //     const res = parseFloat(cells[2].innerText); // Получаем значение res, если нужно
-        //     // const color = cells[5].innerText == "Попадание" ? "blue" : "red"; // Голубой для попадания
-        //     const color = cells[3].innerText == "true" ? "blue" : "red"; // Голубой для попадания
-        //     console.log(x, y, res, color);
-        //     drawPoint(x, y, color);
-        // }
+        for (let i = 1; i < rows.length; i++) {
+            const x = rows[i].x;
+            const y = rows[i].y;
+            const res = rows[i].result;
+            const color = res === true ? "blue" : "red";
+            //console.log(x, y, res, color);
+            drawPoint(x, y, color);
+        }
     }
     // Функция для рисования точки
     function drawPoint(mathX, mathY, color) {
@@ -107,6 +101,7 @@ export function drawGraph(canvas, r) {
         const centerY = canvas.height / 2;
         const x_ = centerX + (x) * R / r;
         const y_ = centerY - (y) * R / r;
+        console.log('mathToCanvas canvx, canvy: ', x_, y_)
         return { x: x_, y: y_ };
     }
 
@@ -143,6 +138,8 @@ export function canvasToMath(clientX, clientY, canvas, R, pixelsR) {
     const centerY = canvas.height / 2;
     const x = ((x_ - centerX) / pixelsR) * R;
     const y = ((centerY - y_) / pixelsR) * R;
+    console.log('in canvastOMATH clX, clY: ', clientX, clientY);
+    console.log('in canvastOMATH: x, y', x, y);
     return {x, y};
 }
 

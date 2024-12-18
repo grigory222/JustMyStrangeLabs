@@ -31,11 +31,9 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
             api,
             extraOptions
         )
-
-        if (refreshResult.data) {
+        console.log('refresh result: '+ JSON.stringify(refreshResult));
+        if (refreshResult.meta?.response?.status === 200) {
             api.dispatch(setLoggedIn(true));
-
-            // повторяем исходный запрос
             result = await baseQuery(args, api, extraOptions)
         } else {
             console.error('Session expired. Please log in again.')
