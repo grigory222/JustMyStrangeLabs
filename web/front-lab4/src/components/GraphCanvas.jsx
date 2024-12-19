@@ -5,7 +5,7 @@ import {useSelector} from "react-redux";
 
 const graphScale = 20;
 
-export function GraphCanvas({ r, formData, setFormData, formSubmitHandler, setXAutocomplete}) {
+export function GraphCanvas({ r, formData, formSubmitHandler}) {
     const canvasRef = useRef(null);
     const rows = useSelector(state => state.reducer.results.array);
 
@@ -24,17 +24,17 @@ export function GraphCanvas({ r, formData, setFormData, formSubmitHandler, setXA
         id="myCanvas"
         width={300}
         height={300}
-        onClick={(event)=>{
-            let {x, y} = canvasToMath(event.clientX, event.clientY, canvasRef.current, formData.r, graphScale*formData.r);
+        onClick={async (event) => {
+            let {
+                x,
+                y
+            } = canvasToMath(event.clientX, event.clientY, canvasRef.current, formData.r, graphScale * formData.r);
             x = Math.round(x);
             // Ограничение x в диапазоне [-3, 5]
             if (x < -3) x = -3;
             if (x > 5) x = 5;
-
-            setFormData((prev) => ({ ...prev, x: x, y: isNaN(y) ? '' : y }));
-
-            setXAutocomplete(x); // Обновляем значение в Autocomplete
-            formSubmitHandler(event, {newX: x, newY: y, source: 'canvas'});
+            console.log("CANVAS LOG: "+x, y, formData.r);
+            await formSubmitHandler({x, y, r: formData.r});
         }}
     />;
 }
@@ -42,7 +42,5 @@ export function GraphCanvas({ r, formData, setFormData, formSubmitHandler, setXA
 GraphCanvas.propTypes = {
     r: PropTypes.number,
     formData: PropTypes.object,
-    setFormData: PropTypes.func,
-    formSubmitHandler: PropTypes.func,
-    setXAutocomplete: PropTypes.func,
+    formSubmitHandler: PropTypes.func.isRequired,
 }

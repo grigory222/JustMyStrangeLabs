@@ -26,7 +26,6 @@ export function MainPage() {
     const isLoggedIn = useSelector(state => state.reducer.auth.isLogged);
 
     const {data, isLoading, refetch} = useGetPointsQuery(); // RTK Query для получения данных
-    const [xValue, setXValue] = useState(null); // Состояние для Autocomplete X
 
     // Загружаем данные в Redux при успешном ответе API
     useEffect(() => {
@@ -41,31 +40,25 @@ export function MainPage() {
                 });
             }
         }
-    }, [isLoggedIn, isLoading, data, dispatch]);
+    }, [isLoggedIn, isLoading, data, dispatch, refetch]);
 
     const getLastRowId = () => {
         return rows.length > 0 ? rows[rows.length - 1].id : 0;
     };
 
-    const formSubmitHandler = async (e, data) => {
-        e.preventDefault();
+    const formSubmitHandler = async (data) => {
+        console.log("ksjadflaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaa");
         if (isSubmitting) return; // Предотвращаем повторное нажатие
         setIsSubmitting(true);
 
         let x, y, r;
-        r = formData.r;
-        const {newX, newY, source} = data;
-        console.log('source: ', source);
-        if (source === 'form'){
-            x = formData.x;
-            y = formData.y;
-        }
-        else {
-            x = newX; y = newY;
-        }
+        r = data.r;
+        x = data.x;
+        y = data.y;
 
         console.log(x, y, r);
-        if (x === null || r === null || y === null || y === '' || x === undefined || r === undefined || y === undefined) {            setAlert(true);
+        if (x === null || r === null || y === null || y === '' || x === undefined || r === undefined || y === undefined) {
+            setAlert(true);
             setAlertContent("Должны быть заполнены все поля")
             setIsSubmitting(false);
             return;
@@ -122,22 +115,28 @@ export function MainPage() {
 
                 }}
             >
-                <GraphCanvas
+                <Box
                     id="graph-box"
                     sx={{
                         width: {md: 1 / 3, xs: '66%'},
                         mx: 5,
                         my: 5,
                         borderRadius: 5,
-                        boxShadow: 1
+                        boxShadow: 1,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
                     }}
-                    r={formData.r ? formData.r : 5}
-                    formData={formData}
-                    setFormData={setFormData}
-                    formSubmitHandler={formSubmitHandler}
-                    setXAutocomplete={setXValue}
                 >
-                </GraphCanvas>
+                    <GraphCanvas
+
+                        r={formData.r ? formData.r : 5}
+                        formData={formData}
+                        formSubmitHandler={formSubmitHandler}
+                    >
+                    </GraphCanvas>
+                </Box>
+
 
                 <MyPaperBox
                     sx={{
@@ -151,10 +150,11 @@ export function MainPage() {
                     <InputPointForm
                         formData={formData}
                         setFormData={setFormData}
-                        formSubmitHandler={formSubmitHandler}
+                        formSubmitHandler={async (event) => {
+                            event.preventDefault();
+                            await formSubmitHandler(formData);
+                        }}
                         errorMessage={errorMessage}
-                        xValue={xValue} // Передаем значение для Autocomplete
-                        setXValue={setXValue} // Позволяет обновлять x из формы
                     />
                 </MyPaperBox>
             </Box>

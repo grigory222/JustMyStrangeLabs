@@ -5,7 +5,6 @@ import Grid from "@mui/material/Grid2";
 import {Autocomplete, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import PropTypes from "prop-types";
-import {useState} from "react";
 
 const xValues = [
     {label: -3},
@@ -31,7 +30,7 @@ const rValues = [
     {label:  5},
 ];
 
-export function InputPointForm({formData, setFormData, formSubmitHandler, errorMessage, xValue, setXValue}) {
+export function InputPointForm({formData, setFormData, formSubmitHandler, errorMessage}) {
 
     const handleYChange = (event) => {
         const value = event.target.value;
@@ -44,7 +43,7 @@ export function InputPointForm({formData, setFormData, formSubmitHandler, errorM
     return (
         <Box
             component='form'
-            onSubmit={()=>formSubmitHandler({source: 'form'})}
+            onSubmit={formSubmitHandler}
         >
             <Grid container sx={{fontFamily: 'Arial'}}>
                 <Grid item size={12} fullWidth><Typography>Введите данные</Typography></Grid>
@@ -53,11 +52,10 @@ export function InputPointForm({formData, setFormData, formSubmitHandler, errorM
                     <Autocomplete
                         disablePortal
                         options={xValues}
-                        value={xValues.find((option) => option.label === xValue) || null} // Привязка состояния
+                        //value={xValues.find((option) => option.label === xValue) || null} // Привязка состояния
                         sx={{ width: '100%' , flexShrink: true, pr: 5}}
                         renderInput={(params) => <TextField {...params} label="Координата X"/>}
                         onChange={(event, newValue) => {
-                            setXValue(newValue?.label ?? null); // Обновляем состояние Autocomplete
                             setFormData((prev) => ({ ...prev, x: newValue?.label ?? null }));
                         }}
                     />
@@ -104,6 +102,4 @@ InputPointForm.propTypes = {
     setFormData: PropTypes.func.isRequired, // setFormData — это функция
     formSubmitHandler: PropTypes.func.isRequired, // formSubmitHandler — это функция
     errorMessage: PropTypes.string,
-    xValue: PropTypes.number,
-    setXValue: PropTypes.func.isRequired,
 };
