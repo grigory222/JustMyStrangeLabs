@@ -68,6 +68,7 @@ export function MainPage() {
             setIsSubmitting(false);
             return;
         }
+        setErrorMessage("")
 
         try {
             const response = await sendPoint({x, y: parseFloat(y), r}).unwrap()
