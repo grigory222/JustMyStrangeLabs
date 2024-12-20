@@ -13,6 +13,10 @@ function App() {
         <Navbar/>
         <Routes>
             <Route
+                path="/"
+                element={<Navigate to="/main" />}
+            />
+            <Route
                 path="/main"
                 element={isLogged ? <MainPage /> : <Navigate to="/login" />}
             />

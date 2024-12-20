@@ -13,7 +13,7 @@ public class Calculator {
         if (x <= 0 && y >= 0 && x*x + y*y <= r*r){
             return true;
         }
-        if (x >= 0 && y >= 0 && y <= -2*x + r){
+        if (x <= 0 && y <= 0 && y >= -2*x - r){
             return true;
         }
         if (x >= 0 && y <= 0 && x <= r / 2 && y >= -r) {

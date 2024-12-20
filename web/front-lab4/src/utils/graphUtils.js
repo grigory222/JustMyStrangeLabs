@@ -65,11 +65,11 @@ export function drawGraph(canvas, r, rows) {
         ctx.closePath();
         ctx.fill();
 
-        // Треугольник (верхний правый угол)
+        // Треугольник (левый нижний угол)
         ctx.beginPath();
         ctx.moveTo(centerX, centerY);
-        ctx.lineTo(centerX + R/2, centerY);
-        ctx.lineTo(centerX, centerY - R);
+        ctx.lineTo(centerX - R/2, centerY);
+        ctx.lineTo(centerX, centerY + R);
         ctx.closePath();
         ctx.fill();
     }
