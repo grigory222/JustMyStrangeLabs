@@ -6,7 +6,7 @@ services:
     container_name: route-manager-db
     environment:
       POSTGRES_DB: studs
-      POSTGRES_USER: sXXXXXX
+      POSTGRES_USER: s408402
       POSTGRES_PASSWORD: your_password
     ports:
       - "5432:5432"
@@ -15,5 +15,4 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
-  # Определяем именованный том для хранения данных
   pgdata:

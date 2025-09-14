@@ -54,9 +54,13 @@ dependencies {
     // Для валидации
     implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
 
-    // Тестирование (опционально, но хорошая практика)
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.0-M1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.0-M1'
+
+    implementation 'org.springframework.data:spring-data-jpa:3.3.1'
+
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
 }
 
 test {
