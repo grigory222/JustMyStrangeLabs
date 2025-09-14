@@ -12,7 +12,7 @@ public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private double x;
+    private Double x;
     private Integer y;
     private Long z;
     private String name;

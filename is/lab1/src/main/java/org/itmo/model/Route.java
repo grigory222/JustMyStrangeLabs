@@ -3,7 +3,8 @@ package org.itmo.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.ZonedDateTime;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -12,7 +13,7 @@ import java.time.ZonedDateTime;
 public class Route {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     private String name;
 
@@ -20,8 +21,8 @@ public class Route {
     @JoinColumn(name = "coordinates_id", referencedColumnName = "id")
     private Coordinates coordinates;
 
-    @Column(updatable = false)
-    private ZonedDateTime creationDate;
+    @Column(name = "creation_date", updatable = false)
+    private LocalDateTime creationDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "from_location_id")
@@ -36,6 +37,6 @@ public class Route {
 
     @PrePersist
     protected void onCreate() {
-        this.creationDate = ZonedDateTime.now();
+        this.creationDate = LocalDateTime.now();
     }
 }

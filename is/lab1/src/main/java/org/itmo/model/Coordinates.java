@@ -13,6 +13,6 @@ public class Coordinates {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private long x;
+    private Long x;
     private Float y;
 }

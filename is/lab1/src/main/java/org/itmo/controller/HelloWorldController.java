@@ -1,10 +1,13 @@
 package org.itmo.controller;
 
+import org.itmo.model.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.itmo.service.HelloWorldService;
+
+import java.util.List;
 
 @Controller
 public class HelloWorldController {
@@ -16,18 +19,18 @@ public class HelloWorldController {
         this.helloWorldService = helloWorldService;
     }
 
-    // Этот метод будет обрабатывать GET-запросы на главный URL ("/")
     @GetMapping("/")
-    public String sayHello(Model model) {
-        // 1. Получаем данные из сервис-слоя
-        String greeting = helloWorldService.getGreetingMessage();
+    public String showAllRoutes(Model model) {
+        // 1. Создаем тестовые данные (если их еще нет)
+        helloWorldService.createTestData();
 
-        // 2. Кладем эти данные в "модель". Модель - это "контейнер",
-        // который контроллер передает в шаблон (view).
-        model.addAttribute("message", greeting);
+        // 2. Получаем все маршруты из БД
+        List<Route> routes = helloWorldService.getAllRoutes();
 
-        // 3. Возвращаем имя шаблона, который нужно показать пользователю.
-        // Spring, благодаря WebConfig, поймет, что нужно найти "hello-page.html".
+        // 3. Кладем список маршрутов в модель для отображения
+        model.addAttribute("routes", routes);
+
+        // 4. Возвращаем имя шаблона
         return "hello-page";
     }
 }

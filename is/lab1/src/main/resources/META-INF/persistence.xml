@@ -25,7 +25,7 @@
 
             <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/studs"/>
 
-            <property name="jakarta.persistence.jdbc.user" value="sXXXXXX"/>
+            <property name="jakarta.persistence.jdbc.user" value="s408402"/>
 
             <property name="jakarta.persistence.jdbc.password" value="your_password"/>
 

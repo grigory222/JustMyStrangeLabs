@@ -24,7 +24,7 @@ ext {
 dependencies {
     // Spring Core & MVC
     implementation "org.springframework:spring-webmvc:${springVersion}"
-    implementation "org.springframework:spring-orm:${springVersion}" // Для интеграции с JPA
+    implementation "org.springframework:spring-orm:${springVersion}"
 
     // Spring Security для аутентификации и авторизации
     implementation "org.springframework.security:spring-security-web:${springSecurityVersion}"
