@@ -5,9 +5,15 @@ import {RegisterPage} from "./pages/RegisterPage.jsx";
 import {NotFoundPage} from "./pages/NotFoundPage.jsx";
 import {Navbar} from "./components/Navbar.jsx";
 import {useSelector} from "react-redux";
+import { useAuthInit } from "./hooks/useAuthInit";
 
 function App() {
-    const isLogged = useSelector(state => state.reducer.auth.isLogged);
+    const { isLogged, isLoading } = useSelector(state => state.reducer.auth);
+    useAuthInit();
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
   return (
       <Router>
         <Navbar/>

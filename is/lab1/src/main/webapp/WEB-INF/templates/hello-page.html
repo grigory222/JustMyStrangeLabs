@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"> <!-- Важно добавить пространство имен th -->
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World</title>
+</head>
+<body>
+
+<!--
+  th:text="${message}" - это инструкция для Thymeleaf.
+  Она говорит: "Найди в модели атрибут с ключом 'message'
+  и вставь его значение как текст внутрь этого тега h1".
+  Текст "Default greeting" будет виден, если открыть этот файл
+  просто в браузере, но будет заменен при обработке на сервере.
+-->
+<h1 th:text="${message}">Default greeting</h1>
+
+</body>
+</html>

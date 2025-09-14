@@ -1,0 +1,68 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+group 'ru.itmo.studs'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    springVersion = '6.2.10'
+    springSecurityVersion = '6.5.3'
+    thymeleafVersion = '3.1.2.RELEASE'
+    eclipselinkVersion = '4.0.3'
+    jakartaPersistenceVersion = '3.1.0'
+    postgresqlVersion = '42.7.3'
+    jakartaServletVersion = '6.0.0'
+    jacksonVersion = '2.17.1'
+}
+
+dependencies {
+    // Spring Core & MVC
+    implementation "org.springframework:spring-webmvc:${springVersion}"
+    implementation "org.springframework:spring-orm:${springVersion}" // Для интеграции с JPA
+
+    // Spring Security для аутентификации и авторизации
+    implementation "org.springframework.security:spring-security-web:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-config:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-taglibs:${springSecurityVersion}"
+
+    // Thymeleaf для UI
+    implementation "org.thymeleaf:thymeleaf-spring6:${thymeleafVersion}"
+    implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafVersion}"
+
+    // JPA (EclipseLink) для работы с БД
+    implementation "org.eclipse.persistence:eclipselink:${eclipselinkVersion}"
+    implementation "jakarta.persistence:jakarta.persistence-api:${jakartaPersistenceVersion}"
+
+    // Драйвер PostgreSQL
+    implementation "org.postgresql:postgresql:${postgresqlVersion}"
+
+    // WebSocket для real-time обновлений
+    implementation "org.springframework:spring-websocket:${springVersion}"
+    implementation "org.springframework:spring-messaging:${springVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+
+    // Servlet API (нужен для Tomcat, но не должен входить в итоговый архив)
+    providedCompile "jakarta.servlet:jakarta.servlet-api:${jakartaServletVersion}"
+
+    // Для валидации
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+
+    // Тестирование (опционально, но хорошая практика)
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.0-M1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.0-M1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+war {
+    archiveFileName = 'route-manager.war'
+}
