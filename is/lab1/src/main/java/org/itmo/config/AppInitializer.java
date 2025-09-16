@@ -9,7 +9,7 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
     // Здесь обычно настраиваются сервисы, репозитории, безопасность.
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{AppConfig.class};
+        return new Class[]{AppConfig.class, WebSocketConfig.class};
     }
 
     // Этот метод указывает на конфигурационные классы для веб-слоя.

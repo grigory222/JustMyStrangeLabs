@@ -2,5 +2,28 @@ package org.itmo.repository;
 
 import org.itmo.model.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-public interface RouteRepository extends JpaRepository<Route, Long> {}
+import java.util.List;
+import java.util.Optional;
+
+public interface RouteRepository extends JpaRepository<Route, Integer> {
+    Page<Route> findByName(String name, Pageable pageable);
+
+    Page<Route> findByFrom_IdAndTo_Id(Long fromId, Long toId, Pageable pageable);
+
+    long deleteByRating(Long rating);
+
+    Optional<Route> findFirstByRating(Long rating);
+
+    @Query("select r.name as name, count(r) as total from Route r group by r.name")
+    List<NameCount> groupByName();
+
+    interface NameCount {
+        String getName();
+        long getTotal();
+    }
+}

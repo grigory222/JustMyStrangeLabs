@@ -1,10 +1,14 @@
 package org.itmo.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 @Data
 @NoArgsConstructor
@@ -15,28 +19,36 @@ public class Route {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank
+    @Column(nullable = false)
     private String name;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "coordinates_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "coordinates_id", nullable = false)
+    @NotNull
     private Coordinates coordinates;
 
-    @Column(name = "creation_date", updatable = false)
-    private LocalDateTime creationDate;
+    @Column(name = "creation_date", updatable = false, nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "UTC")
+    private ZonedDateTime creationDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "from_location_id")
+    @JoinColumn(name = "from_location_id", nullable = false)
+    @NotNull
     private Location from;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "to_location_id")
     private Location to;
 
+    @Min(2)
     private long distance;
+
+    @Positive
     private Long rating;
 
     @PrePersist
     protected void onCreate() {
-        this.creationDate = LocalDateTime.now();
+        this.creationDate = ZonedDateTime.now(ZoneOffset.UTC);
     }
 }

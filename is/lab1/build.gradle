@@ -70,3 +70,7 @@ test {
 war {
     archiveFileName = 'route-manager.war'
 }
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs = ['-parameters']
+}

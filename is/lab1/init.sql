@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS location (
 CREATE TABLE IF NOT EXISTS route (
                                      id SERIAL PRIMARY KEY CHECK (id > 0),
     name VARCHAR(255) NOT NULL CHECK (name <> ''),
-    coordinates_id BIGINT NOT NULL UNIQUE REFERENCES coordinates(id) ON DELETE RESTRICT,
-    creation_date TIMESTAMPTZ NOT NULL,
+    coordinates_id BIGINT NOT NULL REFERENCES coordinates(id) ON DELETE RESTRICT,
+    creation_date TIMESTAMP WITH TIME ZONE NOT NULL,
     from_location_id BIGINT NOT NULL REFERENCES location(id) ON DELETE RESTRICT,
     to_location_id BIGINT REFERENCES location(id) ON DELETE RESTRICT,
     distance BIGINT NOT NULL CHECK (distance > 1),
