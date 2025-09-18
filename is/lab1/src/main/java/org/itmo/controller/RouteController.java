@@ -1,6 +1,7 @@
 package org.itmo.controller;
 
 import jakarta.validation.Valid;
+import org.itmo.dto.*;
 import org.itmo.model.Route;
 import org.itmo.service.RouteService;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,7 @@ public class RouteController {
     }
 
     @GetMapping
-    public Page<Route> list(@RequestParam(defaultValue = "0") int page,
+    public Page<RouteResponseDto> list(@RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "10") int size,
                             @RequestParam(required = false) String sort,
                             @RequestParam(required = false) String order,
@@ -39,19 +40,19 @@ public class RouteController {
     }
 
     @GetMapping("/{id}")
-    public Route get(@PathVariable Integer id) {
+    public RouteResponseDto get(@PathVariable Integer id) {
         return routeService.get(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Route create(@Valid @RequestBody Route route) {
+    public RouteResponseDto create(@Valid @RequestBody RouteCreateDto route) {
         return routeService.create(route);
     }
 
     @PatchMapping("/{id}")
-    public Route update(@PathVariable Integer id,
-                        @RequestBody Route patch) {
+    public RouteResponseDto update(@PathVariable Integer id,
+                        @RequestBody RouteCreateDto patch) {
         return routeService.update(id, patch);
     }
 
@@ -76,12 +77,12 @@ public class RouteController {
     }
 
     @GetMapping("/group-by-name")
-    public Object groupByName() {
+    public java.util.List<GroupByNameResponse> groupByName() {
         return routeService.groupByName();
     }
 
     @GetMapping("/between")
-    public Page<Route> findBetween(@RequestParam Long fromId,
+    public Page<RouteResponseDto> findBetween(@RequestParam Long fromId,
                                    @RequestParam Long toId,
                                    @RequestParam(defaultValue = "0") int page,
                                    @RequestParam(defaultValue = "10") int size,

@@ -1,7 +1,24 @@
+
+
 plugins {
     id 'java'
     id 'war'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1' // для fat jar
 }
+
+application {
+    mainClass = 'org.itmo.Main' // укажи свой entry point (класс с main)
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': application.mainClass
+        )
+    }
+}
+
 
 group 'ru.itmo.studs'
 version '1.0-SNAPSHOT'
@@ -61,6 +78,15 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
+
+    // MapStruct для маппинга DTO <-> Entity
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+
+    implementation 'org.eclipse.jetty:jetty-server:11.0.24'
+    implementation 'org.eclipse.jetty:jetty-servlet:11.0.24'
+    implementation 'org.eclipse.jetty:jetty-webapp:11.0.24'
 }
 
 test {

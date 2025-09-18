@@ -12,7 +12,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@ComponentScan("org.itmo.service")
+@ComponentScan("org.itmo")
 @EnableJpaRepositories(basePackages = "org.itmo.repository")
 @EnableTransactionManagement
 public class AppConfig {

@@ -1,6 +1,7 @@
 package org.itmo.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +25,7 @@ public class Coordinates {
     private Float y;
 
     @AssertTrue(message = "y must be greater than -845")
+    @JsonIgnore
     public boolean isYValid() {
         return y != null && y > -845;
     }
