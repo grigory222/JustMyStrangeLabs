@@ -2,7 +2,9 @@
 import { onMounted, reactive, ref } from 'vue';
 import { api } from '@/services/api';
 import { createRoute, updateRoute } from '@/store/routesStore';
-import type { Route } from '@/types/models';
+import type { Route, Location, Coordinates } from '@/types/models';
+import LocationDialog from './LocationDialog.vue';
+import CoordinatesDialog from './CoordinatesDialog.vue';
 
 const props = defineProps<{ id: number | null }>();
 const emit = defineEmits<{ (e: 'close'): void; (e: 'saved', route: Route): void }>();
@@ -10,11 +12,15 @@ const emit = defineEmits<{ (e: 'close'): void; (e: 'saved', route: Route): void 
 const loading = ref(false);
 const error = ref<string | null>(null);
 
+const showLocationDialog = ref(false);
+const locationTarget = ref<'from' | 'to' | null>(null);
+const showCoordinatesDialog = ref(false);
+
 const form = reactive({
   name: '',
-  coordinates: { x: 0, y: 0 },
-  from: { x: 0, y: 0, z: 0, name: '' },
-  to: { x: 0, y: 0, z: 0, name: '' } as any,
+  coordinates: { x: 0, y: 0 } as Coordinates,
+  from: { x: 0, y: 0, z: 0, name: '' } as Location,
+  to: { x: 0, y: 0, z: 0, name: '' } as Location,
   toEnabled: true,
   distance: 2,
   rating: null as number | null,
@@ -27,8 +33,8 @@ onMounted(async () => {
       const data = await api.getRouteById(props.id);
       form.name = data.name;
       form.coordinates = { ...data.coordinates };
-      form.from = { ...data.from } as any;
-      form.to = data.to ? { ...data.to } as any : ({ x: 0, y: 0, z: 0, name: '' } as any);
+      form.from = { ...data.from };
+      form.to = data.to ? { ...data.to } : ({ x: 0, y: 0, z: 0, name: '' } as Location);
       form.toEnabled = !!data.to;
       form.distance = data.distance;
       form.rating = data.rating ?? null;
@@ -40,6 +46,25 @@ onMounted(async () => {
   }
 });
 
+function openLocationDialog(target: 'from' | 'to') {
+  locationTarget.value = target;
+  showLocationDialog.value = true;
+}
+
+function selectLocation(location: Location) {
+  if (locationTarget.value) {
+    form[locationTarget.value] = location;
+  }
+}
+
+function openCoordinatesDialog() {
+  showCoordinatesDialog.value = true;
+}
+
+function selectCoordinates(coords: Coordinates) {
+  form.coordinates = coords;
+}
+
 async function onSubmit() {
   error.value = null;
   try {
@@ -49,7 +74,7 @@ async function onSubmit() {
       from: { ...form.from },
       to: form.toEnabled ? { ...form.to } : null,
       distance: Number(form.distance),
-  rating: form.rating === null || form.rating === undefined || form.rating === ('' as any) ? null : Number(form.rating),
+      rating: form.rating === null || form.rating === undefined || form.rating === ('' as any) ? null : Number(form.rating),
     };
     let saved: Route;
     if (props.id == null) saved = await createRoute(payload);
@@ -74,31 +99,36 @@ async function onSubmit() {
           <label class="field">name
             <input class="input" v-model.trim="form.name" required />
           </label>
-          <label class="field">coordinates.x
-            <input class="input" type="number" v-model.number="form.coordinates.x" />
-          </label>
+          <div class="field">
+            <label>coordinates.x
+              <input class="input" type="number" v-model.number="form.coordinates.x" />
+            </label>
+            <button type="button" class="btn" @click="openCoordinatesDialog">Select</button>
+          </div>
           <label class="field">coordinates.y (>-845)
             <input class="input" type="number" step="0.01" v-model.number="form.coordinates.y" />
           </label>
 
           <fieldset class="col-span-2">
             <legend>from</legend>
+            <button type="button" class="btn" @click="openLocationDialog('from')">Select From</button>
             <div class="grid">
               <label class="field">x<input class="input" type="number" step="0.01" v-model.number="form.from.x" /></label>
-              <label class="field">y<input class="input" type="number" v-model.number="(form.from as any).y" /></label>
-              <label class="field">z<input class="input" type="number" v-model.number="(form.from as any).z" /></label>
-              <label class="field">name<input class="input" v-model="(form.from as any).name" /></label>
+              <label class="field">y<input class="input" type="number" v-model.number="form.from.y" /></label>
+              <label class="field">z<input class="input" type="number" v-model.number="form.from.z" /></label>
+              <label class="field">name<input class="input" v-model="form.from.name" /></label>
             </div>
           </fieldset>
 
           <fieldset class="col-span-2">
             <legend>to</legend>
+            <button type="button" class="btn" @click="openLocationDialog('to')">Select To</button>
             <label class="field"><input type="checkbox" v-model="form.toEnabled" /> Specify "to" location</label>
             <div class="grid" v-if="form.toEnabled">
-              <label class="field">x<input class="input" type="number" step="0.01" v-model.number="(form.to as any).x" /></label>
-              <label class="field">y<input class="input" type="number" v-model.number="(form.to as any).y" /></label>
-              <label class="field">z<input class="input" type="number" v-model.number="(form.to as any).z" /></label>
-              <label class="field">name<input class="input" v-model="(form.to as any).name" /></label>
+              <label class="field">x<input class="input" type="number" step="0.01" v-model.number="form.to.x" /></label>
+              <label class="field">y<input class="input" type="number" v-model.number="form.to.y" /></label>
+              <label class="field">z<input class="input" type="number" v-model.number="form.to.z" /></label>
+              <label class="field">name<input class="input" v-model="form.to.name" /></label>
             </div>
           </fieldset>
 
@@ -106,7 +136,7 @@ async function onSubmit() {
             <input class="input" type="number" min="2" v-model.number="form.distance" />
           </label>
           <label class="field">rating (>0 or empty)
-            <input class="input" type="number" min="1" v-model.number="(form.rating as any)" />
+            <input class="input" type="number" min="1" v-model.number="form.rating" />
           </label>
         </div>
         <div v-if="error" class="error">{{ error }}</div>
@@ -117,6 +147,8 @@ async function onSubmit() {
       </form>
     </div>
   </div>
+  <LocationDialog v-if="showLocationDialog" @close="showLocationDialog = false" @select="selectLocation" />
+  <CoordinatesDialog v-if="showCoordinatesDialog" @close="showCoordinatesDialog = false" @select="selectCoordinates" />
 </template>
 
 <style scoped>

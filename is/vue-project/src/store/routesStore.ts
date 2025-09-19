@@ -17,11 +17,11 @@ const state = reactive<RoutesState>({
   query: { page: 0, size: 10 },
 });
 
-function parseWsMessage(data: any): { type: 'created' | 'updated' | 'deleted'; entity: Route } | null {
+function parseWsMessage(data: any): { type: 'created' | 'updated' | 'deleted'; id: number } | null {
   try {
-    const payload = typeof data === 'string' ? JSON.parse(data) : data;
-    if (payload && payload.entity && payload.type) {
-      return payload as any;
+    // The backend sends: { type: "created"|"updated"|"deleted", id: number }
+    if (data && data.type && data.id) {
+      return data;
     }
   } catch {
     // ignore
@@ -30,8 +30,8 @@ function parseWsMessage(data: any): { type: 'created' | 'updated' | 'deleted'; e
 }
 
 wsService.connect();
-wsService.subscribe((e) => {
-  const msg = parseWsMessage(e.data);
+wsService.subscribe((data) => {
+  const msg = parseWsMessage(data);
   if (!msg) return;
   // Refresh current page to reflect live updates
   void fetchRoutes();

@@ -1,4 +1,5 @@
 export interface Coordinates {
+  id?: number;
   x: number; // long in backend
   y: number; // Float (> -845)
 }
@@ -43,7 +44,7 @@ export interface RouteQueryParams {
 
 export interface GroupByNameItem {
   name: string;
-  count: number;
+  routesCount: number; // long in backend
 }
 
 

@@ -7,7 +7,7 @@ const showDialog = ref(false);
 const editId = ref<number | null>(null);
 
 const filterName = ref<string>('');
-const filterRating = ref<string>('');
+// ...existing code...
 const sortField = ref<string>('');
 const sortDir = ref<'asc' | 'desc'>('asc');
 
@@ -26,7 +26,7 @@ function applyFilters() {
   void fetchRoutes({
     page: 0,
     nameEquals: filterName.value || undefined,
-    rating: filterRating.value ? Number(filterRating.value) : undefined,
+  // ...existing code...
     sort,
     order
   });
@@ -65,10 +65,7 @@ watch([() => routesState.query.size], () => {
           <label>name</label>
           <input class="input" v-model="filterName" placeholder="exact match" />
         </div>
-        <div class="field">
-          <label>rating</label>
-          <input class="input" v-model="filterRating" placeholder="exact match" />
-        </div>
+        <!-- rating filter removed -->
         <button class="btn" @click="applyFilters">Apply</button>
       </div>
       <button class="btn primary add" @click="openCreate">Add Route</button>

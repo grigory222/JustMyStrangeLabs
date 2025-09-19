@@ -1,33 +1,64 @@
 import { reactive } from 'vue';
+import { Client } from '@stomp/stompjs';
+import type { IFrame, IMessage } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 
-type MessageHandler = (event: MessageEvent) => void;
+type MessageHandler = (message: any) => void;
 
 class WebSocketService {
-  private socket: WebSocket | null = null;
+  private client: Client | null = null;
   private handlers: Set<MessageHandler> = new Set();
   public state = reactive({ connected: false });
 
-  connect(url = (import.meta.env.VITE_WS_URL as string) || 'ws://localhost:8080/ws/routes'): void {
-    if (this.socket) return;
+  connect(url = (import.meta.env.VITE_WS_URL as string) || 'http://localhost:8080/route-manager/ws'): void {
+    if (this.client && this.client.connected) return;
+    
+    console.log('Attempting WebSocket connection to:', url);
+    
     try {
-      this.socket = new WebSocket(url);
-      this.socket.onopen = () => {
-        this.state.connected = true;
-      };
-      this.socket.onclose = () => {
-        this.state.connected = false;
-        this.socket = null;
-        // naive reconnect
-        setTimeout(() => this.connect(url), 2000);
-      };
-      this.socket.onmessage = (e) => {
-        this.handlers.forEach((h) => h(e));
-      };
-      this.socket.onerror = () => {
-        // let close trigger reconnect
-      };
-    } catch {
-      // ignore
+      this.client = new Client({
+        webSocketFactory: () => new SockJS(url),
+        reconnectDelay: 2000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+        debug: (str) => {
+          console.log('STOMP Debug:', str);
+        },
+        onConnect: (frame: IFrame) => {
+          console.log('Connected to WebSocket:', frame);
+          this.state.connected = true;
+          
+          // Subscribe to route events
+          this.client?.subscribe('/topic/routes', (message: IMessage) => {
+            console.log('Received WebSocket message:', message.body);
+            const data = JSON.parse(message.body);
+            this.handlers.forEach((handler) => handler(data));
+          });
+        },
+        onDisconnect: (frame: IFrame) => {
+          console.log('Disconnected from WebSocket:', frame);
+          this.state.connected = false;
+        },
+        onStompError: (frame: IFrame) => {
+          console.error('STOMP error:', frame);
+          this.state.connected = false;
+        },
+        onWebSocketError: (event) => {
+          console.error('WebSocket error:', event);
+        }
+      });
+
+      this.client.activate();
+    } catch (error) {
+      console.error('WebSocket connection failed:', error);
+    }
+  }
+
+  disconnect(): void {
+    if (this.client) {
+      this.client.deactivate();
+      this.client = null;
+      this.state.connected = false;
     }
   }
 

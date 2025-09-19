@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { AxiosInstance } from 'axios';
-import type { Page, Route, RouteQueryParams, GroupByNameItem } from '@/types/models';
+import type { Page, Route, RouteQueryParams, GroupByNameItem, Location, Coordinates } from '@/types/models';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
@@ -38,6 +38,16 @@ class ApiService {
     await this.http.delete(`/routes/${id}`);
   }
 
+  public async getLocations(): Promise<Location[]> {
+    const response = await this.http.get<Location[]>('/locations');
+    return response.data;
+  }
+
+  public async getCoordinates(): Promise<Coordinates[]> {
+    const response = await this.http.get<Coordinates[]>('/coordinates');
+    return response.data;
+  }
+
   // Special operations
   public async deleteAllByRating(rating: number): Promise<number> {
     const response = await this.http.delete<number>(`/routes/by-rating`, { params: { rating } });
@@ -55,7 +65,7 @@ class ApiService {
   }
 
   public async findRoutesBetween(params: { fromId?: number; toId?: number; sort?: string; order?: 'asc' | 'desc' }): Promise<Route[]> {
-    const response = await this.http.get<Route[]>('/routes/find-between', { params });
+    const response = await this.http.get<Route[]>('/routes/between', { params });
     return response.data;
   }
 
