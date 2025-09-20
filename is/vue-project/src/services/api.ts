@@ -50,12 +50,12 @@ class ApiService {
 
   // Special operations
   public async deleteAllByRating(rating: number): Promise<number> {
-    const response = await this.http.delete<number>(`/routes/by-rating`, { params: { rating } });
-    return response.data; // number of deleted
+    const response = await this.http.delete<{ deleted: number }>(`/routes/by-rating`, { params: { rating } });
+    return response.data.deleted; // number of deleted
   }
 
   public async deleteAnyByRating(rating: number): Promise<Route | null> {
-    const response = await this.http.delete<Route | null>(`/routes/any-by-rating`, { params: { rating } });
+    const response = await this.http.delete<Route | null>(`/routes/one-by-rating`, { params: { rating } });
     return response.data;
   }
 
@@ -65,8 +65,8 @@ class ApiService {
   }
 
   public async findRoutesBetween(params: { fromId?: number; toId?: number; sort?: string; order?: 'asc' | 'desc' }): Promise<Route[]> {
-    const response = await this.http.get<Route[]>('/routes/between', { params });
-    return response.data;
+    const response = await this.http.get<Page<Route>>('/routes/between', { params });
+    return response.data.content;
   }
 
   public async addRouteBetween(payload: {

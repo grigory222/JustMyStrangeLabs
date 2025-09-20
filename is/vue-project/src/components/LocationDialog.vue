@@ -1,5 +1,5 @@
 <template>
-  <div class="dialog-backdrop" @click.self="$emit('close')">
+  <div v-if="show" class="dialog-backdrop" @click.self="$emit('close')">
     <div class="dialog">
       <header>
         <h3>Select Location</h3>
@@ -21,6 +21,10 @@
 import { ref, onMounted } from 'vue';
 import { api } from '@/services/api';
 import type { Location } from '@/types/models';
+
+defineProps<{
+  show: boolean
+}>();
 
 const locations = ref<Location[]>([]);
 

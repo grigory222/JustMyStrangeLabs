@@ -204,7 +204,29 @@ public class RouteService {
     }
 
     public Page<RouteResponseDto> findBetween(@NotNull Long fromId, @NotNull Long toId, Pageable pageable) {
-        return routeRepository.findByFrom_IdAndTo_Id(fromId, toId, pageable).map(routeMapper::toResponseDto);
+        return routeRepository.findRoutesBetweenLocations(fromId, toId, pageable).map(routeMapper::toResponseDto);
+    }
+
+    public RouteResponseDto addRouteBetween(AddRouteBetweenDto dto) {
+        Location from = locationRepository.findById(dto.getFromId())
+                .orElseThrow(() -> new EntityNotFoundException("From location not found: " + dto.getFromId()));
+        Location to = locationRepository.findById(dto.getToId())
+                .orElseThrow(() -> new EntityNotFoundException("To location not found: " + dto.getToId()));
+
+        Coordinates coordinates = routeMapper.toEntity(dto.getCoordinates());
+        coordinates = coordinatesRepository.save(coordinates);
+
+        Route route = new Route();
+        route.setName(dto.getName());
+        route.setFrom(from);
+        route.setTo(to);
+        route.setDistance(dto.getDistance());
+        route.setRating(dto.getRating());
+        route.setCoordinates(coordinates);
+
+        route = routeRepository.save(route);
+        eventsPublisher.publishCreated(route);
+        return routeMapper.toResponseDto(route);
     }
 }
 

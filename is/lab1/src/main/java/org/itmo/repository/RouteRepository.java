@@ -15,6 +15,9 @@ public interface RouteRepository extends JpaRepository<Route, Integer> {
 
     Page<Route> findByFrom_IdAndTo_Id(Long fromId, Long toId, Pageable pageable);
 
+    @Query("SELECT r FROM Route r WHERE (r.from.id = :fromId AND r.to.id = :toId) OR (r.from.id = :toId AND r.to.id = :fromId)")
+    Page<Route> findRoutesBetweenLocations(@Param("fromId") Long fromId, @Param("toId") Long toId, Pageable pageable);
+
     long deleteByRating(Long rating);
 
     Optional<Route> findFirstByRating(Long rating);

@@ -96,6 +96,12 @@ public class RouteController {
         Pageable pageable = PageRequest.of(page, size, sortSpec);
         return routeService.findBetween(fromId, toId, pageable);
     }
+
+    @PostMapping("/add-between")
+    @ResponseStatus(HttpStatus.CREATED)
+    public RouteResponseDto addBetween(@Valid @RequestBody AddRouteBetweenDto dto) {
+        return routeService.addRouteBetween(dto);
+    }
 }
 
 

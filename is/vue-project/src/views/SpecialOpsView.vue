@@ -18,6 +18,7 @@ const found = ref<Route[] | null>(null);
 
 const newBetween = ref({ name: '', fromId: null as number | null, toId: null as number | null, distance: 2, rating: null as number | null, coordinates: { x: 0, y: 0 } });
 const createdBetween = ref<Route | null>(null);
+const addSuccessMessage = ref('');
 
 const showLocationDialog = ref(false);
 const locationTarget = ref<'from' | 'to' | 'newFrom' | 'newTo' | null>(null);
@@ -67,15 +68,26 @@ async function onAddBetween() {
     rating: newBetween.value.rating,
     coordinates: { ...newBetween.value.coordinates },
   });
+
+  if (createdBetween.value) {
+    addSuccessMessage.value = 'Успешно добавлено!';
+    newBetween.value = { name: '', fromId: null, toId: null, distance: 2, rating: null, coordinates: { x: 0, y: 0 } };
+    setTimeout(() => {
+      addSuccessMessage.value = '';
+      createdBetween.value = null;
+    }, 3000);
+  }
 }
 </script>
 
 <template>
-  <div class="ops">
+  <div class="ops-container">
     <section>
       <h3>Удалить по рейтингу</h3>
-      <label class="field">Рейтинг <input class="input" type="number" v-model.number="rating" /></label>
-      <div class="row">
+      <div class="form-row">
+        <label class="field">Рейтинг <input class="input" type="number" v-model.number="rating" /></label>
+      </div>
+      <div class="form-row">
         <button class="btn danger" @click="onDeleteAllByRating">Удалить все</button>
         <button class="btn" @click="onDeleteAnyByRating">Удалить один</button>
       </div>
@@ -85,7 +97,9 @@ async function onAddBetween() {
 
     <section>
       <h3>Группировка по имени</h3>
-      <button class="btn" @click="onGroupByName">Выполнить</button>
+      <div class="form-row">
+        <button class="btn" @click="onGroupByName">Выполнить</button>
+      </div>
       <ul v-if="groups">
         <li v-for="g in groups" :key="g.name">{{ g.name }} — {{ g.routesCount }}</li>
       </ul>
@@ -93,12 +107,12 @@ async function onAddBetween() {
 
     <section>
       <h3>Найти маршруты между локациями</h3>
-      <div class="row">
-        <div class="field">
+      <div class="form-row">
+        <div class="field-group">
           <button class="btn" @click="openLocationDialog('from')">Select From</button>
           <span v-if="fromLocation"> {{ fromLocation.name }}</span>
         </div>
-        <div class="field">
+        <div class="field-group">
           <button class="btn" @click="openLocationDialog('to')">Select To</button>
           <span v-if="toLocation"> {{ toLocation.name }}</span>
         </div>
@@ -120,20 +134,20 @@ async function onAddBetween() {
       <ul v-if="found && found.length > 0">
         <li v-for="r in found" :key="r.id">#{{ r.id }} {{ r.name }} ({{ r.distance }})</li>
       </ul>
-      <div v-else-if="found">
+      <div v-else-if="found && found.length === 0">
         <p>Маршруты не найдены.</p>
       </div>
     </section>
 
     <section>
       <h3>Добавить маршрут между локациями</h3>
-      <div class="grid">
+      <div class="form-flex-wrap">
         <label class="field">name<input class="input" v-model="newBetween.name" /></label>
-        <div class="field">
+        <div class="field-group">
           <button class="btn" @click="openLocationDialog('newFrom')">Select From</button>
           <span v-if="newBetween.fromId"> ID: {{ newBetween.fromId }}</span>
         </div>
-        <div class="field">
+        <div class="field-group">
           <button class="btn" @click="openLocationDialog('newTo')">Select To</button>
           <span v-if="newBetween.toId"> ID: {{ newBetween.toId }}</span>
         </div>
@@ -143,23 +157,91 @@ async function onAddBetween() {
         <label class="field">coordinates.y<input class="input" type="number" v-model.number="newBetween.coordinates.y" /></label>
       </div>
       <button class="btn primary" @click="onAddBetween">Добавить</button>
-      <div v-if="createdBetween">Создан маршрут #{{ createdBetween.id }}</div>
+      <div v-if="addSuccessMessage" class="success-message">{{ addSuccessMessage }}</div>
+      <div v-else-if="createdBetween">Создан маршрут #{{ createdBetween.id }}</div>
     </section>
   </div>
-  <LocationDialog v-if="showLocationDialog" @close="showLocationDialog = false" @select="selectLocation" />
+
+  <LocationDialog :show="showLocationDialog" @close="showLocationDialog = false" @select="selectLocation" />
 </template>
 
 <style scoped>
-.ops { display: grid; gap: 16px; }
-section { border: 1px solid var(--color-border); padding: 12px; border-radius: 12px; background: var(--color-background); }
-.row { display: flex; gap: 8px; align-items: center; }
-.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-label { display: grid; gap: 4px; }
-.field input.input, .field select.input { width: 100%; }
-.input { padding: 8px 10px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); color: var(--color-text); }
-.btn { padding: 6px 10px; border: 1px solid var(--color-border); background: var(--color-background-soft); border-radius: 8px; cursor: pointer; }
-.btn.primary { background: hsla(160, 100%, 37%, 0.15); border-color: hsla(160, 100%, 37%, 0.4); }
-.btn.danger { background: rgba(176, 0, 32, 0.1); border-color: rgba(176, 0, 32, 0.25); }
+.ops-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+section {
+  border: 1px solid var(--color-border);
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.form-flex-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+label.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field input.input,
+.field select.input {
+  width: 100%;
+}
+
+.input {
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.btn {
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-background-soft);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: hsla(160, 100%, 37%, 0.15);
+  border-color: hsla(160, 100%, 37%, 0.4);
+}
+
+.btn.danger {
+  background: rgba(176, 0, 32, 0.1);
+  border-color: rgba(176, 0, 32, 0.25);
+}
+
+.field-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.success-message {
+  color: green;
+  margin-top: 10px;
+}
 </style>
 
 
