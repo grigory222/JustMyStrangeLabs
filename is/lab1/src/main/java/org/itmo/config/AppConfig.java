@@ -13,22 +13,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @ComponentScan("org.itmo")
-@EnableJpaRepositories(basePackages = "org.itmo.repository")
-@EnableTransactionManagement
 public class AppConfig {
 
-    @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setPersistenceUnitName("my-persistence-unit");
-        em.setJpaVendorAdapter(new EclipseLinkJpaVendorAdapter());
-        return em;
-    }
-
-        @Bean
-        public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
-            JpaTransactionManager transactionManager = new JpaTransactionManager();
-            transactionManager.setEntityManagerFactory(emf);
-            return transactionManager;
-        }
 }

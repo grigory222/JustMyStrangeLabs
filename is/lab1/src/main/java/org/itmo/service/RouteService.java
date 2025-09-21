@@ -3,6 +3,7 @@ package org.itmo.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.itmo.dto.*;
 import org.itmo.mapper.RouteMapper;
 import org.itmo.model.Route;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class RouteService {
 
     private final RouteRepository routeRepository;
@@ -31,18 +33,6 @@ public class RouteService {
     private final CoordinatesRepository coordinatesRepository;
     private final RouteEventsPublisher eventsPublisher;
     private final RouteMapper routeMapper;
-
-    public RouteService(RouteRepository routeRepository,
-                        LocationRepository locationRepository,
-                        CoordinatesRepository coordinatesRepository,
-                        RouteEventsPublisher eventsPublisher,
-                        RouteMapper routeMapper) {
-        this.routeRepository = routeRepository;
-        this.locationRepository = locationRepository;
-        this.coordinatesRepository = coordinatesRepository;
-        this.eventsPublisher = eventsPublisher;
-        this.routeMapper = routeMapper;
-    }
 
     public Page<RouteResponseDto> list(String nameEquals, Pageable pageable) {
         if (nameEquals != null && !nameEquals.isEmpty()) {

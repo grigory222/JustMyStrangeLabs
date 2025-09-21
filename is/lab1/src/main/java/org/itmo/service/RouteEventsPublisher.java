@@ -1,16 +1,14 @@
 package org.itmo.service;
 
+import lombok.RequiredArgsConstructor;
 import org.itmo.model.Route;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class RouteEventsPublisher {
     private final SimpMessagingTemplate messagingTemplate;
-
-    public RouteEventsPublisher(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
-    }
 
     public void publishCreated(Route route) {
         messagingTemplate.convertAndSend("/topic/routes", new Event("created", route.getId()));

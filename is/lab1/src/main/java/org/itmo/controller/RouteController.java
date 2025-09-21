@@ -1,6 +1,7 @@
 package org.itmo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.itmo.dto.*;
 import org.itmo.model.Route;
 import org.itmo.service.RouteService;
@@ -16,13 +17,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/routes")
+@RequiredArgsConstructor
 public class RouteController {
 
     private final RouteService routeService;
-
-    public RouteController(RouteService routeService) {
-        this.routeService = routeService;
-    }
 
     @GetMapping
     public Page<RouteResponseDto> list(@RequestParam(defaultValue = "0") int page,
