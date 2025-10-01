@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14
+    container_name: route-manager-db
+    environment:
+      POSTGRES_DB: studs
+      POSTGRES_USER: s408402
+      POSTGRES_PASSWORD: <password>
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  pgdata:

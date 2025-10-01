@@ -101,7 +101,7 @@ async function onAddBetween() {
         <button class="btn" @click="onGroupByName">Выполнить</button>
       </div>
       <ul v-if="groups">
-        <li v-for="g in groups" :key="g.name">{{ g.name }} — {{ g.routesCount }}</li>
+        <li v-for="g in groups" :key="g.name">{{ g.name }} — {{ g.total }}</li>
       </ul>
     </section>
 

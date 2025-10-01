@@ -42,9 +42,9 @@ export interface RouteQueryParams {
   rating?: number; // exact match filter
 }
 
-export interface GroupByNameItem {
+export type GroupByNameItem = {
   name: string;
-  routesCount: number; // long in backend
-}
+  total: number;
+};
 
 

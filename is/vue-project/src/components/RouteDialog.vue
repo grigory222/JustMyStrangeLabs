@@ -147,7 +147,7 @@ async function onSubmit() {
       </form>
     </div>
   </div>
-  <LocationDialog v-if="showLocationDialog" @close="showLocationDialog = false" @select="selectLocation" />
+  <LocationDialog v-if="showLocationDialog" :show="showLocationDialog" @close="showLocationDialog = false" @select="selectLocation" />
   <CoordinatesDialog v-if="showCoordinatesDialog" @close="showCoordinatesDialog = false" @select="selectCoordinates" />
 </template>
 
