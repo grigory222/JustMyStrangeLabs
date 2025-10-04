@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import HelloWorld from './components/HelloWorld.vue'
+import { useAuthStore } from './store/authStore';
 import { ref, onMounted } from 'vue'
+
+const authStore = useAuthStore();
+
+const handleLogout = () => {
+  authStore.logout();
+}
 
 const navRef = ref<HTMLElement | null>(null)
 const glowX = ref(0)
@@ -47,8 +55,9 @@ onMounted(() => {
       <span class="nav-glow" aria-hidden="true"></span>
       <RouterLink to="/" @mouseenter="(e:any)=>moveGlowTo(e.currentTarget)">Главная</RouterLink>
       <RouterLink to="/routes" @mouseenter="(e:any)=>moveGlowTo(e.currentTarget)">Маршруты</RouterLink>
-      <RouterLink to="/ops" @mouseenter="(e:any)=>moveGlowTo(e.currentTarget)">Операции</RouterLink>
-      <RouterLink to="/about" @mouseenter="(e:any)=>moveGlowTo(e.currentTarget)">О проекте</RouterLink>
+      <RouterLink to="/special" @mouseenter="(e:any)=>moveGlowTo(e.currentTarget)">Операции</RouterLink>
+      <RouterLink v-if="!authStore.isAuthenticated" to="/auth">Login</RouterLink>
+      <a href="#" v-if="authStore.isAuthenticated" @click.prevent="handleLogout">Logout</a>
     </nav>
   </header>
 

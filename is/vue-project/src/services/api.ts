@@ -5,12 +5,13 @@ import type { Page, Route, RouteQueryParams, GroupByNameItem, Location, Coordina
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 class ApiService {
-  private http: AxiosInstance;
+  public http: AxiosInstance;
 
   constructor() {
     this.http = axios.create({
       baseURL: API_BASE_URL,
       headers: { 'Content-Type': 'application/json' },
+      withCredentials: true, // Включаем отправку cookies для сессий
     });
   }
 

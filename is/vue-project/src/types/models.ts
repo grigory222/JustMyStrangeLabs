@@ -16,11 +16,27 @@ export interface Route {
   id: number;
   name: string;
   coordinates: Coordinates;
-  creationDate: string; // ISO string
-  from: Location;
+  creationDate: string; // Assuming ISO 8601 format
+  from: Location | null;
   to: Location | null;
-  distance: number; // > 1
-  rating: number | null; // > 0 or null
+  distance: number;
+  rating: number | null;
+}
+
+export interface LoginRequest {
+  username?: string;
+  password?: string;
+}
+
+export interface RegisterRequest {
+  username?: string;
+  password?: string;
+}
+
+export interface AuthResponse {
+  username: string;
+  roles: string[];
+  message: string;
 }
 
 export interface Page<T> {

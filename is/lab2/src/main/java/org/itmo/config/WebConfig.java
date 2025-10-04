@@ -25,21 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
         this.applicationContext = applicationContext;
     }
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173")
-                        .allowedMethods("GET", "POST", "PATCH", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
-            }
-        };
-    }
-
-    // Бин №1: TemplateResolver. Он говорит Thymeleaf, где искать наши HTML-шаблоны.
+    // Thymeleaf TemplateResolver
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
@@ -50,7 +36,7 @@ public class WebConfig implements WebMvcConfigurer {
         return templateResolver;
     }
 
-    // Бин №2: TemplateEngine. Это ядро Thymeleaf, которое обрабатывает шаблоны.
+    // Thymeleaf TemplateEngine
     @Bean
     public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
@@ -59,10 +45,7 @@ public class WebConfig implements WebMvcConfigurer {
         return templateEngine;
     }
 
-    // Бин №3: ViewResolver. Это мост между Spring MVC и Thymeleaf.
-    // Когда контроллер возвращает строку (например, "hello-page"), этот бин
-    // понимает, что нужно взять файл /WEB-INF/templates/hello-page.html,
-    // обработать его с помощью templateEngine и отдать пользователю.
+    // Thymeleaf ViewResolver
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
@@ -70,5 +53,4 @@ public class WebConfig implements WebMvcConfigurer {
         resolver.setCharacterEncoding("UTF-8");
         registry.viewResolver(resolver);
     }
-
 }
