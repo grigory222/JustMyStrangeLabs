@@ -23,8 +23,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ConstraintViolationException.class, MethodArgumentNotValidException.class})
     public ResponseEntity<Map<String, Object>> handleDetailedValidation(Exception ex) {
         Map<String, Object> body = new HashMap<>();
-        body.put("error", "Validation failed");
-
+        
+        StringBuilder message = new StringBuilder();
         Map<String, String> errors = new HashMap<>();
 
         if (ex instanceof MethodArgumentNotValidException) {
@@ -32,15 +32,21 @@ public class GlobalExceptionHandler {
                 String fieldName = ((FieldError) error).getField();
                 String errorMessage = error.getDefaultMessage();
                 errors.put(fieldName, errorMessage);
+                if (message.length() > 0) message.append(", ");
+                message.append(errorMessage);
             });
         } else if (ex instanceof ConstraintViolationException) {
             ((ConstraintViolationException) ex).getConstraintViolations().forEach(violation -> {
                 String fieldName = violation.getPropertyPath().toString();
                 String errorMessage = violation.getMessage();
                 errors.put(fieldName, errorMessage);
+                if (message.length() > 0) message.append(", ");
+                message.append(errorMessage);
             });
         }
 
+        body.put("error", "Validation failed");
+        body.put("message", message.toString()); // Добавляем message для фронтенда
         body.put("messages", errors);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);

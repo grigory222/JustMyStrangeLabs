@@ -1,19 +1,25 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/store/authStore';
 import { api } from '@/services/api';
-import type { Route } from '@/types/models';
 
 const authStore = useAuthStore();
 const router = useRouter();
-const stats = ref({ totalRoutes: 0, recentRoutes: [] as Route[] });
+const totalRoutes = ref(0);
+const username = computed(() => {
+  const user = authStore.user as unknown as { username: string; roles: string[]; message: string; } | null;
+  return user?.username || '';
+});
+const userRole = computed(() => {
+  const roles = authStore.roles as unknown as string[];
+  return roles && roles.length > 0 ? roles[0] : '';
+});
 
 onMounted(async () => {
   try {
-    const data = await api.getRoutes({ page: 0, size: 5, sort: 'creationDate', order: 'desc' });
-    stats.value.totalRoutes = data.totalElements;
-    stats.value.recentRoutes = data.content;
+    const data = await api.getRoutes({ page: 0, size: 1 });
+    totalRoutes.value = data.totalElements;
   } catch (error) {
     console.error('Failed to load stats:', error);
   }
@@ -26,23 +32,34 @@ function goToRoutes() {
 function goToSpecial() {
   router.push('/special');
 }
+
+function goToImport() {
+  router.push('/import');
+}
+
+function getRoleDisplayName(role: string): string {
+  const roleMap: Record<string, string> = {
+    'ROLE_USER': 'Пользователь',
+    'ROLE_ADMIN': 'Администратор'
+  };
+  return roleMap[role] || role;
+}
 </script>
 
 <template>
   <main class="home">
     <div class="hero">
       <h1>🗺️ Управление Маршрутами</h1>
-      <p class="subtitle">Добро пожаловать, {{ authStore.user?.username }}!</p>
+      <p class="subtitle">Добро пожаловать, {{ username }}!</p>
+      <div class="user-info">
+        <span class="user-role">{{ getRoleDisplayName(userRole) }}</span>
+      </div>
     </div>
 
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-number">{{ stats.totalRoutes }}</div>
+        <div class="stat-number">{{ totalRoutes }}</div>
         <div class="stat-label">Всего маршрутов</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">{{ authStore.roles.length }}</div>
-        <div class="stat-label">Ролей</div>
       </div>
     </div>
 
@@ -58,19 +75,13 @@ function goToSpecial() {
         <span class="icon">⚙️</span>
         <span>Специальные операции</span>
       </button>
-    </div>
-
-    <div v-if="stats.recentRoutes.length > 0" class="recent">
-      <h2>Последние маршруты</h2>
-      <div class="route-list">
-        <div v-for="route in stats.recentRoutes" :key="route.id" class="route-item">
-          <div class="route-name">{{ route.name }}</div>
-          <div class="route-meta">
-            Дистанция: {{ route.distance }} | 
-            Рейтинг: {{ route.rating ?? 'N/A' }}
-          </div>
-        </div>
-      </div>
+      <button 
+        class="action-btn secondary" 
+        @click="goToImport"
+      >
+        <span class="icon">📤</span>
+        <span>Импорт маршрутов</span>
+      </button>
     </div>
   </main>
 </template>
@@ -103,6 +114,24 @@ function goToSpecial() {
   font-size: 20px;
   color: var(--color-text);
   opacity: 0.8;
+}
+
+.user-info {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.user-role {
+  display: inline-block;
+  padding: 6px 16px;
+  background: var(--color-background-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-heading);
 }
 
 .stats-grid {
@@ -176,40 +205,5 @@ function goToSpecial() {
 
 .icon {
   font-size: 24px;
-}
-
-.recent {
-  margin-top: 20px;
-}
-
-.recent h2 {
-  font-size: 24px;
-  margin-bottom: 16px;
-}
-
-.route-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.route-item {
-  background: var(--color-background-soft);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.route-name {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-heading);
-  margin-bottom: 8px;
-}
-
-.route-meta {
-  font-size: 14px;
-  color: var(--color-text);
-  opacity: 0.7;
 }
 </style>

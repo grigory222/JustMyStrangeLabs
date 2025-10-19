@@ -9,11 +9,16 @@ import org.itmo.mapper.RouteMapper;
 import org.itmo.model.Route;
 import org.itmo.model.Location;
 import org.itmo.model.Coordinates;
+import org.itmo.model.User;
 import org.itmo.repository.RouteRepository;
 import org.itmo.repository.LocationRepository;
 import org.itmo.repository.CoordinatesRepository;
+import org.itmo.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,25 +36,66 @@ public class RouteService {
     private final RouteRepository routeRepository;
     private final LocationRepository locationRepository;
     private final CoordinatesRepository coordinatesRepository;
+    private final UserRepository userRepository;
     private final RouteEventsPublisher eventsPublisher;
     private final RouteMapper routeMapper;
 
-    public Page<RouteResponseDto> list(String nameEquals, Pageable pageable) {
-        if (nameEquals != null && !nameEquals.isEmpty()) {
-            return routeRepository.findByName(nameEquals, pageable)
-                    .map(routeMapper::toResponseDto);
+    private Long getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new AccessDeniedException("User not authenticated");
         }
-        return routeRepository.findAll(pageable).map(routeMapper::toResponseDto);
+        String username = auth.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
+        return user.getId();
+    }
+
+    private boolean isAdmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+    }
+
+    private void checkOwnership(Route route) {
+        if (!isAdmin() && !route.getOwnerId().equals(getCurrentUserId())) {
+            throw new AccessDeniedException("You can only access your own routes");
+        }
+    }
+
+    public Page<RouteResponseDto> list(String nameEquals, Pageable pageable) {
+        Long userId = getCurrentUserId();
+        boolean admin = isAdmin();
+        
+        if (nameEquals != null && !nameEquals.isEmpty()) {
+            if (admin) {
+                return routeRepository.findByName(nameEquals, pageable)
+                        .map(routeMapper::toResponseDto);
+            } else {
+                return routeRepository.findByNameAndOwnerId(nameEquals, userId, pageable)
+                        .map(routeMapper::toResponseDto);
+            }
+        }
+        
+        if (admin) {
+            return routeRepository.findAll(pageable).map(routeMapper::toResponseDto);
+        } else {
+            return routeRepository.findByOwnerId(userId, pageable).map(routeMapper::toResponseDto);
+        }
     }
 
     public RouteResponseDto get(@NotNull Integer id) {
         Route route = routeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Route not found: " + id));
+        checkOwnership(route);
         return routeMapper.toResponseDto(route);
     }
 
     public RouteResponseDto create(@Valid RouteCreateDto dto) {
         Route route = routeMapper.toEntity(dto);
+        
+        // Set owner
+        route.setOwnerId(getCurrentUserId());
 
         // coordinates: if id provided -> load, else create
         Long coordsId = dto.getCoordinates() != null ? dto.getCoordinates().getId() : null;
@@ -106,6 +152,8 @@ public class RouteService {
     public RouteResponseDto update(@NotNull Integer id, @Valid RouteCreateDto patch) {
         Route existing = routeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Route not found: " + id));
+        
+        checkOwnership(existing);
 
         if (patch.getName() != null) existing.setName(patch.getName());
         if (patch.getRating() != null) existing.setRating(patch.getRating());
@@ -164,16 +212,30 @@ public class RouteService {
     public void delete(@NotNull Integer id) {
         Route existing = routeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Route not found: " + id));
+        checkOwnership(existing);
         routeRepository.delete(existing);
         eventsPublisher.publishDeleted(id);
     }
 
     public long deleteAllByRating(@NotNull Long rating) {
-        return routeRepository.deleteByRating(rating);
+        Long userId = getCurrentUserId();
+        if (isAdmin()) {
+            return routeRepository.deleteByRating(rating);
+        } else {
+            return routeRepository.deleteByRatingAndOwnerId(rating, userId);
+        }
     }
 
     public boolean deleteOneByRating(@NotNull Long rating) {
-        Optional<Route> routeOpt = routeRepository.findFirstByRating(rating);
+        Long userId = getCurrentUserId();
+        Optional<Route> routeOpt;
+        
+        if (isAdmin()) {
+            routeOpt = routeRepository.findFirstByRating(rating);
+        } else {
+            routeOpt = routeRepository.findFirstByRatingAndOwnerId(rating, userId);
+        }
+        
         if (routeOpt.isEmpty()) return false;
         Integer id = routeOpt.get().getId();
         routeRepository.delete(routeOpt.get());
@@ -182,7 +244,15 @@ public class RouteService {
     }
 
     public List<GroupByNameResponse> groupByName() {
-        List<Route> all = routeRepository.findAll();
+        Long userId = getCurrentUserId();
+        List<Route> all;
+        
+        if (isAdmin()) {
+            all = routeRepository.findAll();
+        } else {
+            all = routeRepository.findByOwnerId(userId, Pageable.unpaged()).getContent();
+        }
+        
         Map<String, List<Route>> grouped = all.stream().collect(Collectors.groupingBy(Route::getName));
         List<GroupByNameResponse> result = new ArrayList<>();
         for (Map.Entry<String, List<Route>> entry : grouped.entrySet()) {
@@ -194,7 +264,12 @@ public class RouteService {
     }
 
     public Page<RouteResponseDto> findBetween(@NotNull Long fromId, @NotNull Long toId, Pageable pageable) {
-        return routeRepository.findRoutesBetweenLocations(fromId, toId, pageable).map(routeMapper::toResponseDto);
+        Long userId = getCurrentUserId();
+        if (isAdmin()) {
+            return routeRepository.findRoutesBetweenLocations(fromId, toId, pageable).map(routeMapper::toResponseDto);
+        } else {
+            return routeRepository.findRoutesBetweenLocationsAndOwnerId(fromId, toId, userId, pageable).map(routeMapper::toResponseDto);
+        }
     }
 
     public RouteResponseDto addRouteBetween(AddRouteBetweenDto dto) {
@@ -213,6 +288,7 @@ public class RouteService {
         route.setDistance(dto.getDistance());
         route.setRating(dto.getRating());
         route.setCoordinates(coordinates);
+        route.setOwnerId(getCurrentUserId());
 
         route = routeRepository.save(route);
         eventsPublisher.publishCreated(route);

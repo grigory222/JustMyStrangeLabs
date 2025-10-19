@@ -45,7 +45,12 @@ public class Route {
     private long distance;
 
     @Positive
+    @Column(name = "rating")
     private Long rating;
+
+    @Column(name = "owner_id", nullable = false)
+    @NotNull
+    private Long ownerId;
 
     @PrePersist
     protected void onCreate() {

@@ -20,6 +20,7 @@ public interface RouteMapper {
     @Mapping(target = "from", ignore = true)
     @Mapping(target = "to", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
+    @Mapping(target = "ownerId", ignore = true)
     Route toEntity(RouteCreateDto dto);
 
     Coordinates toEntity(CoordinatesCreateDto dto);

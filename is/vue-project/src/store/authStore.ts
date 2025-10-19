@@ -14,7 +14,11 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = response.data;
     } catch (error: any) {
       user.value = null;
-      throw new Error(error.response?.data?.message || 'Login failed');
+      const errorMessage = error.response?.data?.message 
+        || error.response?.data 
+        || error.message 
+        || 'Login failed';
+      throw new Error(errorMessage);
     }
   }
 
@@ -25,7 +29,11 @@ export const useAuthStore = defineStore('auth', () => {
       await login(username, password);
     } catch (error: any) {
       user.value = null;
-      throw new Error(error.response?.data?.message || 'Registration failed');
+      const errorMessage = error.response?.data?.message 
+        || error.response?.data 
+        || error.message 
+        || 'Registration failed';
+      throw new Error(errorMessage);
     }
   }
 

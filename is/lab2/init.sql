@@ -38,7 +38,9 @@ CREATE TABLE IF NOT EXISTS route (
     from_location_id BIGINT NOT NULL REFERENCES location(id) ON DELETE RESTRICT,
     to_location_id BIGINT REFERENCES location(id) ON DELETE RESTRICT,
     distance BIGINT NOT NULL CHECK (distance > 1),
-    rating BIGINT CHECK (rating > 0)
+    rating BIGINT CHECK (rating > 0),
+    owner_id BIGINT NOT NULL,
+    CONSTRAINT fk_route_owner FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
     );
 
 -- Создаем тестовых пользователей (пароль: password123 для обоих)
@@ -55,3 +57,13 @@ VALUES
     ((SELECT id FROM users WHERE username = 'admin'), 'ROLE_USER'),
     ((SELECT id FROM users WHERE username = 'user'), 'ROLE_USER')
 ON CONFLICT DO NOTHING;
+
+-- Таблица для истории импорта
+CREATE TABLE IF NOT EXISTS import_operations (
+    id BIGSERIAL PRIMARY KEY,
+    status VARCHAR(50) NOT NULL,
+    username VARCHAR(50) NOT NULL,
+    added_count INTEGER,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    error_message VARCHAR(1000)
+);

@@ -48,6 +48,17 @@ function changePage(p: number) {
   void fetchRoutes({ page: p });
 }
 
+function formatDate(dateString: string | null | undefined): string {
+  if (!dateString) return '—';
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '—';
+    return date.toLocaleString('ru-RU');
+  } catch {
+    return '—';
+  }
+}
+
 onMounted(() => {
   void fetchRoutes();
 });
@@ -95,7 +106,7 @@ watch([() => routesState.query.size], () => {
           <td>{{ r.name }}</td>
           <td>{{ r.coordinates.x }}</td>
           <td>{{ r.coordinates.y }}</td>
-          <td>{{ new Date(r.creationDate).toLocaleString() }}</td>
+          <td>{{ formatDate(r.creationDate) }}</td>
           <td>{{ r.from?.name }}</td>
           <td>{{ r.to?.name }}</td>
           <td>{{ r.distance }}</td>

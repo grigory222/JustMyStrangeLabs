@@ -3,12 +3,14 @@ package org.itmo.service;
 import org.itmo.model.User;
 import org.itmo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
@@ -48,20 +50,19 @@ public class UserService implements UserDetailsService {
                         .collect(Collectors.toList())
         );
     }
-    
+
     @Transactional
     public User registerUser(String username, String password, Set<User.Role> roles) {
-        if (userRepository.existsByUsername(username)) {
-            throw new IllegalArgumentException("Username already exists");
-        }
-        
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setEnabled(true);
         user.setRoles(roles != null ? roles : new HashSet<>(Set.of(User.Role.ROLE_USER)));
-        
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Username already exists");
+        }
     }
     
     @Transactional(readOnly = true)

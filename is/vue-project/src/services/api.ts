@@ -13,6 +13,24 @@ class ApiService {
       headers: { 'Content-Type': 'application/json' },
       withCredentials: true, // Включаем отправку cookies для сессий
     });
+
+    // Добавляем перехватчик для обработки 403 ошибок
+    this.http.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 403) {
+          // Сессия истекла или пользователь не авторизован
+          console.warn('Session expired or unauthorized. Redirecting to login...');
+          
+          // Очищаем localStorage от сохраненного состояния
+          localStorage.removeItem('auth');
+          
+          // Используем window.location для редиректа, чтобы избежать проблем с циклическими импортами
+          window.location.href = '/auth';
+        }
+        return Promise.reject(error);
+      }
+    );
   }
 
   public async getRoutes(params: RouteQueryParams = {}): Promise<Page<Route>> {
@@ -79,6 +97,21 @@ class ApiService {
     coordinates: { x: number; y: number };
   }): Promise<Route> {
     const response = await this.http.post<Route>('/routes/add-between', payload);
+    return response.data;
+  }
+
+  // Import operations
+  public async importRoutes(file: File): Promise<{ id: number; addedCount: number }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await this.http.post<{ id: number; addedCount: number }>('/import', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  }
+
+  public async getImportHistory(): Promise<any[]> {
+    const response = await this.http.get<any[]>('/import/history');
     return response.data;
   }
 }

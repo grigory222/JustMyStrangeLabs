@@ -19,6 +19,7 @@ public class RouteResponseDto {
     private LocationResponseDto to;
     private long distance;
     private Long rating;
+    private Long ownerId;
 }
 
 
