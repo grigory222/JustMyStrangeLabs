@@ -1,0 +1,174 @@
+openapi: 3.0.3
+info:
+  title: Route Manager API
+  version: 1.0.0
+servers:
+  - url: /
+paths:
+  /api/routes:
+    get:
+      summary: List routes
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 0 }
+        - in: query
+          name: size
+          schema: { type: integer, minimum: 1 }
+        - in: query
+          name: sort
+          schema: { type: string }
+        - in: query
+          name: order
+          schema: { type: string, enum: [asc, desc] }
+        - in: query
+          name: nameEquals
+          schema: { type: string }
+      responses:
+        '200':
+          description: Page of routes
+    post:
+      summary: Create route
+      parameters:
+        - in: query
+          name: fromId
+          schema: { type: integer, format: int64 }
+        - in: query
+          name: toId
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Route'
+      responses:
+        '201':
+          description: Created
+  /api/routes/{id}:
+    get:
+      summary: Get route by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+        '404': { description: Not Found }
+    patch:
+      summary: Update route
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+        - in: query
+          name: fromId
+          schema: { type: integer, format: int64 }
+        - in: query
+          name: toId
+          schema: { type: integer, format: int64 }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Route'
+      responses:
+        '200': { description: OK }
+        '404': { description: Not Found }
+    delete:
+      summary: Delete route
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204': { description: No Content }
+        '404': { description: Not Found }
+  /api/routes/by-rating:
+    delete:
+      summary: Delete all by rating
+      parameters:
+        - in: query
+          name: rating
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200': { description: Deleted count }
+  /api/routes/one-by-rating:
+    delete:
+      summary: Delete one by rating
+      parameters:
+        - in: query
+          name: rating
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '204': { description: No Content }
+        '404': { description: Not Found }
+  /api/routes/group-by-name:
+    get:
+      summary: Group by name
+      responses:
+        '200': { description: OK }
+  /api/routes/between:
+    get:
+      summary: Find routes between locations
+      parameters:
+        - in: query
+          name: fromId
+          required: true
+          schema: { type: integer, format: int64 }
+        - in: query
+          name: toId
+          required: true
+          schema: { type: integer, format: int64 }
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 0 }
+        - in: query
+          name: size
+          schema: { type: integer, minimum: 1 }
+        - in: query
+          name: sort
+          schema: { type: string }
+        - in: query
+          name: order
+          schema: { type: string, enum: [asc, desc] }
+      responses:
+        '200': { description: OK }
+
+components:
+  schemas:
+    Coordinates:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        x: { type: integer, format: int64 }
+        y: { type: number, format: float }
+    Location:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        x: { type: number, format: double }
+        y: { type: integer }
+        z: { type: integer, format: int64 }
+        name: { type: string }
+    Route:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        creationDate: { type: string, format: date-time }
+        from:
+          $ref: '#/components/schemas/Location'
+        to:
+          $ref: '#/components/schemas/Location'
+        distance: { type: integer, format: int64 }
+        rating: { type: integer, format: int64 }
+
+

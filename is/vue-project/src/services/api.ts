@@ -114,6 +114,31 @@ class ApiService {
     const response = await this.http.get<any[]>('/import/history');
     return response.data;
   }
+
+  public async downloadImportFile(importId: number): Promise<any> {
+    const response = await this.http.get(`/import/${importId}/download`, {
+      responseType: 'blob'
+    });
+    return response;
+  }
+
+  // Admin operations
+  public async getAdminStatus(): Promise<{ minioFailureSimulation: boolean; databaseFailureSimulation: boolean; businessErrorSimulation: boolean }> {
+    const response = await this.http.get('/admin/status');
+    return response.data;
+  }
+
+  public async toggleMinio(simulate: boolean): Promise<void> {
+    await this.http.post(`/admin/minio/toggle?simulate=${simulate}`);
+  }
+
+  public async toggleDatabase(simulate: boolean): Promise<void> {
+    await this.http.post(`/admin/database/toggle?simulate=${simulate}`);
+  }
+
+  public async toggleBusinessError(simulate: boolean): Promise<void> {
+    await this.http.post(`/admin/business-error/toggle?simulate=${simulate}`);
+  }
 }
 
 export const api = new ApiService();

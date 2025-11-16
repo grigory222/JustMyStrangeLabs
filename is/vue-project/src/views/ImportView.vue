@@ -11,6 +11,9 @@ interface ImportOperation {
   createdAt?: string; // может приходить с сервера
   localCreatedAt?: string; // локальная дата/время
   errorMessage: string | null;
+  fileKey: string | null;
+  fileName: string | null;
+  fileSize: number | null;
 }
 
 const authStore = useAuthStore();
@@ -24,6 +27,53 @@ const isAdmin = computed(() => {
   const roles = authStore.roles as unknown as string[];
   return roles && roles.includes('ROLE_ADMIN');
 });
+
+// Admin controls
+const adminStatus = ref({
+  minioFailureSimulation: false,
+  databaseFailureSimulation: false,
+  businessErrorSimulation: false
+});
+const loadingAdminStatus = ref(false);
+
+async function loadAdminStatus() {
+  if (!isAdmin.value) return;
+  try {
+    loadingAdminStatus.value = true;
+    adminStatus.value = await api.getAdminStatus();
+  } catch (error) {
+    console.error('Failed to load admin status:', error);
+  } finally {
+    loadingAdminStatus.value = false;
+  }
+}
+
+async function toggleMinio() {
+  try {
+    await api.toggleMinio(!adminStatus.value.minioFailureSimulation);
+    await loadAdminStatus();
+  } catch (error: any) {
+    alert(`Ошибка: ${error.response?.data?.message || error.message}`);
+  }
+}
+
+async function toggleDatabase() {
+  try {
+    await api.toggleDatabase(!adminStatus.value.databaseFailureSimulation);
+    await loadAdminStatus();
+  } catch (error: any) {
+    alert(`Ошибка: ${error.response?.data?.message || error.message}`);
+  }
+}
+
+async function toggleBusinessError() {
+  try {
+    await api.toggleBusinessError(!adminStatus.value.businessErrorSimulation);
+    await loadAdminStatus();
+  } catch (error: any) {
+    alert(`Ошибка: ${error.response?.data?.message || error.message}`);
+  }
+}
 
 function onFileChange(event: Event) {
   const target = event.target as HTMLInputElement;
@@ -89,14 +139,77 @@ function formatDate(dateString: string | undefined) {
   }
 }
 
+async function downloadFile(op: ImportOperation) {
+  if (!op.fileKey) {
+    alert('Файл недоступен для этой операции импорта');
+    return;
+  }
+
+  try {
+    const response = await api.downloadImportFile(op.id);
+    
+    // Create a blob from the response
+    const blob = new Blob([response.data], { type: response.headers['content-type'] || 'application/octet-stream' });
+    
+    // Create download link
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = op.fileName || `import-${op.id}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error: any) {
+    alert(`Ошибка скачивания файла: ${error.response?.data?.message || error.message}`);
+  }
+}
+
+function formatFileSize(bytes: number | null): string {
+  if (!bytes) return '—';
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
 onMounted(() => {
   loadHistory();
+  loadAdminStatus();
 });
 </script>
 
 <template>
   <div class="import-container">
     <h1>📤 Импорт маршрутов</h1>
+
+    <!-- Admin Controls Panel -->
+    <section v-if="isAdmin" class="admin-panel">
+      <div class="admin-controls">
+        <div class="control-item">
+          <label class="switch">
+            <input type="checkbox" :checked="adminStatus.minioFailureSimulation" @change="toggleMinio" :disabled="loadingAdminStatus">
+            <span class="slider"></span>
+          </label>
+          <span class="control-label">❌ MinIO Failure</span>
+        </div>
+        
+        <div class="control-item">
+          <label class="switch">
+            <input type="checkbox" :checked="adminStatus.databaseFailureSimulation" @change="toggleDatabase" :disabled="loadingAdminStatus">
+            <span class="slider"></span>
+          </label>
+          <span class="control-label">❌ DB Failure</span>
+        </div>
+        
+        <div class="control-item">
+          <label class="switch">
+            <input type="checkbox" :checked="adminStatus.businessErrorSimulation" @change="toggleBusinessError" :disabled="loadingAdminStatus">
+            <span class="slider"></span>
+          </label>
+          <span class="control-label">❌ Logic Error</span>
+        </div>
+      </div>
+    </section>
 
     <section class="upload-section">
       <h2>Загрузить файл</h2>
@@ -152,8 +265,11 @@ onMounted(() => {
               <th>Статус</th>
               <th>Пользователь</th>
               <th>Добавлено объектов</th>
+              <th>Файл</th>
+              <th>Размер</th>
               <th>Дата</th>
               <th>Ошибка</th>
+              <th>Действия</th>
             </tr>
           </thead>
           <tbody>
@@ -166,8 +282,21 @@ onMounted(() => {
               </td>
               <td>{{ op.username }}</td>
               <td>{{ op.addedCount ?? '—' }}</td>
+              <td>{{ op.fileName ?? '—' }}</td>
+              <td>{{ formatFileSize(op.fileSize) }}</td>
               <td>{{ formatDate(op.localCreatedAt) }}</td>
               <td class="error-cell">{{ op.errorMessage ?? '—' }}</td>
+              <td>
+                <button
+                  v-if="op.fileKey"
+                  class="btn download"
+                  @click="downloadFile(op)"
+                  title="Скачать файл импорта"
+                >
+                  📥 Скачать
+                </button>
+                <span v-else class="no-file">—</span>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -333,4 +462,101 @@ td {
   font-size: 12px;
   color: #721c24;
 }
+
+.btn.download {
+  background: #007bff;
+  color: white;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.btn.download:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.no-file {
+  color: var(--color-text);
+  opacity: 0.5;
+}
+
+/* Admin Panel */
+.admin-panel {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.admin-controls {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.control-label {
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: rgba(76, 175, 80, 0.8);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+input:disabled + .slider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 </style>
+

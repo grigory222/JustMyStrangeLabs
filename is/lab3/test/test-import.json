@@ -1,0 +1,46 @@
+[
+  {
+    "name": "Imported Route 1",
+    "coordinates": {
+      "x": 10,
+      "y": 20,
+      "z": 30
+    },
+    "from": {
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "name": "Start Point"
+    },
+    "to": {
+      "x": 100,
+      "y": 200,
+      "z": 300,
+      "name": "End Point"
+    },
+    "distance": 500.5,
+    "rating": 4
+  },
+  {
+    "name": "Imported Route 2",
+    "coordinates": {
+      "x": 15,
+      "y": 25,
+      "z": 35
+    },
+    "from": {
+      "x": 5,
+      "y": 5,
+      "z": 5,
+      "name": "Point A"
+    },
+    "to": {
+      "x": 150,
+      "y": 250,
+      "z": 350,
+      "name": "Point B"
+    },
+    "distance": 700.8,
+    "rating": 5
+  }
+]

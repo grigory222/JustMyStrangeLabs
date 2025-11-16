@@ -1,0 +1,116 @@
+package org.itmo.controller;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.itmo.dto.*;
+import org.itmo.model.Route;
+import org.itmo.service.RouteService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/routes")
+@RequiredArgsConstructor
+public class RouteController {
+
+    private final RouteService routeService;
+
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public Page<RouteResponseDto> list(@RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "10") int size,
+                            @RequestParam(required = false) String sort,
+                            @RequestParam(required = false) String order,
+                            @RequestParam(required = false) String nameEquals) {
+        Sort sortSpec = Sort.unsorted();
+        if (sort != null && !sort.isEmpty()) {
+            Sort.Direction dir = (order != null && order.equalsIgnoreCase("desc")) ? Sort.Direction.DESC : Sort.Direction.ASC;
+            sortSpec = Sort.by(dir, sort);
+        }
+        Pageable pageable = PageRequest.of(page, size, sortSpec);
+        return routeService.list(nameEquals, pageable);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public RouteResponseDto get(@PathVariable Integer id) {
+        return routeService.get(id);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("isAuthenticated()")
+    public RouteResponseDto create(@Valid @RequestBody RouteCreateDto route) {
+        return routeService.create(route);
+    }
+
+
+    @PatchMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public RouteResponseDto update(@PathVariable Integer id,
+                        @RequestBody RouteCreateDto patch) {
+        return routeService.update(id, patch);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
+        routeService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Спец-операции - доступны только админам
+    @DeleteMapping("/by-rating")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Map<String, Object> deleteAllByRating(@RequestParam Long rating) {
+        long count = routeService.deleteAllByRating(rating);
+        return Map.of("deleted", count);
+    }
+
+    @DeleteMapping("/one-by-rating")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteOneByRating(@RequestParam Long rating) {
+        boolean deleted = routeService.deleteOneByRating(rating);
+        if (deleted) return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "No route with given rating"));
+    }
+
+    @GetMapping("/group-by-name")
+    @PreAuthorize("isAuthenticated()")
+    public java.util.List<GroupByNameResponse> groupByName() {
+        return routeService.groupByName();
+    }
+
+    @GetMapping("/between")
+    @PreAuthorize("isAuthenticated()")
+    public Page<RouteResponseDto> findBetween(@RequestParam Long fromId,
+                                   @RequestParam Long toId,
+                                   @RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "10") int size,
+                                   @RequestParam(required = false) String sort,
+                                   @RequestParam(required = false) String order) {
+        Sort sortSpec = Sort.unsorted();
+        if (sort != null && !sort.isEmpty()) {
+            Sort.Direction dir = (order != null && order.equalsIgnoreCase("desc")) ? Sort.Direction.DESC : Sort.Direction.ASC;
+            sortSpec = Sort.by(dir, sort);
+        }
+        Pageable pageable = PageRequest.of(page, size, sortSpec);
+        return routeService.findBetween(fromId, toId, pageable);
+    }
+
+    @PostMapping("/add-between")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("isAuthenticated()")
+    public RouteResponseDto addBetween(@Valid @RequestBody AddRouteBetweenDto dto) {
+        return routeService.addRouteBetween(dto);
+    }
+}
+
