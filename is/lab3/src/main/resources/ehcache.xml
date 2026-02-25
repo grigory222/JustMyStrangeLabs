@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache:config
+        xmlns:ehcache="http://www.ehcache.org/v3"
+        xmlns:jcache="http://www.ehcache.org/v3/jsr107">
+
+    <!-- Конфигурация кэша по умолчанию -->
+    <ehcache:cache-template name="default">
+        <ehcache:expiry>
+            <ehcache:ttl unit="minutes">10</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">1000</ehcache:heap>
+            <ehcache:offheap unit="MB">10</ehcache:offheap>
+        </ehcache:resources>
+    </ehcache:cache-template>
+
+    <!-- Кэш для сущностей Route -->
+    <ehcache:cache alias="org.itmo.model.Route" uses-template="default">
+        <ehcache:expiry>
+            <ehcache:ttl unit="minutes">15</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:offheap unit="MB">5</ehcache:offheap>
+        </ehcache:resources>
+    </ehcache:cache>
+
+    <!-- Кэш для сущностей Location -->
+    <ehcache:cache alias="org.itmo.model.Location" uses-template="default">
+        <ehcache:expiry>
+            <ehcache:ttl unit="minutes">20</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">300</ehcache:heap>
+            <ehcache:offheap unit="MB">3</ehcache:offheap>
+        </ehcache:resources>
+    </ehcache:cache>
+
+    <!-- Кэш для сущностей Coordinates -->
+    <ehcache:cache alias="org.itmo.model.Coordinates" uses-template="default">
+        <ehcache:expiry>
+            <ehcache:ttl unit="minutes">20</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">300</ehcache:heap>
+            <ehcache:offheap unit="MB">3</ehcache:offheap>
+        </ehcache:resources>
+    </ehcache:cache>
+
+    <!-- Кэш для сущностей User -->
+    <ehcache:cache alias="org.itmo.model.User" uses-template="default">
+        <ehcache:expiry>
+            <ehcache:ttl unit="minutes">30</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">200</ehcache:heap>
+            <ehcache:offheap unit="MB">2</ehcache:offheap>
+        </ehcache:resources>
+    </ehcache:cache>
+
+    <!-- Регион кэша для коллекций и запросов -->
+    <ehcache:cache alias="default-query-results-region" uses-template="default">
+        <ehcache:expiry>
+            <ehcache:ttl unit="minutes">5</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">100</ehcache:heap>
+        </ehcache:resources>
+    </ehcache:cache>
+
+    <ehcache:cache alias="default-update-timestamps-region" uses-template="default">
+        <ehcache:expiry>
+            <ehcache:none/>
+        </ehcache:expiry>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">5000</ehcache:heap>
+        </ehcache:resources>
+    </ehcache:cache>
+
+</ehcache:config>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TangentFunction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">lab1</a> &gt; <a href="index.source.html" class="el_package">ru.itmo.tpo</a> &gt; <span class="el_source">TangentFunction.java</span></div><h1>TangentFunction.java</h1><pre class="source lang-java linenums">package ru.itmo.tpo;
+
+<span class="nc" id="L3">public class TangentFunction {</span>
+
+    private static final double PRECISION = 1e-10;
+    private static final int MAX_ITERATIONS = 100;
+
+    public static double tg(double x) {
+<span class="fc" id="L9">        double sinX = sin(x);</span>
+<span class="fc" id="L10">        double cosX = cos(x);</span>
+        
+<span class="fc bfc" id="L12" title="All 2 branches covered.">        if (abs(cosX) &lt; 1e-10) {</span>
+<span class="fc" id="L13">            throw new IllegalArgumentException(&quot;tg(x) не определен в точке x = π/2 + πk&quot;);</span>
+        }
+        
+<span class="fc" id="L16">        return sinX / cosX;</span>
+    }
+    
+    private static double sin(double x) {
+<span class="fc" id="L20">        double sum = 0.0;</span>
+<span class="fc" id="L21">        double term = x;</span>
+<span class="fc" id="L22">        double xSquared = x * x;</span>
+        
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        for (int n = 0; n &lt; MAX_ITERATIONS; n++) {</span>
+<span class="fc" id="L25">            sum += term;</span>
+<span class="fc" id="L26">            term *= -xSquared / ((2*n + 2) * (2*n + 3));</span>
+            
+<span class="fc bfc" id="L28" title="All 2 branches covered.">            if (abs(term) &lt; PRECISION) {</span>
+<span class="fc" id="L29">                break;</span>
+            }
+        }
+        
+<span class="fc" id="L33">        return sum;</span>
+    }
+    
+    private static double cos(double x) {
+<span class="fc" id="L37">        double sum = 0.0;</span>
+<span class="fc" id="L38">        double term = 1.0;</span>
+<span class="fc" id="L39">        double xSquared = x * x;</span>
+        
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        for (int n = 0; n &lt; MAX_ITERATIONS; n++) {</span>
+<span class="fc" id="L42">            sum += term;</span>
+<span class="fc" id="L43">            term *= -xSquared / ((2*n + 1) * (2*n + 2));</span>
+            
+<span class="fc bfc" id="L45" title="All 2 branches covered.">            if (abs(term) &lt; PRECISION) {</span>
+<span class="fc" id="L46">                break;</span>
+            }
+        }
+        
+<span class="fc" id="L50">        return sum;</span>
+    }
+    
+    private static double abs(double value) {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        return value &lt; 0 ? -value : value;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

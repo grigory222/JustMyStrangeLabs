@@ -27,6 +27,24 @@ dependencies {
 
     implementation 'org.postgresql:postgresql:42.7.3'
 
+    // Apache Commons DBCP2 for connection pooling
+    implementation 'org.apache.commons:commons-dbcp2:2.12.0'
+
+    // Ehcache L2 Cache
+    implementation 'org.hibernate.orm:hibernate-jcache:6.5.2.Final'
+    implementation 'org.ehcache:ehcache:3.10.8'
+    
+    // JAXB для Ehcache (требуется для парсинга ehcache.xml)
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.3'
+    // Bridge для совместимости javax -> jakarta
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'com.sun.xml.bind:jaxb-impl:2.3.1'
+    implementation 'com.sun.xml.bind:jaxb-core:2.3.0.1'
+    
+    // AOP for cache statistics logging
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
     // WebSocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 

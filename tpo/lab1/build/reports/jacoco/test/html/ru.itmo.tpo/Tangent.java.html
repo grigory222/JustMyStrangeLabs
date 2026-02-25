@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tangent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">lab1</a> &gt; <a href="index.source.html" class="el_package">ru.itmo.tpo</a> &gt; <span class="el_source">Tangent.java</span></div><h1>Tangent.java</h1><pre class="source lang-java linenums">package ru.itmo.tpo;
+
+/**
+ * Класс для вычисления тангенса через степенной ряд
+ */
+<span class="nc" id="L6">public class Tangent {</span>
+    
+    private static final double DEFAULT_PRECISION = 1e-10;
+
+    /**
+     * Вычисляет tg(x) = sin(x) / cos(x)
+     * 
+     * @param x аргумент в радианах
+     * @param precision точность вычисления
+     * @return значение tg(x)
+     * @throws IllegalArgumentException если cos(x) ≈ 0 (x = π/2 + πk)
+     */
+    public static double tan(double x, double precision) {
+<span class="fc" id="L19">        double sinValue = TaylorSeries.sin(x, precision);</span>
+<span class="fc" id="L20">        double cosValue = TaylorSeries.cos(x, precision);</span>
+        
+<span class="fc bfc" id="L22" title="All 2 branches covered.">        if (Math.abs(cosValue) &lt; precision) {</span>
+<span class="fc" id="L23">            throw new IllegalArgumentException(</span>
+                &quot;Tangent is undefined at x = &quot; + x + &quot; (cos(x) ≈ 0)&quot;
+            );
+        }
+        
+<span class="fc" id="L28">        return sinValue / cosValue;</span>
+    }
+
+    /**
+     * Вычисляет tg(x) с точностью по умолчанию
+     * 
+     * @param x аргумент в радианах
+     * @return значение tg(x)
+     */
+    public static double tan(double x) {
+<span class="fc" id="L38">        return tan(x, DEFAULT_PRECISION);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

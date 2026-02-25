@@ -1,0 +1,14 @@
+/Users/skadibtw/compilers/Lexer/obj/Debug/net10.0/Lexer.GeneratedMSBuildEditorConfig.editorconfig
+/Users/skadibtw/compilers/Lexer/obj/Debug/net10.0/Lexer.AssemblyInfoInputs.cache
+/Users/skadibtw/compilers/Lexer/obj/Debug/net10.0/Lexer.AssemblyInfo.cs
+/Users/skadibtw/compilers/Lexer/obj/Debug/net10.0/Lexer.csproj.CoreCompileInputs.cache
+/Users/skadibtw/compilers/Lexer/bin/Debug/net10.0/Lexer
+/Users/skadibtw/compilers/Lexer/bin/Debug/net10.0/Lexer.deps.json
+/Users/skadibtw/compilers/Lexer/bin/Debug/net10.0/Lexer.runtimeconfig.json
+/Users/skadibtw/compilers/Lexer/bin/Debug/net10.0/Lexer.dll
+/Users/skadibtw/compilers/Lexer/bin/Debug/net10.0/Lexer.pdb
+/Users/skadibtw/compilers/Lexer/obj/Debug/net10.0/Lexer.dll
+/Users/skadibtw/compilers/Lexer/obj/Debug/net10.0/refint/Lexer.dll
+/Users/skadibtw/compilers/Lexer/obj/Debug/net10.0/Lexer.pdb
+/Users/skadibtw/compilers/Lexer/obj/Debug/net10.0/Lexer.genruntimeconfig.cache
+/Users/skadibtw/compilers/Lexer/obj/Debug/net10.0/ref/Lexer.dll
