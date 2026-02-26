@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Тесты для класса Zaphod" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-02-26T16:52:01" hostname="grigory" time="0.004">
+  <properties/>
+  <testcase name="Зафод кладет ноги на пульт управления" classname="ru.itmo.tpo.domain.ZaphodTest" time="0.0"/>
+  <testcase name="Зафод разваливается в кресле" classname="ru.itmo.tpo.domain.ZaphodTest" time="0.0"/>
+  <testcase name="Левая голова Зафода улыбается" classname="ru.itmo.tpo.domain.ZaphodTest" time="0.001"/>
+  <testcase name="Начальное состояние Зафода" classname="ru.itmo.tpo.domain.ZaphodTest" time="0.0"/>
+  <testcase name="Зафод ковыряет в зубах правой головы левой рукой" classname="ru.itmo.tpo.domain.ZaphodTest" time="0.0"/>
+  <testcase name="Зафод встает" classname="ru.itmo.tpo.domain.ZaphodTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

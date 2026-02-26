@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HashTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">lab1</a> &gt; <a href="index.source.html" class="el_package">ru.itmo.tpo</a> &gt; <span class="el_source">HashTable.java</span></div><h1>HashTable.java</h1><pre class="source lang-java linenums">package ru.itmo.tpo;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+
+public class HashTable {
+
+<span class="fc" id="L10">    public enum TracingPoints {</span>
+<span class="fc" id="L11">        OPERATION_START,</span>
+<span class="fc" id="L12">        HASH_CALCULATED,</span>
+<span class="fc" id="L13">        SEARCHING_IN_CHAIN,</span>
+<span class="fc" id="L14">        KEY_FOUND,</span>
+<span class="fc" id="L15">        KEY_NOT_FOUND,</span>
+<span class="fc" id="L16">        KEY_INSERTED,</span>
+<span class="fc" id="L17">        KEY_UPDATED,</span>
+<span class="fc" id="L18">        KEY_DELETED,</span>
+<span class="fc" id="L19">        OPERATION_COMPLETE</span>
+    }
+
+    static class Node {
+        String key;
+        String value;
+
+<span class="fc" id="L26">        Node(String key, String value) {</span>
+<span class="fc" id="L27">            this.key = key;</span>
+<span class="fc" id="L28">            this.value = value;</span>
+<span class="fc" id="L29">        }</span>
+    }
+
+    private final int size;
+    private final List&lt;LinkedList&lt;Node&gt;&gt; table;
+    private int elementCount;
+
+    // Для отслеживания характерных точек
+<span class="fc" id="L37">    private boolean traceEnabled = false;</span>
+<span class="fc" id="L38">    private final List&lt;TracingPoints&gt; trace = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L40">    public HashTable(int size) {</span>
+<span class="fc" id="L41">        this.size = size;</span>
+<span class="fc" id="L42">        this.table = new ArrayList&lt;&gt;(size);</span>
+<span class="fc" id="L43">        this.elementCount = 0;</span>
+
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        for (int i = 0; i &lt; size; i++) {</span>
+<span class="fc" id="L46">            table.add(new LinkedList&lt;&gt;());</span>
+        }
+<span class="fc" id="L48">    }</span>
+
+    public void enableTrace() {
+<span class="fc" id="L51">        this.traceEnabled = true;</span>
+<span class="fc" id="L52">        this.trace.clear();</span>
+<span class="fc" id="L53">    }</span>
+
+    public void disableTrace() {
+<span class="fc" id="L56">        this.traceEnabled = false;</span>
+<span class="fc" id="L57">    }</span>
+
+    public List&lt;TracingPoints&gt; getTrace() {
+<span class="fc" id="L60">        return new ArrayList&lt;&gt;(trace);</span>
+    }
+
+    private void addPoint(TracingPoints point) {
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (traceEnabled) {</span>
+<span class="fc" id="L65">            trace.add(point);</span>
+        }
+<span class="fc" id="L67">    }</span>
+
+    public int hashCode(String key) {
+<span class="fc bfc" id="L70" title="All 4 branches covered.">        if (key == null || key.isEmpty()) {</span>
+<span class="fc" id="L71">            return 0;</span>
+        }
+
+<span class="fc" id="L74">        int hash = 0;</span>
+
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        for (char c : key.toCharArray()) {</span>
+<span class="fc" id="L77">            hash = hash &lt;&lt; 4;</span>
+<span class="fc" id="L78">            hash += c;</span>
+
+<span class="fc" id="L80">            int high = hash &amp; 0xF0000000;</span>
+<span class="fc" id="L81">            hash ^= high &gt;&gt;&gt; 12;</span>
+        }
+
+<span class="fc" id="L84">        return hash;</span>
+    }
+
+    public int hash(String key) {
+<span class="fc" id="L88">        int rawHash = hashCode(key);</span>
+<span class="fc" id="L89">        int index = Math.abs(rawHash % size);</span>
+<span class="fc" id="L90">        addPoint(TracingPoints.HASH_CALCULATED);</span>
+<span class="fc" id="L91">        return index;</span>
+    }
+
+    public void insert(String key, String value) {
+<span class="fc" id="L95">        addPoint(TracingPoints.OPERATION_START);</span>
+
+<span class="fc" id="L97">        int index = hash(key);</span>
+
+<span class="fc" id="L99">        LinkedList&lt;Node&gt; bucket = table.get(index);</span>
+<span class="fc" id="L100">        addPoint(TracingPoints.SEARCHING_IN_CHAIN);</span>
+
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        for (Node node : bucket) {</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">            if (Objects.equals(node.key, key)) {</span>
+<span class="fc" id="L104">                addPoint(TracingPoints.KEY_FOUND);</span>
+<span class="fc" id="L105">                node.value = value;</span>
+<span class="fc" id="L106">                addPoint(TracingPoints.KEY_UPDATED);</span>
+<span class="fc" id="L107">                addPoint(TracingPoints.OPERATION_COMPLETE);</span>
+<span class="fc" id="L108">                return;</span>
+            }
+<span class="fc" id="L110">        }</span>
+
+<span class="fc" id="L112">        addPoint(TracingPoints.KEY_NOT_FOUND);</span>
+<span class="fc" id="L113">        bucket.add(new Node(key, value));</span>
+<span class="fc" id="L114">        elementCount++;</span>
+<span class="fc" id="L115">        addPoint(TracingPoints.KEY_INSERTED);</span>
+<span class="fc" id="L116">        addPoint(TracingPoints.OPERATION_COMPLETE);</span>
+<span class="fc" id="L117">    }</span>
+
+    public String search(String key) {
+<span class="fc" id="L120">        addPoint(TracingPoints.OPERATION_START);</span>
+
+<span class="fc" id="L122">        int index = hash(key);</span>
+
+<span class="fc" id="L124">        LinkedList&lt;Node&gt; bucket = table.get(index);</span>
+<span class="fc" id="L125">        addPoint(TracingPoints.SEARCHING_IN_CHAIN);</span>
+
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        for (Node node : bucket) {</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">            if (Objects.equals(node.key, key)) {</span>
+<span class="fc" id="L129">                addPoint(TracingPoints.KEY_FOUND);</span>
+<span class="fc" id="L130">                addPoint(TracingPoints.OPERATION_COMPLETE);</span>
+<span class="fc" id="L131">                return node.value;</span>
+            }
+<span class="fc" id="L133">        }</span>
+
+<span class="fc" id="L135">        addPoint(TracingPoints.KEY_NOT_FOUND);</span>
+<span class="fc" id="L136">        addPoint(TracingPoints.OPERATION_COMPLETE);</span>
+<span class="fc" id="L137">        return null;</span>
+    }
+
+    public boolean delete(String key) {
+<span class="fc" id="L141">        addPoint(TracingPoints.OPERATION_START);</span>
+
+<span class="fc" id="L143">        int index = hash(key);</span>
+
+<span class="fc" id="L145">        LinkedList&lt;Node&gt; bucket = table.get(index);</span>
+<span class="fc" id="L146">        addPoint(TracingPoints.SEARCHING_IN_CHAIN);</span>
+
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        for (Node node : bucket) {</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">            if (Objects.equals(node.key, key)) {</span>
+<span class="fc" id="L150">                addPoint(TracingPoints.KEY_FOUND);</span>
+<span class="fc" id="L151">                bucket.remove(node);</span>
+<span class="fc" id="L152">                elementCount--;</span>
+<span class="fc" id="L153">                addPoint(TracingPoints.KEY_DELETED);</span>
+<span class="fc" id="L154">                addPoint(TracingPoints.OPERATION_COMPLETE);</span>
+<span class="fc" id="L155">                return true;</span>
+            }
+<span class="fc" id="L157">        }</span>
+
+<span class="fc" id="L159">        addPoint(TracingPoints.KEY_NOT_FOUND);</span>
+<span class="fc" id="L160">        addPoint(TracingPoints.OPERATION_COMPLETE);</span>
+<span class="fc" id="L161">        return false;</span>
+    }
+
+    public int getElementCount() {
+<span class="fc" id="L165">        return elementCount;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

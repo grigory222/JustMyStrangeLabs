@@ -5,15 +5,41 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fec03718-2b1e-4a5f-8187-6e7f2096f409" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../is/lab3/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../../is/lab3/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../is/lab3/src/main/java/org/itmo/config/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../is/lab3/src/main/java/org/itmo/config/AppConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../is/lab3/src/main/java/org/itmo/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../is/lab3/src/main/java/org/itmo/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../is/lab3/src/main/java/org/itmo/model/Coordinates.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../is/lab3/src/main/java/org/itmo/model/Coordinates.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../is/lab3/src/main/java/org/itmo/model/Location.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../is/lab3/src/main/java/org/itmo/model/Location.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../is/lab3/src/main/java/org/itmo/model/Route.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../is/lab3/src/main/java/org/itmo/model/Route.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../is/lab3/src/main/java/org/itmo/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../is/lab3/src/main/java/org/itmo/model/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../is/lab3/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../../is/lab3/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../is/lab3/test/CRUD_test.jmx" beforeDir="false" afterPath="$PROJECT_DIR$/../../is/lab3/test/CRUD_test.jmx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.10/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.10/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.10/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.10/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/test/ru/itmo/tpo/TangentFunctionTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/test/ru/itmo/tpo/TangentFunctionTest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/jacoco/test.exec" beforeDir="false" afterPath="$PROJECT_DIR$/build/jacoco/test.exec" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/jacoco/test/html/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/jacoco/test/html/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/jacoco/test/html/jacoco-sessions.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/jacoco/test/html/jacoco-sessions.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/jacoco/test/html/ru.itmo.tpo/Tangent.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/jacoco/test/html/ru.itmo.tpo/Tangent.java.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/jacoco/test/html/ru.itmo.tpo/TangentFunction.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/jacoco/test/html/ru.itmo.tpo/TangentFunction.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/jacoco/test/html/ru.itmo.tpo/TangentFunction.java.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/jacoco/test/html/ru.itmo.tpo/TangentFunction.java.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/jacoco/test/html/ru.itmo.tpo/TaylorSeries.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/jacoco/test/html/ru.itmo.tpo/TaylorSeries.java.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/jacoco/test/html/ru.itmo.tpo/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/jacoco/test/html/ru.itmo.tpo/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/jacoco/test/html/ru.itmo.tpo/index.source.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/jacoco/test/html/ru.itmo.tpo/index.source.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/jacoco/test/jacocoTestReport.csv" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/jacoco/test/jacocoTestReport.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/jacoco/test/jacocoTestReport.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/jacoco/test/jacocoTestReport.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/classes/ru.itmo.tpo.TangentFunctionTest.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/classes/ru.itmo.tpo.TangentFunctionTest.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/packages/ru.itmo.tpo.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/packages/ru.itmo.tpo.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/TEST-ru.itmo.tpo.TangentFunctionTest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/TEST-ru.itmo.tpo.TangentFunctionTest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/binary/results.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/binary/results.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/compileTransaction/stash-dir/TangentFunction.class.uniqueId0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileTestJava/compileTransaction/stash-dir/TangentFunctionTest.class.uniqueId0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileTestJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileTestJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/itmo/tpo/HashTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/itmo/tpo/HashTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/ru/itmo/tpo/HashTableTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ru/itmo/tpo/HashTableTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/ru/itmo/tpo/TangentFunctionTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ru/itmo/tpo/TangentFunctionTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +84,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Gradle.HashTableTest.executor": "Run",
     "Gradle.TangentFunctionTest.executor": "Run",
     "Gradle.TangentFunctionTest.testLargeInputForLoopLimit.executor": "Run",
     "Gradle.TangentFunctionTest.testLargeValueNearDiscontinuity.executor": "Run",
@@ -70,11 +97,35 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Gradle.TangentFunctionTest">
+  <component name="RunManager" selected="Gradle.HashTableTest">
+    <configuration name="HashTableTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;ru.itmo.tpo.HashTableTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
     <configuration name="TangentFunctionTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -149,6 +200,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.HashTableTest" />
         <item itemvalue="Gradle.TangentFunctionTest" />
         <item itemvalue="Gradle.TangentFunctionTest.testLargeInputForLoopLimit" />
         <item itemvalue="Gradle.TangentFunctionTest.testLargeValueNearDiscontinuity" />
@@ -173,7 +225,7 @@
       <updated>1771437685845</updated>
       <workItem from="1771437686978" duration="627000" />
       <workItem from="1771930575378" duration="3479000" />
-      <workItem from="1772033655399" duration="7473000" />
+      <workItem from="1772033655399" duration="22834000" />
     </task>
     <servers />
   </component>

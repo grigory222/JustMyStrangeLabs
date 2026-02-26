@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Тесты для класса Head" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-02-26T16:52:01" hostname="grigory" time="0.006">
+  <properties/>
+  <testcase name="Голова прекращает деятельность" classname="ru.itmo.tpo.domain.HeadTest" time="0.001"/>
+  <testcase name="Активность головы можно переопределить" classname="ru.itmo.tpo.domain.HeadTest" time="0.001"/>
+  <testcase name="Голова начинает улыбаться" classname="ru.itmo.tpo.domain.HeadTest" time="0.001"/>
+  <testcase name="Голова разговаривает" classname="ru.itmo.tpo.domain.HeadTest" time="0.001"/>
+  <testcase name="Голова ковыряет в зубах" classname="ru.itmo.tpo.domain.HeadTest" time="0.0"/>
+  <testcase name="Начальное состояние головы" classname="ru.itmo.tpo.domain.HeadTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

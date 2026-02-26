@@ -1,24 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ru.itmo.tpo.TangentFunctionTest" tests="18" skipped="0" failures="0" errors="0" timestamp="2026-02-25T16:46:39" hostname="grigory" time="0.162">
+<testsuite name="ru.itmo.tpo.TangentFunctionTest" tests="36" skipped="0" failures="0" errors="0" timestamp="2026-02-26T16:52:01" hostname="grigory" time="0.211">
   <properties/>
-  <testcase name="Проверка цикла на больших числах (для 100% покрытия)" classname="ru.itmo.tpo.TangentFunctionTest" time="0.02"/>
-  <testcase name="tg(1.5707963267948966) выбрасывает исключение" classname="ru.itmo.tpo.TangentFunctionTest" time="0.026"/>
+  <testcase name="Проверка цикла на больших числах (для 100% покрытия)" classname="ru.itmo.tpo.TangentFunctionTest" time="0.004"/>
+  <testcase name="tg(1.5707963267948966) выбрасывает исключение" classname="ru.itmo.tpo.TangentFunctionTest" time="0.03"/>
   <testcase name="tg(4.71238898038469) выбрасывает исключение" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
-  <testcase name="tg(-1.5707963267948966) выбрасывает исключение" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
-  <testcase name="tg(0.0) ≈ 0.0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.007"/>
+  <testcase name="tg(7.853981633974483) выбрасывает исключение" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(-1.5707963267948966) выбрасывает исключение" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(-4.71238898038469) выбрасывает исключение" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(0.0) ≈ 0.0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.005"/>
   <testcase name="tg(0.1) ≈ 0.10033467208545055" classname="ru.itmo.tpo.TangentFunctionTest" time="0.003"/>
-  <testcase name="tg(0.2) ≈ 0.20271003550867248" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="tg(0.2) ≈ 0.20271003550867248" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
   <testcase name="tg(0.3) ≈ 0.30933624960962325" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
   <testcase name="tg(0.4) ≈ 0.42279321873816156" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
-  <testcase name="tg(0.5) ≈ 0.5463024898437905" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
-  <testcase name="tg(1.0) ≈ 1.5574077246549023" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
-  <testcase name="tg(1.4) ≈ 5.797883715482887" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(0.5) ≈ 0.5463024898437905" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="tg(1.0) ≈ 1.5574077246549023" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="tg(1.4) ≈ 5.797883715482887" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
   <testcase name="tg(1.5) ≈ 14.101419947171719" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
   <testcase name="tg(-0.1) ≈ -0.10033467208545055" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
   <testcase name="tg(-0.2) ≈ -0.20271003550867248" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
   <testcase name="tg(-0.3) ≈ -0.30933624960962325" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
   <testcase name="tg(-1.0) ≈ -1.5574077246549023" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
-  <testcase name="tg(-1.5) ≈ -14.101419947171719" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="tg(-1.5) ≈ -14.101419947171719" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(2.0) ≈ -2.185039863261519" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(2.5) ≈ -0.7470222972386603" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(3.0) ≈ -0.1425465430742778" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(3.5) ≈ 0.3745856401585947" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(4.0) ≈ 1.1578212823495777" classname="ru.itmo.tpo.TangentFunctionTest" time="0.0"/>
+  <testcase name="tg(4.5) ≈ 4.637332054551484" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(-2.0) ≈ 2.185039863261519" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(-2.5) ≈ 0.7470222972386603" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(-3.0) ≈ 0.1425465430742778" classname="ru.itmo.tpo.TangentFunctionTest" time="0.0"/>
+  <testcase name="tg(-4.0) ≈ -1.1578212823495777" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(-4.5) ≈ -4.637332054551484" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(5.0) ≈ -3.380515006246586" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(6.0) ≈ -0.29100619138474915" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(-5.0) ≈ 3.380515006246586" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(-6.0) ≈ 0.29100619138474915" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="Покрытие конструктора" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

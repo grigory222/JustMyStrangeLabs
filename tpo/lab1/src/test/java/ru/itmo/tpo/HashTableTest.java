@@ -7,292 +7,262 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static ru.itmo.tpo.HashTable.CharacteristicPoint.*;
+import static ru.itmo.tpo.HashTable.TracingPoints.*;
 
-@DisplayName("Тесты хеш-таблицы с закрытой адресацией - Пункт 2")
+@DisplayName("Тесты хеш-таблицы с закрытой адресацией")
 class HashTableTest {
-    
+
     private HashTable hashTable;
-    
+
     @BeforeEach
     void setUp() {
         hashTable = new HashTable(13);
     }
-    
-    // ===== ТЕСТЫ ТРАССИРОВКИ ВСТАВКИ =====
-    
+
     @Test
     @DisplayName("Трассировка INSERT: вставка в пустую корзину")
     void testTraceInsertToEmptyBucket() {
-        // Эталон: START -> HASH -> SEARCHING -> KEY_NOT_FOUND -> KEY_INSERTED -> COMPLETE
-        List<HashTable.CharacteristicPoint> expected = List.of(
-            OPERATION_START,
-            HASH_CALCULATED,
-            SEARCHING_IN_CHAIN,
-            KEY_NOT_FOUND,
-            KEY_INSERTED,
-            OPERATION_COMPLETE
+        List<HashTable.TracingPoints> expected = List.of(
+                OPERATION_START,
+                HASH_CALCULATED,
+                SEARCHING_IN_CHAIN,
+                KEY_NOT_FOUND,
+                KEY_INSERTED,
+                OPERATION_COMPLETE
         );
-        
+
         hashTable.enableTrace();
-        hashTable.insert("test", "value1");
-        List<HashTable.CharacteristicPoint> actual = hashTable.getTrace();
+        hashTable.insert("test", "value");
+
+        assertEquals(expected, hashTable.getTrace());
         
-        assertEquals(expected, actual, 
-            "Вставка в пустую корзину: START -> HASH -> SEARCHING -> KEY_NOT_FOUND -> KEY_INSERTED -> COMPLETE");
+        assertEquals("value", hashTable.search("test"), "Вставленное значение должно быть найдено");
+        assertEquals(1, hashTable.getElementCount(), "Количество элементов должно быть 1");
     }
-    
-    @Test
-    @DisplayName("Трассировка INSERT: вставка нового ключа с коллизией")
-    void testTraceInsertWithCollision() {
-        // Сначала вставляем первый элемент
-        hashTable.insert("key1", "value1");
-        
-        // Вставляем второй с тем же хешем (симулируем или просто другой ключ)
-        // Эталон: START -> HASH -> SEARCHING -> KEY_NOT_FOUND -> KEY_INSERTED -> COMPLETE
-        List<HashTable.CharacteristicPoint> expected = List.of(
-            OPERATION_START,
-            HASH_CALCULATED,
-            SEARCHING_IN_CHAIN,
-            KEY_NOT_FOUND,
-            KEY_INSERTED,
-            OPERATION_COMPLETE
-        );
-        
-        hashTable.enableTrace();
-        hashTable.insert("key2", "value2");
-        List<HashTable.CharacteristicPoint> actual = hashTable.getTrace();
-        
-        // Проверяем что последовательность содержит основные точки
-        assertEquals(OPERATION_START, actual.get(0));
-        assertEquals(HASH_CALCULATED, actual.get(1));
-        assertTrue(actual.contains(OPERATION_COMPLETE));
-    }
-    
+
     @Test
     @DisplayName("Трассировка INSERT: обновление существующего ключа")
-    void testTraceUpdateExisting() {
+    void testTraceInsertUpdate() {
         hashTable.insert("key", "value1");
-        
-        // Эталон: START -> HASH -> SEARCHING -> KEY_FOUND -> KEY_UPDATED -> COMPLETE
-        List<HashTable.CharacteristicPoint> expected = List.of(
-            OPERATION_START,
-            HASH_CALCULATED,
-            SEARCHING_IN_CHAIN,
-            KEY_FOUND,
-            KEY_UPDATED,
-            OPERATION_COMPLETE
+        assertEquals("value1", hashTable.search("key"), "Первое значение должно быть сохранено");
+
+        List<HashTable.TracingPoints> expected = List.of(
+                OPERATION_START,
+                HASH_CALCULATED,
+                SEARCHING_IN_CHAIN,
+                KEY_FOUND,
+                KEY_UPDATED,
+                OPERATION_COMPLETE
         );
-        
+
         hashTable.enableTrace();
         hashTable.insert("key", "value2");
-        List<HashTable.CharacteristicPoint> actual = hashTable.getTrace();
+
+        assertEquals(expected, hashTable.getTrace());
         
-        assertEquals(expected, actual,
-            "Обновление: START -> HASH -> SEARCHING -> KEY_FOUND -> KEY_UPDATED -> COMPLETE");
+        assertEquals("value2", hashTable.search("key"), "Значение должно быть обновлено");
+        assertEquals(1, hashTable.getElementCount(), "Количество элементов не должно измениться");
     }
-    
-    // ===== ТЕСТЫ ТРАССИРОВКИ ПОИСКА =====
-    
-    @Test
-    @DisplayName("Трассировка SEARCH: поиск в пустой корзине")
-    void testTraceSearchInEmptyBucket() {
-        // Эталон: START -> HASH -> SEARCHING -> KEY_NOT_FOUND -> COMPLETE
-        List<HashTable.CharacteristicPoint> expected = List.of(
-            OPERATION_START,
-            HASH_CALCULATED,
-            SEARCHING_IN_CHAIN,
-            KEY_NOT_FOUND,
-            OPERATION_COMPLETE
-        );
-        
-        hashTable.enableTrace();
-        String result = hashTable.search("nonexistent");
-        List<HashTable.CharacteristicPoint> actual = hashTable.getTrace();
-        
-        assertNull(result);
-        assertEquals(expected, actual,
-            "Поиск в пустой корзине: START -> HASH -> SEARCHING -> KEY_NOT_FOUND -> COMPLETE");
-    }
-    
+
     @Test
     @DisplayName("Трассировка SEARCH: успешный поиск")
     void testTraceSearchFound() {
         hashTable.insert("key", "value");
-        
-        // Эталон: START -> HASH -> SEARCHING -> KEY_FOUND -> COMPLETE
-        List<HashTable.CharacteristicPoint> expected = List.of(
-            OPERATION_START,
-            HASH_CALCULATED,
-            SEARCHING_IN_CHAIN,
-            KEY_FOUND,
-            OPERATION_COMPLETE
+
+        List<HashTable.TracingPoints> expected = List.of(
+                OPERATION_START,
+                HASH_CALCULATED,
+                SEARCHING_IN_CHAIN,
+                KEY_FOUND,
+                OPERATION_COMPLETE
         );
-        
+
         hashTable.enableTrace();
         String result = hashTable.search("key");
-        List<HashTable.CharacteristicPoint> actual = hashTable.getTrace();
-        
-        assertEquals("value", result);
-        assertEquals(expected, actual,
-            "Успешный поиск: START -> HASH -> SEARCHING -> KEY_FOUND -> COMPLETE");
+        assertEquals("value", result, "Найденное значение должно совпадать");
+        assertEquals(expected, hashTable.getTrace());
     }
-    
+
     @Test
-    @DisplayName("Трассировка SEARCH: неудачный поиск в непустой корзине")
-    void testTraceSearchNotFoundInChain() {
-        hashTable.insert("key1", "value1");
-        
-        // Эталон: START -> HASH -> SEARCHING -> KEY_NOT_FOUND -> COMPLETE
-        List<HashTable.CharacteristicPoint> expected = List.of(
-            OPERATION_START,
-            HASH_CALCULATED,
-            SEARCHING_IN_CHAIN,
-            KEY_NOT_FOUND,
-            OPERATION_COMPLETE
+    @DisplayName("Трассировка SEARCH: ключ не найден")
+    void testTraceSearchNotFound() {
+        hashTable.insert("A", "1");
+        hashTable.insert("N", "2");
+
+        List<HashTable.TracingPoints> expected = List.of(
+                OPERATION_START,
+                HASH_CALCULATED,
+                SEARCHING_IN_CHAIN,
+                KEY_NOT_FOUND,
+                OPERATION_COMPLETE
         );
-        
+
         hashTable.enableTrace();
-        String result = hashTable.search("key2");
-        List<HashTable.CharacteristicPoint> actual = hashTable.getTrace();
-        
-        assertNull(result);
-        assertEquals(expected, actual,
-            "Неудачный поиск: START -> HASH -> SEARCHING -> KEY_NOT_FOUND -> COMPLETE");
+        String result = hashTable.search("[");
+        assertNull(result, "Несуществующий ключ должен вернуть null");
+        assertEquals(expected, hashTable.getTrace());
     }
-    
-    // ===== ТЕСТЫ ТРАССИРОВКИ УДАЛЕНИЯ =====
-    
-    @Test
-    @DisplayName("Трассировка DELETE: удаление из пустой корзины")
-    void testTraceDeleteFromEmptyBucket() {
-        // Эталон: START -> HASH -> SEARCHING -> KEY_NOT_FOUND -> COMPLETE
-        List<HashTable.CharacteristicPoint> expected = List.of(
-            OPERATION_START,
-            HASH_CALCULATED,
-            SEARCHING_IN_CHAIN,
-            KEY_NOT_FOUND,
-            OPERATION_COMPLETE
-        );
-        
-        hashTable.enableTrace();
-        boolean result = hashTable.delete("nonexistent");
-        List<HashTable.CharacteristicPoint> actual = hashTable.getTrace();
-        
-        assertFalse(result);
-        assertEquals(expected, actual,
-            "Удаление из пустой корзины: START -> HASH -> SEARCHING -> KEY_NOT_FOUND -> COMPLETE");
-    }
-    
+
     @Test
     @DisplayName("Трассировка DELETE: успешное удаление")
     void testTraceDeleteSuccess() {
         hashTable.insert("key", "value");
-        
-        // Эталон: START -> HASH -> SEARCHING -> KEY_FOUND -> KEY_DELETED -> COMPLETE
-        List<HashTable.CharacteristicPoint> expected = List.of(
-            OPERATION_START,
-            HASH_CALCULATED,
-            SEARCHING_IN_CHAIN,
-            KEY_FOUND,
-            KEY_DELETED,
-            OPERATION_COMPLETE
-        );
-        
-        hashTable.enableTrace();
-        boolean result = hashTable.delete("key");
-        List<HashTable.CharacteristicPoint> actual = hashTable.getTrace();
-        
-        assertTrue(result);
-        assertEquals(expected, actual,
-            "Успешное удаление: START -> HASH -> SEARCHING -> KEY_FOUND -> KEY_DELETED -> COMPLETE");
-    }
-    
-    @Test
-    @DisplayName("Трассировка DELETE: неудачное удаление из непустой корзины")
-    void testTraceDeleteNotFoundInChain() {
-        hashTable.insert("key1", "value1");
-        
-        // Эталон: START -> HASH -> SEARCHING -> KEY_NOT_FOUND -> COMPLETE
-        List<HashTable.CharacteristicPoint> expected = List.of(
-            OPERATION_START,
-            HASH_CALCULATED,
-            SEARCHING_IN_CHAIN,
-            KEY_NOT_FOUND,
-            OPERATION_COMPLETE
-        );
-        
-        hashTable.enableTrace();
-        boolean result = hashTable.delete("key2");
-        List<HashTable.CharacteristicPoint> actual = hashTable.getTrace();
-        
-        assertFalse(result);
-        assertEquals(expected, actual,
-            "Неудачное удаление: START -> HASH -> SEARCHING -> KEY_NOT_FOUND -> COMPLETE");
-    }
-    
-    // ===== ФУНКЦИОНАЛЬНЫЕ ТЕСТЫ =====
-    
-    @Test
-    @DisplayName("Вставка и поиск элемента")
-    void testInsertAndSearch() {
-        hashTable.insert("key", "value");
-        assertEquals("value", hashTable.search("key"));
+        assertEquals("value", hashTable.search("key"), "Значение должно быть найдено перед удалением");
         assertEquals(1, hashTable.getElementCount());
-    }
-    
-    @Test
-    @DisplayName("Удаление элемента")
-    void testDelete() {
-        hashTable.insert("key", "value");
-        assertTrue(hashTable.delete("key"));
-        assertNull(hashTable.search("key"));
-        assertEquals(0, hashTable.getElementCount());
-    }
-    
-    @Test
-    @DisplayName("Обновление значения")
-    void testUpdate() {
-        hashTable.insert("key", "value1");
-        hashTable.insert("key", "value2");
-        assertEquals("value2", hashTable.search("key"));
-        assertEquals(1, hashTable.getElementCount());
-    }
-    
-    @Test
-    @DisplayName("Множественные вставки")
-    void testMultipleInserts() {
-        hashTable.insert("key1", "value1");
-        hashTable.insert("key2", "value2");
-        hashTable.insert("key3", "value3");
+
+        List<HashTable.TracingPoints> expected = List.of(
+                OPERATION_START,
+                HASH_CALCULATED,
+                SEARCHING_IN_CHAIN,
+                KEY_FOUND,
+                KEY_DELETED,
+                OPERATION_COMPLETE
+        );
+
+        hashTable.enableTrace();
+        boolean deleteResult = hashTable.delete("key");
+        assertTrue(deleteResult, "Удаление существующего ключа должно вернуть true");
+        assertEquals(expected, hashTable.getTrace());
         
-        assertEquals("value1", hashTable.search("key1"));
-        assertEquals("value2", hashTable.search("key2"));
-        assertEquals("value3", hashTable.search("key3"));
+        assertNull(hashTable.search("key"), "Удаленный ключ не должен быть найден");
+        assertEquals(0, hashTable.getElementCount(), "Количество элементов должно уменьшиться");
+    }
+
+    @Test
+    @DisplayName("Трассировка DELETE: ключ не найден")
+    void testTraceDeleteNotFound() {
+        hashTable.insert("A", "1");
+        hashTable.insert("N", "2");
+        int initialCount = hashTable.getElementCount();
+
+        List<HashTable.TracingPoints> expected = List.of(
+                OPERATION_START,
+                HASH_CALCULATED,
+                SEARCHING_IN_CHAIN,
+                KEY_NOT_FOUND,
+                OPERATION_COMPLETE
+        );
+
+        hashTable.enableTrace();
+        boolean deleteResult = hashTable.delete("[");
+        assertFalse(deleteResult, "Удаление несуществующего ключа должно вернуть false");
+        assertEquals(expected, hashTable.getTrace());
+        
+        assertEquals("1", hashTable.search("A"), "Другие элементы не должны быть затронуты");
+        assertEquals("2", hashTable.search("N"), "Другие элементы не должны быть затронуты");
+        assertEquals(initialCount, hashTable.getElementCount(), "Количество элементов не должно измениться");
+    }
+
+    @Test
+    @DisplayName("disableTrace не добавляет точки трассировки")
+    void testDisableTrace() {
+        hashTable.enableTrace();
+        hashTable.disableTrace();
+        hashTable.insert("key", "value");
+
+        assertTrue(hashTable.getTrace().isEmpty());
+    }
+
+    @Test
+    @DisplayName("hashCode: null и пустая строка")
+    void testHashCodeNullAndEmpty() {
+        assertEquals(0, hashTable.hashCode(null));
+        assertEquals(0, hashTable.hashCode(""));
+    }
+
+    @Test
+    @DisplayName("hashCode: непустая строка")
+    void testHashCodeNonEmpty() {
+        assertNotEquals(0, hashTable.hashCode("abc"));
+    }
+
+    @Test
+    @DisplayName("Множественная вставка и поиск")
+    void testMultipleInsertAndSearch() {
+        hashTable.insert("apple", "fruit");
+        hashTable.insert("carrot", "vegetable");
+        hashTable.insert("milk", "dairy");
+        hashTable.insert("bread", "bakery");
+        
+        assertEquals("fruit", hashTable.search("apple"));
+        assertEquals("vegetable", hashTable.search("carrot"));
+        assertEquals("dairy", hashTable.search("milk"));
+        assertEquals("bakery", hashTable.search("bread"));
+        assertEquals(4, hashTable.getElementCount());
+    }
+
+    @Test
+    @DisplayName("Обработка коллизий")
+    void testCollisionHandling() {
+        hashTable.insert("A", "value_A");
+        hashTable.insert("N", "value_N");
+        hashTable.insert("[", "value_[");
+        
+        assertEquals("value_A", hashTable.search("A"));
+        assertEquals("value_N", hashTable.search("N"));
+        assertEquals("value_[", hashTable.search("["));
         assertEquals(3, hashTable.getElementCount());
     }
-    
+
     @Test
-    @DisplayName("Инициализация таблицы")
-    void testTableInitialization() {
-        HashTable table = new HashTable(10);
-        assertEquals(10, table.getSize());
+    @DisplayName("Обновление значений в цепочке")
+    void testUpdateInChain() {
+        hashTable.insert("A", "first");
+        hashTable.insert("N", "second");
         
-        HashTable defaultTable = new HashTable();
-        assertEquals(13, defaultTable.getSize());
+        hashTable.insert("A", "updated_A");
+        hashTable.insert("N", "updated_N");
+        
+        assertEquals("updated_A", hashTable.search("A"));
+        assertEquals("updated_N", hashTable.search("N"));
+        assertEquals(2, hashTable.getElementCount(), "Обновление не должно увеличивать счетчик");
     }
-    
+
     @Test
-    @DisplayName("Трассировка детерминирована")
-    void testTraceDeterminism() {
-        hashTable.enableTrace();
-        hashTable.insert("key", "value");
-        List<HashTable.CharacteristicPoint> trace1 = hashTable.getTrace();
+    @DisplayName("Удаление из цепочки")
+    void testDeleteFromChain() {
+        hashTable.insert("A", "value_A");
+        hashTable.insert("N", "value_N");
+        hashTable.insert("[", "value_[");
         
-        hashTable.clearTrace();
-        hashTable.insert("key", "value");
-        List<HashTable.CharacteristicPoint> trace2 = hashTable.getTrace();
+        assertTrue(hashTable.delete("N"));
         
-        assertEquals(trace1, trace2, "Одинаковые операции дают одинаковую трассировку");
+        assertEquals("value_A", hashTable.search("A"), "Другие элементы в цепочке должны остаться");
+        assertNull(hashTable.search("N"), "Удаленный элемент не должен быть найден");
+        assertEquals("value_[", hashTable.search("["), "Другие элементы в цепочке должны остаться");
+        assertEquals(2, hashTable.getElementCount());
+    }
+
+    @Test
+    @DisplayName("Поиск несуществующих ключей")
+    void testSearchNonexistentKeys() {
+        hashTable.insert("existing", "value");
+        
+        assertNull(hashTable.search("nonexistent"));
+        assertNull(hashTable.search(""));
+        assertNull(hashTable.search("another_missing_key"));
+        assertEquals(1, hashTable.getElementCount());
+    }
+
+    @Test
+    @DisplayName("Удаление несуществующих ключей")
+    void testDeleteNonexistentKeys() {
+        hashTable.insert("key", "value");
+        
+        assertFalse(hashTable.delete("nonexistent"));
+        assertFalse(hashTable.delete("another"));
+        assertEquals(1, hashTable.getElementCount());
+        assertEquals("value", hashTable.search("key"), "Существующий элемент не должен быть затронут");
+    }
+
+    @Test
+    @DisplayName("Работа с null и пустыми значениями")
+    void testNullAndEmptyValues() {
+        hashTable.insert("key1", null);
+        hashTable.insert("key2", "");
+        
+        assertNull(hashTable.search("key1"));
+        assertEquals("", hashTable.search("key2"));
+        assertEquals(2, hashTable.getElementCount());
     }
 }

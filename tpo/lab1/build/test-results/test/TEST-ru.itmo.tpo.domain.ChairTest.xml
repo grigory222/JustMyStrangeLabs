@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Тесты для класса Chair" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-02-26T16:52:01" hostname="grigory" time="0.007">
+  <properties/>
+  <testcase name="Нельзя освободить незанятое кресло" classname="ru.itmo.tpo.domain.ChairTest" time="0.003"/>
+  <testcase name="Нельзя занять занятое кресло" classname="ru.itmo.tpo.domain.ChairTest" time="0.0"/>
+  <testcase name="Начальное состояние кресла" classname="ru.itmo.tpo.domain.ChairTest" time="0.001"/>
+  <testcase name="Кто-то занимает кресло" classname="ru.itmo.tpo.domain.ChairTest" time="0.001"/>
+  <testcase name="Освобождение кресла" classname="ru.itmo.tpo.domain.ChairTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

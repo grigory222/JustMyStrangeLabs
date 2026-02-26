@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Arthur.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">lab1</a> &gt; <a href="index.source.html" class="el_package">ru.itmo.tpo.domain</a> &gt; <span class="el_source">Arthur.java</span></div><h1>Arthur.java</h1><pre class="source lang-java linenums">package ru.itmo.tpo.domain;
+
+public class Arthur implements Person {
+    private EmotionalState emotionalState;
+    private PhysicalState physicalState;
+    private int unbelievableThingsCount;
+    private boolean isInRoom;
+
+<span class="fc" id="L9">    public Arthur() {</span>
+<span class="fc" id="L10">        this.emotionalState = EmotionalState.CALM;</span>
+<span class="fc" id="L11">        this.physicalState = PhysicalState.NORMAL;</span>
+<span class="fc" id="L12">        this.unbelievableThingsCount = 0;</span>
+<span class="fc" id="L13">        this.isInRoom = false;</span>
+<span class="fc" id="L14">    }</span>
+
+    @Override
+    public String getName() {
+<span class="fc" id="L18">        return &quot;Arthur&quot;;</span>
+    }
+
+    public void enterRoom() {
+<span class="fc bfc" id="L22" title="All 2 branches covered.">        if (isInRoom) {</span>
+<span class="fc" id="L23">            throw new IllegalStateException(&quot;Arthur is already in the room&quot;);</span>
+        }
+<span class="fc" id="L25">        this.isInRoom = true;</span>
+<span class="fc" id="L26">    }</span>
+
+    public void becomeNervous() {
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (!isInRoom) {</span>
+<span class="fc" id="L30">            this.emotionalState = EmotionalState.NERVOUS;</span>
+        }
+<span class="fc" id="L32">    }</span>
+
+    public void becomeShocked() {
+<span class="fc" id="L35">        this.emotionalState = EmotionalState.SHOCKED;</span>
+<span class="fc" id="L36">    }</span>
+
+    public void seeUnbelievableThing() {
+<span class="fc" id="L39">        this.unbelievableThingsCount++;</span>
+<span class="fc" id="L40">    }</span>
+
+    public void dropJaw() {
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (emotionalState == EmotionalState.SHOCKED) {</span>
+<span class="fc" id="L44">            this.physicalState = PhysicalState.JAW_DROPPED;</span>
+        }
+<span class="fc" id="L46">    }</span>
+
+    public EmotionalState getEmotionalState() {
+<span class="fc" id="L49">        return emotionalState;</span>
+    }
+
+    public PhysicalState getPhysicalState() {
+<span class="fc" id="L53">        return physicalState;</span>
+    }
+
+    public int getUnbelievableThingsCount() {
+<span class="fc" id="L57">        return unbelievableThingsCount;</span>
+    }
+
+    public boolean isInRoom() {
+<span class="fc" id="L61">        return isInRoom;</span>
+    }
+
+    public void resetState() {
+<span class="fc" id="L65">        this.emotionalState = EmotionalState.CALM;</span>
+<span class="fc" id="L66">        this.physicalState = PhysicalState.NORMAL;</span>
+<span class="fc" id="L67">        this.unbelievableThingsCount = 0;</span>
+<span class="fc" id="L68">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

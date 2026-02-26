@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Тесты для класса Room" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-02-26T16:52:01" hostname="grigory" time="0.01">
+  <properties/>
+  <testcase name="Нельзя добавить одного человека дважды" classname="ru.itmo.tpo.domain.RoomTest" time="0.001"/>
+  <testcase name="Удалить человека из комнаты" classname="ru.itmo.tpo.domain.RoomTest" time="0.0"/>
+  <testcase name="Нельзя удалить человека, которого нет в комнате" classname="ru.itmo.tpo.domain.RoomTest" time="0.001"/>
+  <testcase name="Добавить человека в комнату" classname="ru.itmo.tpo.domain.RoomTest" time="0.001"/>
+  <testcase name="Начальное состояние комнаты" classname="ru.itmo.tpo.domain.RoomTest" time="0.001"/>
+  <testcase name="Добавить несколько человек в комнату" classname="ru.itmo.tpo.domain.RoomTest" time="0.001"/>
+  <testcase name="Проверка наличия человека в комнате" classname="ru.itmo.tpo.domain.RoomTest" time="0.001"/>
+  <testcase name="Список людей - это копия, изменения не влияют на оригинал" classname="ru.itmo.tpo.domain.RoomTest" time="0.001"/>
+  <testcase name="Получить список людей в комнате" classname="ru.itmo.tpo.domain.RoomTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

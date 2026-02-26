@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Тесты хеш-таблицы с закрытой адресацией" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-02-26T16:52:01" hostname="grigory" time="0.06">
+  <properties/>
+  <testcase name="Работа с null и пустыми значениями" classname="ru.itmo.tpo.HashTableTest" time="0.028"/>
+  <testcase name="Обновление значений в цепочке" classname="ru.itmo.tpo.HashTableTest" time="0.001"/>
+  <testcase name="Трассировка DELETE: успешное удаление" classname="ru.itmo.tpo.HashTableTest" time="0.002"/>
+  <testcase name="hashCode: непустая строка" classname="ru.itmo.tpo.HashTableTest" time="0.002"/>
+  <testcase name="Обработка коллизий" classname="ru.itmo.tpo.HashTableTest" time="0.001"/>
+  <testcase name="hashCode: null и пустая строка" classname="ru.itmo.tpo.HashTableTest" time="0.001"/>
+  <testcase name="disableTrace не добавляет точки трассировки" classname="ru.itmo.tpo.HashTableTest" time="0.001"/>
+  <testcase name="Множественная вставка и поиск" classname="ru.itmo.tpo.HashTableTest" time="0.001"/>
+  <testcase name="Трассировка SEARCH: успешный поиск" classname="ru.itmo.tpo.HashTableTest" time="0.0"/>
+  <testcase name="Удаление из цепочки" classname="ru.itmo.tpo.HashTableTest" time="0.002"/>
+  <testcase name="Трассировка INSERT: обновление существующего ключа" classname="ru.itmo.tpo.HashTableTest" time="0.001"/>
+  <testcase name="Трассировка SEARCH: ключ не найден" classname="ru.itmo.tpo.HashTableTest" time="0.001"/>
+  <testcase name="Трассировка DELETE: ключ не найден" classname="ru.itmo.tpo.HashTableTest" time="0.002"/>
+  <testcase name="Трассировка INSERT: вставка в пустую корзину" classname="ru.itmo.tpo.HashTableTest" time="0.001"/>
+  <testcase name="Удаление несуществующих ключей" classname="ru.itmo.tpo.HashTableTest" time="0.001"/>
+  <testcase name="Поиск несуществующих ключей" classname="ru.itmo.tpo.HashTableTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

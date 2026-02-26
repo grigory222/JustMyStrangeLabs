@@ -1,2 +1,16 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-lab1,ru.itmo.tpo,TangentFunction,3,119,0,12,1,24,1,10,1,4
+lab1,ru.itmo.tpo,Main,72,0,0,0,17,0,2,0,2,0
+lab1,ru.itmo.tpo,HashTable,0,306,0,22,0,79,0,22,0,11
+lab1,ru.itmo.tpo,HashTable.TracingPoints,0,57,0,0,0,10,0,1,0,1
+lab1,ru.itmo.tpo,TangentFunction,0,122,0,12,0,25,0,11,0,5
+lab1,ru.itmo.tpo,HashTable.Node,0,9,0,0,0,4,0,1,0,1
+lab1,ru.itmo.tpo.domain,Arthur,0,77,0,6,0,29,0,15,0,12
+lab1,ru.itmo.tpo.domain,Room,0,75,0,4,0,18,0,10,0,8
+lab1,ru.itmo.tpo.domain,EmotionalState,0,21,0,0,0,4,0,1,0,1
+lab1,ru.itmo.tpo.domain,Chair,0,48,0,4,0,16,0,7,0,5
+lab1,ru.itmo.tpo.domain,HeadActivity,0,27,0,0,0,5,0,1,0,1
+lab1,ru.itmo.tpo.domain,ControlPanel,0,13,0,0,0,6,0,3,0,3
+lab1,ru.itmo.tpo.domain,Story,0,81,0,0,0,24,0,5,0,5
+lab1,ru.itmo.tpo.domain,Head,0,31,0,0,0,14,0,7,0,7
+lab1,ru.itmo.tpo.domain,PhysicalState,0,15,0,0,0,3,0,1,0,1
+lab1,ru.itmo.tpo.domain,Zaphod,0,64,0,0,0,24,0,11,0,11
