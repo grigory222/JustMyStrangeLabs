@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Проверка прохождения характерных точек алгоритма" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-03-11T13:17:05" hostname="grigory" time="0.104">
+  <properties/>
+  <testcase name="insert(): добавление нового ключа" classname="ru.itmo.tpo.HashTableTest$KeypointSequenceTests" time="0.073"/>
+  <testcase name="search(): поиск существующего ключа" classname="ru.itmo.tpo.HashTableTest$KeypointSequenceTests" time="0.006"/>
+  <testcase name="delete(): попытка удаления отсутствующего ключа" classname="ru.itmo.tpo.HashTableTest$KeypointSequenceTests" time="0.004"/>
+  <testcase name="insert(): обновление существующего ключа" classname="ru.itmo.tpo.HashTableTest$KeypointSequenceTests" time="0.007"/>
+  <testcase name="delete(): удаление существующего ключа" classname="ru.itmo.tpo.HashTableTest$KeypointSequenceTests" time="0.005"/>
+  <testcase name="search(): поиск отсутствующего ключа" classname="ru.itmo.tpo.HashTableTest$KeypointSequenceTests" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

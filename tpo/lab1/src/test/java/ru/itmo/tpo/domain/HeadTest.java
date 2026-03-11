@@ -31,7 +31,7 @@ class HeadTest {
     }
 
     @Test
-    @DisplayName("Голова ковыряет в зубах")
+    @DisplayName("Голова ковыряет в зубах") // не голова, а рука
     void testPickTeeth() {
         head.pickTeeth();
         assertEquals(HeadActivity.PICKING_TEETH, head.getActivity());

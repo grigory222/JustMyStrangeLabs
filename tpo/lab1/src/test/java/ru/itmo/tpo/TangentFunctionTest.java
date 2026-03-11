@@ -1,7 +1,6 @@
 package ru.itmo.tpo;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -11,79 +10,84 @@ import static org.junit.jupiter.api.Assertions.*;
 class TangentFunctionTest {
 
     private static final double DELTA = 1e-5;
+    private static final double PI = 3.14159265358979323846;
 
-    @ParameterizedTest(name = "tg({0}) ≈ {1}")
+    @ParameterizedTest(name = "x = {0}, ожидается tg(x) ≈ {1}")
     @CsvSource({
-            "0.0, 0.0",
-        "0.1, 0.10033467208545055",
-        "0.2, 0.20271003550867248",
-        "0.3, 0.30933624960962325",
-        "0.4, 0.42279321873816156",
-        "0.5, 0.5463024898437905",
-        "1.0, 1.5574077246549023",
-        "1.4, 5.797883715482887",
-        "1.5, 14.101419947171719",
-        "-0.1, -0.10033467208545055",
-        "-0.2, -0.20271003550867248",
-        "-0.3, -0.30933624960962325",
-        "-1.0, -1.5574077246549023",
-        "-1.5, -14.101419947171719",
-        
-        "2.0, -2.185039863261519",
-        "2.5, -0.7470222972386603",
-        "3.0, -0.1425465430742778",
-        "3.5, 0.3745856401585947",
-        "4.0, 1.1578212823495777",
-        "4.5, 4.637332054551484",
-        
-        "-2.0, 2.185039863261519",
-        "-2.5, 0.7470222972386603",
-        "-3.0, 0.1425465430742778",
-        "-4.0, -1.1578212823495777",
-        "-4.5, -4.637332054551484",
-        
-        "5.0, -3.380515006246586",
-        "6.0, -0.29100619138474915",
-        
-        "-5.0, 3.380515006246586",
-        "-6.0, 0.29100619138474915"
+            "0.7853981633974483, 1.0",                   // π/4
+            "-0.7853981633974483, -1.0",                 // -π/4
+            "0.5235987755982989, 0.5773502691896257",    // π/6
+            "-0.5235987755982989, -0.5773502691896257",  // -π/6
+            "1.0471975511965976, 1.7320508075688772",    // π/3
+            "-1.0471975511965976, -1.7320508075688772"   // -π/3
     })
-    @DisplayName("Проверка значений tg(x) по табличным данным")
-    void testTangentValues(double x, double expected) {
-        double actual = TangentFunction.tg(x);
-        assertEquals(expected, actual, DELTA,
-            String.format("tg(%.2f) ожидается %.6f, получено %.6f", x, expected, actual));
+    @DisplayName("Проверка вычислений на табличных знначениях")
+    void testBasicTabularValues(double x, double expected) {
+        assertEquals(expected, TangentFunction.tg(x), DELTA);
     }
 
-    @ParameterizedTest(name = "tg({0}) выбрасывает исключение")
-    @ValueSource( doubles = {
-        1.5707963267948966,    // π/2
-        4.71238898038469,       // 3π/2
-        7.853981633974483,      // 5π/2
-        -1.5707963267948966,    // -π/2
-        -4.71238898038469       // -3π/2
+    @ParameterizedTest(name = "x = {0}, tg(x) должен быть 0")
+    @ValueSource(doubles = {0.0, PI, -PI, 2 * PI, -2 * PI})
+    @DisplayName("Проверка нулей функции")
+    void testZeros(double x) {
+        assertEquals(0.0, TangentFunction.tg(x), DELTA);
+    }
+
+    @ParameterizedTest(name = "В точке x = {0} функция не определена")
+    @ValueSource(doubles = {PI / 2, -PI / 2, 3 * PI / 2, -3 * PI / 2})
+    @DisplayName("Проверка поведения в точках разрыва")
+    void testAsymptotes(double x) {
+        assertThrows(IllegalArgumentException.class, () -> TangentFunction.tg(x));
+    }
+
+    @ParameterizedTest(name = "Для x = {0} знак функции должен быть {1}")
+    @CsvSource({
+            "0.5, 1.0",     // I четверть
+            "2.0, -1.0",    // II
+            "4.0, 1.0",     // III
+            "-0.5, -1.0"    // IV
     })
-    @DisplayName("Проверка выброса исключения при x = π/2 + πk")
-    void testTangentAtDiscontinuity(double x) {
-        Exception exception = assertThrows(IllegalArgumentException.class, 
-            () -> TangentFunction.tg(x));
-        assertTrue(exception.getMessage().contains("не определен"));
+    @DisplayName("Проверка знакопостоянства по четвертям")
+    void testSignConstancy(double x, double expectedSign) {
+        double actualValue = TangentFunction.tg(x);
+
+        double actualSign = 0.0;
+        if (actualValue > DELTA) actualSign = 1.0;
+        else if (actualValue < -DELTA) actualSign = -1.0;
+
+        assertEquals(expectedSign, actualSign, "Неверный знак в данной четверти");
     }
 
-    @Test
-    @DisplayName("Проверка цикла на больших числах (для 100% покрытия)")
-    void testLargeInputForLoopLimit() {
-        double largeX = 100.0;
+    @ParameterizedTest(name = "tg({0}) == tg({0} + {1})")
+    @CsvSource({
+            "0.5, 3.141592653589793",   // сдвиг на PI
+            "0.5, 6.283185307179586",   // 2*PI
+            "0.5, -3.141592653589793",  // -PI
+            "-0.5, 31.41592653589793"   // 10*PI
+    })
+    @DisplayName("Проверка периодичности")
+    void testPeriodicity(double x, double shift) {
+        double original = TangentFunction.tg(x);
+        double shifted = TangentFunction.tg(x + shift);
 
-        assertDoesNotThrow(() -> TangentFunction.tg(largeX));
+        assertEquals(original, shifted, DELTA);
     }
 
-    @Test
-    @DisplayName("Покрытие конструктора")
-    void testConstructor() {
-        TangentFunction function = new TangentFunction();
-        assertNotNull(function);
+    @ParameterizedTest(name = "Производная в точке x = {0}")
+    @ValueSource(doubles = {0.0, 0.5, -0.5, 1.0, 3.0})
+    @DisplayName("Проверка угла наклона (производной)")
+    void testDerivativeAngle(double x) {
+        double h = 1e-6;
+
+        // Численная производная (f(x+h) - f(x-h)) / 2h
+        double fPlus = TangentFunction.tg(x + h);
+        double fMinus = TangentFunction.tg(x - h);
+        double numericalDerivative = (fPlus - fMinus) / (2 * h);
+
+        // Аналитическая производная tg'(x) = 1 + tg^2(x)
+        double tgX = TangentFunction.tg(x);
+        double expectedDerivative = 1.0 + (tgX * tgX);
+
+        assertEquals(expectedDerivative, numericalDerivative, DELTA, "Угол наклона не совпадает с аналитическим значением");
     }
 }
-
-

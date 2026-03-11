@@ -7,6 +7,9 @@ public class Main {
         System.out.println("=== 1. tg(x) ===");
         System.out.println("tg(0) = " + TangentFunction.tg(0));
         System.out.println("tg(1) = " + TangentFunction.tg(1));
+        System.out.println("tg(100) = " + TangentFunction.tg(100));
+        System.out.println("tg(-100) = " + TangentFunction.tg(-100));
+        System.out.println("tg(5123123) = " + TangentFunction.tg(5123123));
         
         System.out.println("\n=== 2. Хеш-таблица ===");
         HashTable table = new HashTable(13);
@@ -15,11 +18,11 @@ public class Main {
         System.out.println("search(apple) = " + table.search("apple"));
         System.out.println("delete(apple) = " + table.delete("apple"));
         System.out.println("size = " + table.getElementCount());
-        
-        System.out.println("\n=== 3. История ===");
-        Story story = new Story();
-        story.playFullScene();
-        System.out.println("Артур в шоке: " + story.getArthur().getEmotionalState());
-        System.out.println("Зафод в кресле: " + story.getZaphod().isLounging());
+//
+//        System.out.println("\n=== 3. История ===");
+//        Story story = new Story();
+//        story.playFullScene();
+//        System.out.println("Артур в шоке: " + story.getArthur().getEmotionalState());
+//        System.out.println("Зафод в кресле: " + story.getZaphod().isLounging());
     }
 }

@@ -2,267 +2,321 @@ package ru.itmo.tpo;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
+import org.mockito.InOrder;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static ru.itmo.tpo.HashTable.TracingPoints.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.spy;
 
-@DisplayName("Тесты хеш-таблицы с закрытой адресацией")
-class HashTableTest {
+@DisplayName("Тестирование хеш-таблицы")
+public class HashTableTest {
 
     private HashTable hashTable;
+    private HashTable hashTableSpy;
 
     @BeforeEach
     void setUp() {
-        hashTable = new HashTable(13);
+        hashTable = new HashTable(10);
+        hashTableSpy = spy(hashTable);
     }
 
-    @Test
-    @DisplayName("Трассировка INSERT: вставка в пустую корзину")
-    void testTraceInsertToEmptyBucket() {
-        List<HashTable.TracingPoints> expected = List.of(
-                OPERATION_START,
-                HASH_CALCULATED,
-                SEARCHING_IN_CHAIN,
-                KEY_NOT_FOUND,
-                KEY_INSERTED,
-                OPERATION_COMPLETE
-        );
+    @Nested
+    @DisplayName("Проверка прохождения характерных точек алгоритма")
+    class KeypointSequenceTests {
 
-        hashTable.enableTrace();
-        hashTable.insert("test", "value");
+        @Test
+        @DisplayName("insert(): добавление нового ключа")
+        void insert_newKey_followsReferenceSequence() {
+            hashTableSpy.insert("new_key", "value");
 
-        assertEquals(expected, hashTable.getTrace());
-        
-        assertEquals("value", hashTable.search("test"), "Вставленное значение должно быть найдено");
-        assertEquals(1, hashTable.getElementCount(), "Количество элементов должно быть 1");
+            InOrder inOrder = inOrder(hashTableSpy);
+            inOrder.verify(hashTableSpy).onOperationStart();
+            inOrder.verify(hashTableSpy).calculateHashIndex("new_key");
+            inOrder.verify(hashTableSpy).onSearchingInChain();
+            inOrder.verify(hashTableSpy).onKeyNotFound();
+            inOrder.verify(hashTableSpy).onKeyInserted();
+            inOrder.verify(hashTableSpy).onOperationComplete();
+        }
+
+        @Test
+        @DisplayName("insert(): обновление существующего ключа")
+        void insert_existingKey_followsReferenceSequence() {
+            hashTableSpy.insert("existing_key", "val1");
+            InOrder inOrder = inOrder(hashTableSpy);
+
+            hashTableSpy.insert("existing_key", "val2");
+
+            inOrder.verify(hashTableSpy).onOperationStart();
+            inOrder.verify(hashTableSpy).calculateHashIndex("existing_key");
+            inOrder.verify(hashTableSpy).onSearchingInChain();
+            inOrder.verify(hashTableSpy).onKeyFound();
+            inOrder.verify(hashTableSpy).onKeyUpdated();
+            inOrder.verify(hashTableSpy).onOperationComplete();
+        }
+
+        @Test
+        @DisplayName("search(): поиск существующего ключа")
+        void search_existingKey_followsReferenceSequence() {
+            hashTableSpy.insert("key", "value");
+            InOrder inOrder = inOrder(hashTableSpy);
+
+            hashTableSpy.search("key");
+
+            inOrder.verify(hashTableSpy).onOperationStart();
+            inOrder.verify(hashTableSpy).calculateHashIndex("key");
+            inOrder.verify(hashTableSpy).onSearchingInChain();
+            inOrder.verify(hashTableSpy).onKeyFound();
+            inOrder.verify(hashTableSpy).onOperationComplete();
+        }
+
+        @Test
+        @DisplayName("search(): поиск отсутствующего ключа")
+        void search_missingKey_followsReferenceSequence() {
+            hashTableSpy.search("missing");
+
+            InOrder inOrder = inOrder(hashTableSpy);
+            inOrder.verify(hashTableSpy).onOperationStart();
+            inOrder.verify(hashTableSpy).calculateHashIndex("missing");
+            inOrder.verify(hashTableSpy).onSearchingInChain();
+            inOrder.verify(hashTableSpy).onKeyNotFound();
+            inOrder.verify(hashTableSpy).onOperationComplete();
+        }
+
+        @Test
+        @DisplayName("delete(): удаление существующего ключа")
+        void delete_existingKey_followsReferenceSequence() {
+            hashTableSpy.insert("key", "value");
+            InOrder inOrder = inOrder(hashTableSpy);
+
+            hashTableSpy.delete("key");
+
+            inOrder.verify(hashTableSpy).onOperationStart();
+            inOrder.verify(hashTableSpy).calculateHashIndex("key");
+            inOrder.verify(hashTableSpy).onSearchingInChain();
+            inOrder.verify(hashTableSpy).onKeyFound();
+            inOrder.verify(hashTableSpy).onKeyDeleted();
+            inOrder.verify(hashTableSpy).onOperationComplete();
+        }
+
+        @Test
+        @DisplayName("delete(): попытка удаления отсутствующего ключа")
+        void delete_missingKey_followsReferenceSequence() {
+            hashTableSpy.delete("missing");
+
+            InOrder inOrder = inOrder(hashTableSpy);
+            inOrder.verify(hashTableSpy).onOperationStart();
+            inOrder.verify(hashTableSpy).calculateHashIndex("missing");
+            inOrder.verify(hashTableSpy).onSearchingInChain();
+            inOrder.verify(hashTableSpy).onKeyNotFound();
+            inOrder.verify(hashTableSpy).onOperationComplete();
+        }
     }
 
-    @Test
-    @DisplayName("Трассировка INSERT: обновление существующего ключа")
-    void testTraceInsertUpdate() {
-        hashTable.insert("key", "value1");
-        assertEquals("value1", hashTable.search("key"), "Первое значение должно быть сохранено");
+    @Nested
+    @DisplayName("Свойства хеш-функции")
+    class HashFunctionTests {
 
-        List<HashTable.TracingPoints> expected = List.of(
-                OPERATION_START,
-                HASH_CALCULATED,
-                SEARCHING_IN_CHAIN,
-                KEY_FOUND,
-                KEY_UPDATED,
-                OPERATION_COMPLETE
-        );
+        @Test
+        @DisplayName("Детерминированность: одинаковые ключи дают одинаковый индекс")
+        void hash_isDeterministic() {
+            int hash1 = hashTable.calculateHashIndex("SameKey");
+            int hash2 = hashTable.calculateHashIndex("SameKey");
+            assertEquals(hash1, hash2);
+        }
 
-        hashTable.enableTrace();
-        hashTable.insert("key", "value2");
+        @Test
+        @DisplayName("Распределение: разные ключи дают разные индексы")
+        void hash_producesDifferentIndicesForDifferentKeys() {
+            int hash1 = hashTable.calculateHashIndex("A");
+            int hash2 = hashTable.calculateHashIndex("B");
+            assertNotEquals(hash1, hash2);
+        }
 
-        assertEquals(expected, hashTable.getTrace());
-        
-        assertEquals("value2", hashTable.search("key"), "Значение должно быть обновлено");
-        assertEquals(1, hashTable.getElementCount(), "Количество элементов не должно измениться");
+        @Test
+        @DisplayName("Граничные значения: возвращает 0 для null и пустой строки")
+        void hash_handlesNullAndEmptyStrings() {
+            assertEquals(0, hashTable.calculateHashIndex(null));
+            assertEquals(0, hashTable.calculateHashIndex(""));
+        }
+
+        @Test
+        @DisplayName("Обработка длинных строк (битовые смещения для строк > 8 символов)")
+        void hash_processesLongStrings() {
+            int index = hashTable.calculateHashIndex("LONG_STRING_OVER_EIGHT_CHARS");
+            assertTrue(index >= 0 && index < 10);
+        }
     }
 
-    @Test
-    @DisplayName("Трассировка SEARCH: успешный поиск")
-    void testTraceSearchFound() {
-        hashTable.insert("key", "value");
+    @Nested
+    @DisplayName("Операции поиска и обновления значений")
+    class SearchAndInsertTests {
 
-        List<HashTable.TracingPoints> expected = List.of(
-                OPERATION_START,
-                HASH_CALCULATED,
-                SEARCHING_IN_CHAIN,
-                KEY_FOUND,
-                OPERATION_COMPLETE
-        );
+        @Test
+        @DisplayName("search(): возвращает null для отсутствующего ключа")
+        void search_returnsNullForMissingKey() {
+            assertNull(hashTable.search("missing_key"));
+        }
 
-        hashTable.enableTrace();
-        String result = hashTable.search("key");
-        assertEquals("value", result, "Найденное значение должно совпадать");
-        assertEquals(expected, hashTable.getTrace());
+        @Test
+        @DisplayName("search(): возвращает корректное значение после insert()")
+        void search_returnsValueAfterInsert() {
+            hashTable.insert("key", "expected_val");
+            assertEquals("expected_val", hashTable.search("key"));
+        }
+
+        @Test
+        @DisplayName("insert(): успешно перезаписывает старое значение")
+        void insert_overwritesExistingValue() {
+            hashTable.insert("key", "old_val");
+            hashTable.insert("key", "new_val");
+            assertEquals("new_val", hashTable.search("key"));
+        }
     }
 
-    @Test
-    @DisplayName("Трассировка SEARCH: ключ не найден")
-    void testTraceSearchNotFound() {
-        hashTable.insert("A", "1");
-        hashTable.insert("N", "2");
+    @Nested
+    @DisplayName("Операции удаления")
+    class DeleteTests {
 
-        List<HashTable.TracingPoints> expected = List.of(
-                OPERATION_START,
-                HASH_CALCULATED,
-                SEARCHING_IN_CHAIN,
-                KEY_NOT_FOUND,
-                OPERATION_COMPLETE
-        );
+        @Test
+        @DisplayName("delete(): возвращает true при удалении существующего ключа")
+        void delete_returnsTrueForExistingKey() {
+            hashTable.insert("key", "val");
+            assertTrue(hashTable.delete("key"));
+        }
 
-        hashTable.enableTrace();
-        String result = hashTable.search("[");
-        assertNull(result, "Несуществующий ключ должен вернуть null");
-        assertEquals(expected, hashTable.getTrace());
+        @Test
+        @DisplayName("delete(): элемент фактически недоступен после удаления")
+        void delete_removesElementFromTable() {
+            hashTable.insert("key", "val");
+            hashTable.delete("key");
+            assertNull(hashTable.search("key"));
+        }
+
+        @Test
+        @DisplayName("delete(): возвращает false при попытке удалить отсутствующий ключ")
+        void delete_returnsFalseForMissingKey() {
+            assertFalse(hashTable.delete("missing_key"));
+        }
     }
 
-    @Test
-    @DisplayName("Трассировка DELETE: успешное удаление")
-    void testTraceDeleteSuccess() {
-        hashTable.insert("key", "value");
-        assertEquals("value", hashTable.search("key"), "Значение должно быть найдено перед удалением");
-        assertEquals(1, hashTable.getElementCount());
+    @Nested
+    @DisplayName("Логика счетчика элементов")
+    class ElementCountTests {
 
-        List<HashTable.TracingPoints> expected = List.of(
-                OPERATION_START,
-                HASH_CALCULATED,
-                SEARCHING_IN_CHAIN,
-                KEY_FOUND,
-                KEY_DELETED,
-                OPERATION_COMPLETE
-        );
+        @Test
+        @DisplayName("Изначально таблица пуста (счетчик = 0)")
+        void count_isZeroInitially() {
+            assertEquals(0, hashTable.getElementCount());
+        }
 
-        hashTable.enableTrace();
-        boolean deleteResult = hashTable.delete("key");
-        assertTrue(deleteResult, "Удаление существующего ключа должно вернуть true");
-        assertEquals(expected, hashTable.getTrace());
-        
-        assertNull(hashTable.search("key"), "Удаленный ключ не должен быть найден");
-        assertEquals(0, hashTable.getElementCount(), "Количество элементов должно уменьшиться");
+        @Test
+        @DisplayName("Счетчик увеличивается при добавлении нового ключа")
+        void count_increasesOnNewInsert() {
+            hashTable.insert("key", "val");
+            assertEquals(1, hashTable.getElementCount());
+        }
+
+        @Test
+        @DisplayName("Счетчик НЕ увеличивается при обновлении существующего ключа")
+        void count_doesNotIncreaseOnUpdate() {
+            hashTable.insert("key", "val1");
+            hashTable.insert("key", "val2");
+            assertEquals(1, hashTable.getElementCount());
+        }
+
+        @Test
+        @DisplayName("Счетчик уменьшается при успешном удалении ключа")
+        void count_decreasesOnDelete() {
+            hashTable.insert("key", "val");
+            hashTable.delete("key");
+            assertEquals(0, hashTable.getElementCount());
+        }
     }
 
-    @Test
-    @DisplayName("Трассировка DELETE: ключ не найден")
-    void testTraceDeleteNotFound() {
-        hashTable.insert("A", "1");
-        hashTable.insert("N", "2");
-        int initialCount = hashTable.getElementCount();
-
-        List<HashTable.TracingPoints> expected = List.of(
-                OPERATION_START,
-                HASH_CALCULATED,
-                SEARCHING_IN_CHAIN,
-                KEY_NOT_FOUND,
-                OPERATION_COMPLETE
-        );
-
-        hashTable.enableTrace();
-        boolean deleteResult = hashTable.delete("[");
-        assertFalse(deleteResult, "Удаление несуществующего ключа должно вернуть false");
-        assertEquals(expected, hashTable.getTrace());
-        
-        assertEquals("1", hashTable.search("A"), "Другие элементы не должны быть затронуты");
-        assertEquals("2", hashTable.search("N"), "Другие элементы не должны быть затронуты");
-        assertEquals(initialCount, hashTable.getElementCount(), "Количество элементов не должно измениться");
-    }
-
-    @Test
-    @DisplayName("disableTrace не добавляет точки трассировки")
-    void testDisableTrace() {
-        hashTable.enableTrace();
-        hashTable.disableTrace();
-        hashTable.insert("key", "value");
-
-        assertTrue(hashTable.getTrace().isEmpty());
-    }
-
-    @Test
-    @DisplayName("hashCode: null и пустая строка")
-    void testHashCodeNullAndEmpty() {
-        assertEquals(0, hashTable.hashCode(null));
-        assertEquals(0, hashTable.hashCode(""));
-    }
-
-    @Test
-    @DisplayName("hashCode: непустая строка")
-    void testHashCodeNonEmpty() {
-        assertNotEquals(0, hashTable.hashCode("abc"));
-    }
-
-    @Test
-    @DisplayName("Множественная вставка и поиск")
-    void testMultipleInsertAndSearch() {
-        hashTable.insert("apple", "fruit");
-        hashTable.insert("carrot", "vegetable");
-        hashTable.insert("milk", "dairy");
-        hashTable.insert("bread", "bakery");
-        
-        assertEquals("fruit", hashTable.search("apple"));
-        assertEquals("vegetable", hashTable.search("carrot"));
-        assertEquals("dairy", hashTable.search("milk"));
-        assertEquals("bakery", hashTable.search("bread"));
-        assertEquals(4, hashTable.getElementCount());
-    }
-
-    @Test
+    @Nested
     @DisplayName("Обработка коллизий")
-    void testCollisionHandling() {
-        hashTable.insert("A", "value_A");
-        hashTable.insert("N", "value_N");
-        hashTable.insert("[", "value_[");
-        
-        assertEquals("value_A", hashTable.search("A"));
-        assertEquals("value_N", hashTable.search("N"));
-        assertEquals("value_[", hashTable.search("["));
-        assertEquals(3, hashTable.getElementCount());
+    class CollisionTests {
+
+        @BeforeEach
+        void setUpCollision() {
+            // Ключи "A" и "K" попадают в один бакет (индекс 5)
+            hashTable.insert("A", "val_A");
+            hashTable.insert("K", "val_K");
+        }
+
+        @Test
+        @DisplayName("Поиск корректно работает внутри цепочки при коллизии")
+        void search_findsElementsInCollisionChain() {
+            assertEquals("val_A", hashTable.search("A"));
+            assertEquals("val_K", hashTable.search("K"));
+        }
+
+        @Test
+        @DisplayName("Удаление первого элемента из цепочки не затрагивает другие")
+        void delete_removesFirstElementInChain() {
+            hashTable.delete("A");
+            assertNull(hashTable.search("A"));
+            assertEquals("val_K", hashTable.search("K"));
+        }
+
+        @Test
+        @DisplayName("search(): поиск отсутствующего ключа в корзине с другими элементами возвращает null")
+        void search_returnsNullWhenKeyIsMissingInPopulatedBucket() {
+            // "U" тоже имеет индекс 5, но его нет в таблице
+            assertNull(hashTable.search("U"));
+        }
+
+        @Test
+        @DisplayName("delete(): попытка удаления отсутствующего ключа из непустой корзины возвращает false")
+        void delete_returnsFalseWhenKeyIsMissingInPopulatedBucket() {
+            assertFalse(hashTable.delete("U"));
+        }
+
+        @Test
+        @DisplayName("delete(): удаление второго элемента в цепочке коллизий проходит успешно")
+        void delete_removesSubsequentElementInCollisionChain() {
+            boolean isDeleted = hashTable.delete("K");
+
+            assertTrue(isDeleted);
+            assertNull(hashTable.search("K"));
+            assertEquals("val_A", hashTable.search("A"), "Первый элемент цепочки не должен пострадать");
+        }
     }
 
-    @Test
-    @DisplayName("Обновление значений в цепочке")
-    void testUpdateInChain() {
-        hashTable.insert("A", "first");
-        hashTable.insert("N", "second");
-        
-        hashTable.insert("A", "updated_A");
-        hashTable.insert("N", "updated_N");
-        
-        assertEquals("updated_A", hashTable.search("A"));
-        assertEquals("updated_N", hashTable.search("N"));
-        assertEquals(2, hashTable.getElementCount(), "Обновление не должно увеличивать счетчик");
+    @Nested
+    @DisplayName("Поддержка null-ключей")
+    class NullKeyTests {
+
+        @Test
+        @DisplayName("insert() и search(): хеш-таблица позволяет хранить и находить значение по null-ключу")
+        void table_acceptsAndFindsNullKey() {
+            hashTable.insert(null, "null_value");
+            assertEquals("null_value", hashTable.search(null));
+        }
+
+        @Test
+        @DisplayName("delete(): хеш-таблица корректно удаляет элемент с null-ключом")
+        void table_successfullyDeletesNullKey() {
+            hashTable.insert(null, "null_value");
+
+            boolean isDeleted = hashTable.delete(null);
+
+            assertTrue(isDeleted);
+            assertNull(hashTable.search(null));
+        }
     }
 
-    @Test
-    @DisplayName("Удаление из цепочки")
-    void testDeleteFromChain() {
-        hashTable.insert("A", "value_A");
-        hashTable.insert("N", "value_N");
-        hashTable.insert("[", "value_[");
-        
-        assertTrue(hashTable.delete("N"));
-        
-        assertEquals("value_A", hashTable.search("A"), "Другие элементы в цепочке должны остаться");
-        assertNull(hashTable.search("N"), "Удаленный элемент не должен быть найден");
-        assertEquals("value_[", hashTable.search("["), "Другие элементы в цепочке должны остаться");
-        assertEquals(2, hashTable.getElementCount());
-    }
+    @Nested
+    @DisplayName("Создание таблицы и валидация размера")
+    class ConstructorTests {
 
-    @Test
-    @DisplayName("Поиск несуществующих ключей")
-    void testSearchNonexistentKeys() {
-        hashTable.insert("existing", "value");
-        
-        assertNull(hashTable.search("nonexistent"));
-        assertNull(hashTable.search(""));
-        assertNull(hashTable.search("another_missing_key"));
-        assertEquals(1, hashTable.getElementCount());
-    }
-
-    @Test
-    @DisplayName("Удаление несуществующих ключей")
-    void testDeleteNonexistentKeys() {
-        hashTable.insert("key", "value");
-        
-        assertFalse(hashTable.delete("nonexistent"));
-        assertFalse(hashTable.delete("another"));
-        assertEquals(1, hashTable.getElementCount());
-        assertEquals("value", hashTable.search("key"), "Существующий элемент не должен быть затронут");
-    }
-
-    @Test
-    @DisplayName("Работа с null и пустыми значениями")
-    void testNullAndEmptyValues() {
-        hashTable.insert("key1", null);
-        hashTable.insert("key2", "");
-        
-        assertNull(hashTable.search("key1"));
-        assertEquals("", hashTable.search("key2"));
-        assertEquals(2, hashTable.getElementCount());
+        @Test
+        @DisplayName("Выбрасывает IllegalArgumentException при размере <= 0")
+        void constructor_rejectsInvalidSize() {
+            assertThrows(IllegalArgumentException.class, () -> new HashTable(0));
+            assertThrows(IllegalArgumentException.class, () -> new HashTable(-5));
+        }
     }
 }

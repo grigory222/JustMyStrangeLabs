@@ -7,20 +7,23 @@ import ru.itmo.tpo.domain.*;
 <span class="nc" id="L7">        System.out.println(&quot;=== 1. tg(x) ===&quot;);</span>
 <span class="nc" id="L8">        System.out.println(&quot;tg(0) = &quot; + TangentFunction.tg(0));</span>
 <span class="nc" id="L9">        System.out.println(&quot;tg(1) = &quot; + TangentFunction.tg(1));</span>
+<span class="nc" id="L10">        System.out.println(&quot;tg(100) = &quot; + TangentFunction.tg(100));</span>
+<span class="nc" id="L11">        System.out.println(&quot;tg(-100) = &quot; + TangentFunction.tg(-100));</span>
+<span class="nc" id="L12">        System.out.println(&quot;tg(5123123) = &quot; + TangentFunction.tg(5123123));</span>
         
-<span class="nc" id="L11">        System.out.println(&quot;\n=== 2. Хеш-таблица ===&quot;);</span>
-<span class="nc" id="L12">        HashTable table = new HashTable(13);</span>
-<span class="nc" id="L13">        table.insert(&quot;apple&quot;, &quot;fruit&quot;);</span>
-<span class="nc" id="L14">        table.insert(&quot;carrot&quot;, &quot;vegetable&quot;);</span>
-<span class="nc" id="L15">        System.out.println(&quot;search(apple) = &quot; + table.search(&quot;apple&quot;));</span>
-<span class="nc" id="L16">        System.out.println(&quot;delete(apple) = &quot; + table.delete(&quot;apple&quot;));</span>
-<span class="nc" id="L17">        System.out.println(&quot;size = &quot; + table.getElementCount());</span>
-        
-<span class="nc" id="L19">        System.out.println(&quot;\n=== 3. История ===&quot;);</span>
-<span class="nc" id="L20">        Story story = new Story();</span>
-<span class="nc" id="L21">        story.playFullScene();</span>
-<span class="nc" id="L22">        System.out.println(&quot;Артур в шоке: &quot; + story.getArthur().getEmotionalState());</span>
-<span class="nc" id="L23">        System.out.println(&quot;Зафод в кресле: &quot; + story.getZaphod().isLounging());</span>
-<span class="nc" id="L24">    }</span>
+<span class="nc" id="L14">        System.out.println(&quot;\n=== 2. Хеш-таблица ===&quot;);</span>
+<span class="nc" id="L15">        HashTable table = new HashTable(13);</span>
+<span class="nc" id="L16">        table.insert(&quot;apple&quot;, &quot;fruit&quot;);</span>
+<span class="nc" id="L17">        table.insert(&quot;carrot&quot;, &quot;vegetable&quot;);</span>
+<span class="nc" id="L18">        System.out.println(&quot;search(apple) = &quot; + table.search(&quot;apple&quot;));</span>
+<span class="nc" id="L19">        System.out.println(&quot;delete(apple) = &quot; + table.delete(&quot;apple&quot;));</span>
+<span class="nc" id="L20">        System.out.println(&quot;size = &quot; + table.getElementCount());</span>
+//
+//        System.out.println(&quot;\n=== 3. История ===&quot;);
+//        Story story = new Story();
+//        story.playFullScene();
+//        System.out.println(&quot;Артур в шоке: &quot; + story.getArthur().getEmotionalState());
+//        System.out.println(&quot;Зафод в кресле: &quot; + story.getZaphod().isLounging());
+<span class="nc" id="L27">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

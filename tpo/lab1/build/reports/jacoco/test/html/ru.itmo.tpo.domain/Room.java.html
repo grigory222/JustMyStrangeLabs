@@ -8,44 +8,44 @@ public class Room {
     private final ControlPanel controlPanel;
     private final List&lt;Person&gt; peopleInRoom;
 
-<span class="fc" id="L11">    public Room() {</span>
-<span class="fc" id="L12">        this.chair = new Chair();</span>
-<span class="fc" id="L13">        this.controlPanel = new ControlPanel();</span>
-<span class="fc" id="L14">        this.peopleInRoom = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L15">    }</span>
+<span class="nc" id="L11">    public Room() {</span>
+<span class="nc" id="L12">        this.chair = new Chair();</span>
+<span class="nc" id="L13">        this.controlPanel = new ControlPanel();</span>
+<span class="nc" id="L14">        this.peopleInRoom = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L15">    }</span>
 
     public void addPerson(Person person) {
-<span class="fc bfc" id="L18" title="All 2 branches covered.">        if (peopleInRoom.contains(person)) {</span>
-<span class="fc" id="L19">            throw new IllegalStateException(person.getName() + &quot; is already in the room&quot;);</span>
+<span class="nc bnc" id="L18" title="All 2 branches missed.">        if (peopleInRoom.contains(person)) {</span>
+<span class="nc" id="L19">            throw new IllegalStateException(person.getName() + &quot; is already in the room&quot;);</span>
         }
-<span class="fc" id="L21">        peopleInRoom.add(person);</span>
-<span class="fc" id="L22">    }</span>
+<span class="nc" id="L21">        peopleInRoom.add(person);</span>
+<span class="nc" id="L22">    }</span>
 
     public void removePerson(Person person) {
-<span class="fc bfc" id="L25" title="All 2 branches covered.">        if (!peopleInRoom.contains(person)) {</span>
-<span class="fc" id="L26">            throw new IllegalStateException(person.getName() + &quot; is not in the room&quot;);</span>
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        if (!peopleInRoom.contains(person)) {</span>
+<span class="nc" id="L26">            throw new IllegalStateException(person.getName() + &quot; is not in the room&quot;);</span>
         }
-<span class="fc" id="L28">        peopleInRoom.remove(person);</span>
-<span class="fc" id="L29">    }</span>
+<span class="nc" id="L28">        peopleInRoom.remove(person);</span>
+<span class="nc" id="L29">    }</span>
 
     public boolean isPersonInRoom(Person person) {
-<span class="fc" id="L32">        return peopleInRoom.contains(person);</span>
+<span class="nc" id="L32">        return peopleInRoom.contains(person);</span>
     }
 
     public Chair getChair() {
-<span class="fc" id="L36">        return chair;</span>
+<span class="nc" id="L36">        return chair;</span>
     }
 
     public ControlPanel getControlPanel() {
-<span class="fc" id="L40">        return controlPanel;</span>
+<span class="nc" id="L40">        return controlPanel;</span>
     }
 
     public int getPeopleCount() {
-<span class="fc" id="L44">        return peopleInRoom.size();</span>
+<span class="nc" id="L44">        return peopleInRoom.size();</span>
     }
 
     public List&lt;Person&gt; getPeopleInRoom() {
-<span class="fc" id="L48">        return new ArrayList&lt;&gt;(peopleInRoom);</span>
+<span class="nc" id="L48">        return new ArrayList&lt;&gt;(peopleInRoom);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -5,48 +5,48 @@ public class Story {
     private final Zaphod zaphod;
     private final Room room;
 
-<span class="fc" id="L8">    public Story() {</span>
-<span class="fc" id="L9">        this.arthur = new Arthur();</span>
-<span class="fc" id="L10">        this.zaphod = new Zaphod();</span>
-<span class="fc" id="L11">        this.room = new Room();</span>
-<span class="fc" id="L12">    }</span>
+<span class="nc" id="L8">    public Story() {</span>
+<span class="nc" id="L9">        this.arthur = new Arthur();</span>
+<span class="nc" id="L10">        this.zaphod = new Zaphod();</span>
+<span class="nc" id="L11">        this.room = new Room();</span>
+<span class="nc" id="L12">    }</span>
 
     public void playFullScene() {
-<span class="fc" id="L15">        room.addPerson(zaphod);</span>
-<span class="fc" id="L16">        room.getChair().occupy(zaphod);</span>
+<span class="nc" id="L15">        room.addPerson(zaphod);</span>
+<span class="nc" id="L16">        room.getChair().occupy(zaphod);</span>
         
-<span class="fc" id="L18">        zaphod.loungeInChair();</span>
-<span class="fc" id="L19">        zaphod.putFeetOnControlPanel();</span>
-<span class="fc" id="L20">        room.getControlPanel().putFeetOn();</span>
+<span class="nc" id="L18">        zaphod.loungeInChair();</span>
+<span class="nc" id="L19">        zaphod.putFeetOnControlPanel();</span>
+<span class="nc" id="L20">        room.getControlPanel().putFeetOn();</span>
         
-<span class="fc" id="L22">        zaphod.pickTeethWithLeftHand();</span>
+<span class="nc" id="L22">        zaphod.pickTeethWithLeftHand();</span>
         
-<span class="fc" id="L24">        zaphod.smileWithLeftHead();</span>
+<span class="nc" id="L24">        zaphod.smileWithLeftHead();</span>
         
-<span class="fc" id="L26">        arthur.becomeNervous();</span>
+<span class="nc" id="L26">        arthur.becomeNervous();</span>
         
-<span class="fc" id="L28">        arthur.enterRoom();</span>
-<span class="fc" id="L29">        room.addPerson(arthur);</span>
+<span class="nc" id="L28">        arthur.enterRoom();</span>
+<span class="nc" id="L29">        room.addPerson(arthur);</span>
         
-<span class="fc" id="L31">        arthur.becomeShocked();</span>
+<span class="nc" id="L31">        arthur.becomeShocked();</span>
         
-<span class="fc" id="L33">        arthur.seeUnbelievableThing();</span>
-<span class="fc" id="L34">        arthur.seeUnbelievableThing();</span>
-<span class="fc" id="L35">        arthur.seeUnbelievableThing();</span>
+<span class="nc" id="L33">        arthur.seeUnbelievableThing();</span>
+<span class="nc" id="L34">        arthur.seeUnbelievableThing();</span>
+<span class="nc" id="L35">        arthur.seeUnbelievableThing();</span>
         
-<span class="fc" id="L37">        arthur.dropJaw();</span>
-<span class="fc" id="L38">    }</span>
+<span class="nc" id="L37">        arthur.dropJaw();</span>
+<span class="nc" id="L38">    }</span>
 
     public Arthur getArthur() {
-<span class="fc" id="L41">        return arthur;</span>
+<span class="nc" id="L41">        return arthur;</span>
     }
 
     public Zaphod getZaphod() {
-<span class="fc" id="L45">        return zaphod;</span>
+<span class="nc" id="L45">        return zaphod;</span>
     }
 
     public Room getRoom() {
-<span class="fc" id="L49">        return room;</span>
+<span class="nc" id="L49">        return room;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

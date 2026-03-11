@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Свойства хеш-функции" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-03-11T13:17:05" hostname="grigory" time="0.015">
+  <properties/>
+  <testcase name="Граничные значения: возвращает 0 для null и пустой строки" classname="ru.itmo.tpo.HashTableTest$HashFunctionTests" time="0.001"/>
+  <testcase name="Распределение: разные ключи дают разные индексы" classname="ru.itmo.tpo.HashTableTest$HashFunctionTests" time="0.005"/>
+  <testcase name="Детерминированность: одинаковые ключи дают одинаковый индекс" classname="ru.itmo.tpo.HashTableTest$HashFunctionTests" time="0.002"/>
+  <testcase name="Обработка длинных строк (битовые смещения для строк &gt; 8 символов)" classname="ru.itmo.tpo.HashTableTest$HashFunctionTests" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -72,3 +72,6 @@ class ZaphodTest {
         assertEquals(HeadActivity.IDLE, zaphod.getRightHead().getActivity());
     }
 }
+
+// атомарность
+// таблица переходов (по истории из текста)

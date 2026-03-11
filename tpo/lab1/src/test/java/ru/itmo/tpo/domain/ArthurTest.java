@@ -70,7 +70,7 @@ class ArthurTest {
     }
 
     @Test
-    @DisplayName("Артур видит три невероятные вещи")
+    @DisplayName("Артур видит три невероятные вещи") // given - then
     void testSeeThreeUnbelievableThings() {
         arthur.seeUnbelievableThing();
         arthur.seeUnbelievableThing();
@@ -114,3 +114,5 @@ class ArthurTest {
         assertEquals(0, arthur.getUnbelievableThingsCount());
     }
 }
+
+// bdd
