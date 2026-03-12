@@ -13,12 +13,8 @@ public class Head {
         this.activity = HeadActivity.SMILING;
     }
 
-    public void pickTeeth() {
-        this.activity = HeadActivity.PICKING_TEETH;
-    }
-
-    public void talk() {
-        this.activity = HeadActivity.TALKING;
+    public void setActivity(HeadActivity activity) {
+        this.activity = activity;
     }
 
     public void stopActivity() {

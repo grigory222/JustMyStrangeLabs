@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ru.itmo.tpo.TangentFunctionTest" tests="28" skipped="0" failures="0" errors="0" timestamp="2026-03-12T19:55:17" hostname="grigory" time="0.304">
+  <properties/>
+  <testcase name="Производная в точке x = 0.0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.057"/>
+  <testcase name="Производная в точке x = 0.5" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="Производная в точке x = -0.5" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="Производная в точке x = 1.0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="Производная в точке x = 3.0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="tg(0.5) == tg(0.5 + 3.141592653589793)" classname="ru.itmo.tpo.TangentFunctionTest" time="0.007"/>
+  <testcase name="tg(0.5) == tg(0.5 + 6.283185307179586)" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="tg(0.5) == tg(0.5 + -3.141592653589793)" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="tg(-0.5) == tg(-0.5 + 31.41592653589793)" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="x = 0.0, tg(x) должен быть 0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="x = 3.141592653589793, tg(x) должен быть 0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="x = -3.141592653589793, tg(x) должен быть 0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.003"/>
+  <testcase name="x = 6.283185307179586, tg(x) должен быть 0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="x = -6.283185307179586, tg(x) должен быть 0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="x = 0.7853981633974483, ожидается tg(x) ≈ 1.0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.004"/>
+  <testcase name="x = -0.7853981633974483, ожидается tg(x) ≈ -1.0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.006"/>
+  <testcase name="x = 0.5235987755982989, ожидается tg(x) ≈ 0.5773502691896257" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="x = -0.5235987755982989, ожидается tg(x) ≈ -0.5773502691896257" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="x = 1.0471975511965976, ожидается tg(x) ≈ 1.7320508075688772" classname="ru.itmo.tpo.TangentFunctionTest" time="0.004"/>
+  <testcase name="x = -1.0471975511965976, ожидается tg(x) ≈ -1.7320508075688772" classname="ru.itmo.tpo.TangentFunctionTest" time="0.003"/>
+  <testcase name="Для x = 0.5 знак функции должен быть 1.0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="Для x = 2.0 знак функции должен быть -1.0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="Для x = 4.0 знак функции должен быть 1.0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="Для x = -0.5 знак функции должен быть -1.0" classname="ru.itmo.tpo.TangentFunctionTest" time="0.001"/>
+  <testcase name="В точке x = 1.5707963267948966 функция не определена" classname="ru.itmo.tpo.TangentFunctionTest" time="0.004"/>
+  <testcase name="В точке x = -1.5707963267948966 функция не определена" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="В точке x = 4.71238898038469 функция не определена" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <testcase name="В точке x = -4.71238898038469 функция не определена" classname="ru.itmo.tpo.TangentFunctionTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

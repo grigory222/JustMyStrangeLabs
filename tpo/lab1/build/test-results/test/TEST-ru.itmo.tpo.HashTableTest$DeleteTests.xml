@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Операции удаления" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-03-11T13:17:05" hostname="grigory" time="0.009">
+<testsuite name="Операции удаления" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-03-12T19:55:16" hostname="grigory" time="0.012">
   <properties/>
   <testcase name="delete(): возвращает false при попытке удалить отсутствующий ключ" classname="ru.itmo.tpo.HashTableTest$DeleteTests" time="0.002"/>
   <testcase name="delete(): возвращает true при удалении существующего ключа" classname="ru.itmo.tpo.HashTableTest$DeleteTests" time="0.002"/>
-  <testcase name="delete(): элемент фактически недоступен после удаления" classname="ru.itmo.tpo.HashTableTest$DeleteTests" time="0.002"/>
+  <testcase name="delete(): элемент фактически недоступен после удаления" classname="ru.itmo.tpo.HashTableTest$DeleteTests" time="0.003"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

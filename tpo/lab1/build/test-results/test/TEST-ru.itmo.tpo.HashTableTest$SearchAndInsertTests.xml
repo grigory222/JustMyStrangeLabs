@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Операции поиска и обновления значений" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-03-11T13:17:05" hostname="grigory" time="0.007">
+<testsuite name="Операции поиска и обновления значений" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-03-12T19:55:16" hostname="grigory" time="0.014">
   <properties/>
-  <testcase name="insert(): успешно перезаписывает старое значение" classname="ru.itmo.tpo.HashTableTest$SearchAndInsertTests" time="0.001"/>
-  <testcase name="search(): возвращает null для отсутствующего ключа" classname="ru.itmo.tpo.HashTableTest$SearchAndInsertTests" time="0.001"/>
-  <testcase name="search(): возвращает корректное значение после insert()" classname="ru.itmo.tpo.HashTableTest$SearchAndInsertTests" time="0.001"/>
+  <testcase name="insert(): успешно перезаписывает старое значение" classname="ru.itmo.tpo.HashTableTest$SearchAndInsertTests" time="0.003"/>
+  <testcase name="search(): возвращает null для отсутствующего ключа" classname="ru.itmo.tpo.HashTableTest$SearchAndInsertTests" time="0.004"/>
+  <testcase name="search(): возвращает корректное значение после insert()" classname="ru.itmo.tpo.HashTableTest$SearchAndInsertTests" time="0.003"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

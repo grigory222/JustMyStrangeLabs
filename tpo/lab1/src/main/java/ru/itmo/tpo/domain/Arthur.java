@@ -61,9 +61,4 @@ public class Arthur implements Person {
         return isInRoom;
     }
 
-    public void resetState() {
-        this.emotionalState = EmotionalState.CALM;
-        this.physicalState = PhysicalState.NORMAL;
-        this.unbelievableThingsCount = 0;
-    }
 }

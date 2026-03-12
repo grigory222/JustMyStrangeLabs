@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Обработка коллизий" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-03-11T13:17:05" hostname="grigory" time="0.024">
+<testsuite name="Обработка коллизий" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-03-12T19:55:16" hostname="grigory" time="0.044">
   <properties/>
-  <testcase name="Поиск корректно работает внутри цепочки при коллизии" classname="ru.itmo.tpo.HashTableTest$CollisionTests" time="0.003"/>
-  <testcase name="delete(): удаление второго элемента в цепочке коллизий проходит успешно" classname="ru.itmo.tpo.HashTableTest$CollisionTests" time="0.003"/>
-  <testcase name="Удаление первого элемента из цепочки не затрагивает другие" classname="ru.itmo.tpo.HashTableTest$CollisionTests" time="0.002"/>
-  <testcase name="search(): поиск отсутствующего ключа в корзине с другими элементами возвращает null" classname="ru.itmo.tpo.HashTableTest$CollisionTests" time="0.002"/>
-  <testcase name="delete(): попытка удаления отсутствующего ключа из непустой корзины возвращает false" classname="ru.itmo.tpo.HashTableTest$CollisionTests" time="0.005"/>
+  <testcase name="Поиск корректно работает внутри цепочки при коллизии" classname="ru.itmo.tpo.HashTableTest$CollisionTests" time="0.008"/>
+  <testcase name="delete(): удаление второго элемента в цепочке коллизий проходит успешно" classname="ru.itmo.tpo.HashTableTest$CollisionTests" time="0.005"/>
+  <testcase name="Удаление первого элемента из цепочки не затрагивает другие" classname="ru.itmo.tpo.HashTableTest$CollisionTests" time="0.004"/>
+  <testcase name="search(): поиск отсутствующего ключа в корзине с другими элементами возвращает null" classname="ru.itmo.tpo.HashTableTest$CollisionTests" time="0.006"/>
+  <testcase name="delete(): попытка удаления отсутствующего ключа из непустой корзины возвращает false" classname="ru.itmo.tpo.HashTableTest$CollisionTests" time="0.006"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

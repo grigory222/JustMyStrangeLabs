@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Логика счетчика элементов" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-03-11T13:17:05" hostname="grigory" time="0.014">
+<testsuite name="Логика счетчика элементов" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-03-12T19:55:16" hostname="grigory" time="0.041">
   <properties/>
-  <testcase name="Изначально таблица пуста (счетчик = 0)" classname="ru.itmo.tpo.HashTableTest$ElementCountTests" time="0.002"/>
+  <testcase name="Изначально таблица пуста (счетчик = 0)" classname="ru.itmo.tpo.HashTableTest$ElementCountTests" time="0.008"/>
   <testcase name="Счетчик НЕ увеличивается при обновлении существующего ключа" classname="ru.itmo.tpo.HashTableTest$ElementCountTests" time="0.003"/>
-  <testcase name="Счетчик увеличивается при добавлении нового ключа" classname="ru.itmo.tpo.HashTableTest$ElementCountTests" time="0.002"/>
-  <testcase name="Счетчик уменьшается при успешном удалении ключа" classname="ru.itmo.tpo.HashTableTest$ElementCountTests" time="0.002"/>
+  <testcase name="Счетчик увеличивается при добавлении нового ключа" classname="ru.itmo.tpo.HashTableTest$ElementCountTests" time="0.012"/>
+  <testcase name="Счетчик уменьшается при успешном удалении ключа" classname="ru.itmo.tpo.HashTableTest$ElementCountTests" time="0.008"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

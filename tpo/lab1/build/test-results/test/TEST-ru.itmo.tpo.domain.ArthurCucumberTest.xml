@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ru.itmo.tpo.domain.ArthurCucumberTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-03-12T19:55:17" hostname="grigory" time="0.333">
+  <properties/>
+  <testcase name="Артур входит в рубку и у него отвисает челюсть от серии невероятных зрелищ" classname="ru.itmo.tpo.domain.ArthurCucumberTest" time="0.211"/>
+  <testcase name="Дальнейшие невероятные вещи не возвращают челюсть на место" classname="ru.itmo.tpo.domain.ArthurCucumberTest" time="0.011"/>
+  <testcase name="Попытка занять уже занятое кресло вызывает ошибку" classname="ru.itmo.tpo.domain.ArthurCucumberTest" time="0.01"/>
+  <testcase name="Человек встаёт с кресла и уходит из комнаты" classname="ru.itmo.tpo.domain.ArthurCucumberTest" time="0.008"/>
+  <testcase name="Попытка освободить пустое кресло вызывает ошибку" classname="ru.itmo.tpo.domain.ArthurCucumberTest" time="0.008"/>
+  <testcase name="Повторный вход Артура в комнату вызывает ошибку" classname="ru.itmo.tpo.domain.ArthurCucumberTest" time="0.013"/>
+  <testcase name="Попытка убрать из комнаты человека которого там нет" classname="ru.itmo.tpo.domain.ArthurCucumberTest" time="0.009"/>
+  <testcase name="Артур не может начать нервничать будучи уже в комнате" classname="ru.itmo.tpo.domain.ArthurCucumberTest" time="0.02"/>
+  <testcase name="Попытка уронить челюсть без шока не меняет состояние" classname="ru.itmo.tpo.domain.ArthurCucumberTest" time="0.013"/>
+  <testcase name="Повторное добавление человека в комнату вызывает ошибку" classname="ru.itmo.tpo.domain.ArthurCucumberTest" time="0.014"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

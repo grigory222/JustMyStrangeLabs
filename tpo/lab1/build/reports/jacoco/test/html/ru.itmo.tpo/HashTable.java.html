@@ -53,14 +53,14 @@ public class HashTable {
 <span class="fc" id="L53">        onSearchingInChain();</span>
 
 <span class="fc bfc" id="L55" title="All 2 branches covered.">        for (Node node : bucket) {</span>
-<span class="pc bpc" id="L56" title="1 of 2 branches missed.">            if (Objects.equals(node.key, key)) {</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            if (Objects.equals(node.key, key)) {</span>
 <span class="fc" id="L57">                onKeyFound();</span>
 <span class="fc" id="L58">                node.value = value;</span>
 <span class="fc" id="L59">                onKeyUpdated();</span>
 <span class="fc" id="L60">                onOperationComplete();</span>
 <span class="fc" id="L61">                return;</span>
             }
-<span class="nc" id="L63">        }</span>
+<span class="fc" id="L63">        }</span>
 
 <span class="fc" id="L65">        onKeyNotFound();</span>
 <span class="fc" id="L66">        bucket.add(new Node(key, value));</span>
@@ -76,12 +76,12 @@ public class HashTable {
 <span class="fc" id="L76">        onSearchingInChain();</span>
 
 <span class="fc bfc" id="L78" title="All 2 branches covered.">        for (Node node : bucket) {</span>
-<span class="pc bpc" id="L79" title="1 of 2 branches missed.">            if (Objects.equals(node.key, key)) {</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            if (Objects.equals(node.key, key)) {</span>
 <span class="fc" id="L80">                onKeyFound();</span>
 <span class="fc" id="L81">                onOperationComplete();</span>
 <span class="fc" id="L82">                return node.value;</span>
             }
-<span class="nc" id="L84">        }</span>
+<span class="fc" id="L84">        }</span>
 
 <span class="fc" id="L86">        onKeyNotFound();</span>
 <span class="fc" id="L87">        onOperationComplete();</span>
@@ -96,12 +96,12 @@ public class HashTable {
 
 <span class="fc" id="L97">        Node toRemove = null;</span>
 <span class="fc bfc" id="L98" title="All 2 branches covered.">        for (Node node : bucket) {</span>
-<span class="pc bpc" id="L99" title="1 of 2 branches missed.">            if (Objects.equals(node.key, key)) {</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">            if (Objects.equals(node.key, key)) {</span>
 <span class="fc" id="L100">                onKeyFound();</span>
 <span class="fc" id="L101">                toRemove = node;</span>
 <span class="fc" id="L102">                break;</span>
             }
-<span class="nc" id="L104">        }</span>
+<span class="fc" id="L104">        }</span>
 
 <span class="fc bfc" id="L106" title="All 2 branches covered.">        if (toRemove != null) {</span>
 <span class="fc" id="L107">            bucket.remove(toRemove);</span>

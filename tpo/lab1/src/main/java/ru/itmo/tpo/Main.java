@@ -18,11 +18,5 @@ public class Main {
         System.out.println("search(apple) = " + table.search("apple"));
         System.out.println("delete(apple) = " + table.delete("apple"));
         System.out.println("size = " + table.getElementCount());
-//
-//        System.out.println("\n=== 3. История ===");
-//        Story story = new Story();
-//        story.playFullScene();
-//        System.out.println("Артур в шоке: " + story.getArthur().getEmotionalState());
-//        System.out.println("Зафод в кресле: " + story.getZaphod().isLounging());
     }
 }

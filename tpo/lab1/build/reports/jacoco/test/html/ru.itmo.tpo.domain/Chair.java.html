@@ -4,33 +4,33 @@ public class Chair {
     private boolean isOccupied;
     private Person occupant;
 
-<span class="nc" id="L7">    public Chair() {</span>
-<span class="nc" id="L8">        this.isOccupied = false;</span>
-<span class="nc" id="L9">        this.occupant = null;</span>
-<span class="nc" id="L10">    }</span>
+<span class="fc" id="L7">    public Chair() {</span>
+<span class="fc" id="L8">        this.isOccupied = false;</span>
+<span class="fc" id="L9">        this.occupant = null;</span>
+<span class="fc" id="L10">    }</span>
 
     public void occupy(Person person) {
-<span class="nc bnc" id="L13" title="All 2 branches missed.">        if (isOccupied) {</span>
-<span class="nc" id="L14">            throw new IllegalStateException(&quot;Chair is already occupied by &quot; + this.occupant.getName());</span>
+<span class="fc bfc" id="L13" title="All 2 branches covered.">        if (isOccupied) {</span>
+<span class="fc" id="L14">            throw new IllegalStateException(&quot;Chair is already occupied by &quot; + this.occupant.getName());</span>
         }
-<span class="nc" id="L16">        this.isOccupied = true;</span>
-<span class="nc" id="L17">        this.occupant = person;</span>
-<span class="nc" id="L18">    }</span>
+<span class="fc" id="L16">        this.isOccupied = true;</span>
+<span class="fc" id="L17">        this.occupant = person;</span>
+<span class="fc" id="L18">    }</span>
 
     public void vacate() {
-<span class="nc bnc" id="L21" title="All 2 branches missed.">        if (!isOccupied) {</span>
-<span class="nc" id="L22">            throw new IllegalStateException(&quot;Chair is not occupied&quot;);</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">        if (!isOccupied) {</span>
+<span class="fc" id="L22">            throw new IllegalStateException(&quot;Chair is not occupied&quot;);</span>
         }
-<span class="nc" id="L24">        this.isOccupied = false;</span>
-<span class="nc" id="L25">        this.occupant = null;</span>
-<span class="nc" id="L26">    }</span>
+<span class="fc" id="L24">        this.isOccupied = false;</span>
+<span class="fc" id="L25">        this.occupant = null;</span>
+<span class="fc" id="L26">    }</span>
 
     public boolean isOccupied() {
-<span class="nc" id="L29">        return isOccupied;</span>
+<span class="fc" id="L29">        return isOccupied;</span>
     }
 
     public Person getOccupant() {
-<span class="nc" id="L33">        return occupant;</span>
+<span class="fc" id="L33">        return occupant;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
