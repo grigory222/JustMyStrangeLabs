@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+}
+
+group = 'ru.itmo.tpo'
+version = '1.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    testImplementation 'com.microsoft.playwright:playwright:1.52.0'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging { events "passed", "skipped", "failed"; showStandardStreams = true }
+
+    def selectedBrowser = System.getProperty('browser', 'all')
+    systemProperty 'browser', selectedBrowser
+
+    maxParallelForks = 1
+    forkEvery = 0
+}
+
+tasks.register('testChrome', Test) {
+    useJUnitPlatform()
+    testLogging { events "passed", "skipped", "failed"; showStandardStreams = true }
+    systemProperty 'browser', 'chrome'
+    maxParallelForks = 1
+    forkEvery = 0
+    outputs.upToDateWhen { false }
+    reports.html.outputLocation      = layout.buildDirectory.dir('reports/tests/chrome')
+    reports.junitXml.outputLocation  = layout.buildDirectory.dir('test-results/chrome')
+    binaryResultsDirectory.set(layout.buildDirectory.dir('test-results-bin/chrome'))
+}
+
+tasks.register('testFirefox', Test) {
+    useJUnitPlatform()
+    testLogging { events "passed", "skipped", "failed"; showStandardStreams = true }
+    systemProperty 'browser', 'firefox'
+    maxParallelForks = 1
+    forkEvery = 0
+    outputs.upToDateWhen { false }
+    reports.html.outputLocation      = layout.buildDirectory.dir('reports/tests/firefox')
+    reports.junitXml.outputLocation  = layout.buildDirectory.dir('test-results/firefox')
+    binaryResultsDirectory.set(layout.buildDirectory.dir('test-results-bin/firefox'))
+}
+
+tasks.register('saveAuth', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'ru.itmo.tpo.SaveAuthState'
+    standardInput = System.in
+    description = 'Сохранить аутентификационное состояние booking.com в storage-state.json'
+}

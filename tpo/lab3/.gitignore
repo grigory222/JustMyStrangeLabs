@@ -1,0 +1,24 @@
+# Build / IDE / Gradle
+build/
+.gradle/
+.idea/
+*.iml
+out/
+
+# MCP / Playwright debug artefacts
+.playwright-mcp/
+
+# Локальные артефакты тестов
+test-output/
+test-results/
+
+# Аутентификационное состояние (личные куки)
+storage-state.json
+
+# Ссылочный пример (не часть проекта)
+functional_testing_example/
+
+# AI вспомогательные
+.agents/
+.ai-factory/
+.claude/
