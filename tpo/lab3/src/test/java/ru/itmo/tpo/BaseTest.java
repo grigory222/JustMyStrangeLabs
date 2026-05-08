@@ -84,6 +84,15 @@ public abstract class BaseTest {
                         + " or @aria-label='close' or @aria-label='Dismiss' or @aria-label='dismiss']"),
                 overlay -> { try { overlay.first().click(click); } catch (Exception ignored) {} },
                 opts);
+        // Genius "Sign in, save money" floating popup — у него нет стабильного
+        // testid/aria, X-кнопка просто <button> с svg без текста. Ловим её по
+        // структуре: button-без-текста с svg, лежащий внутри блока, чей текст
+        // содержит «Sign in, save money».
+        page.addLocatorHandler(
+                page.locator("xpath=//*[contains(normalize-space(.), 'Sign in, save money')]"
+                        + "//button[.//svg and not(normalize-space(string(.)))]"),
+                overlay -> { try { overlay.first().click(click); } catch (Exception ignored) {} },
+                opts);
     }
 
     protected SearchResultsPage performSearch(String city, String checkIn, String checkOut) {

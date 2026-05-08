@@ -32,6 +32,10 @@ public class MainPage extends BasePage {
     private static final String XP_GENIUS_DISMISS =
             "//button[@aria-label='Dismiss sign in information.']";
 
+    private static final String JS_CLICK_DAY_CELL =
+            "(d) => document.querySelector("
+            + "'[data-testid=\"searchbox-datepicker-calendar\"] [data-date=\"'+d+'\"]')?.click()";
+
     public MainPage(Page page) {
         super(page);
     }
@@ -113,10 +117,7 @@ public class MainPage extends BasePage {
         }
 
         dayCell.first().waitFor(new Locator.WaitForOptions().setTimeout(5_000));
-        page.evaluate(
-                "(d) => document.querySelector("
-                + "'[data-testid=\"searchbox-datepicker-calendar\"] [data-date=\"'+d+'\"]')?.click()",
-                isoDate);
+        page.evaluate(JS_CLICK_DAY_CELL, isoDate);
         return this;
     }
 
@@ -126,21 +127,8 @@ public class MainPage extends BasePage {
         btn.waitFor();
         btn.click();
 
-        try {
-            page.waitForURL(url ->
-                            url.contains("searchresults")
-                            || url.contains("/city/")
-                            || url.contains("/hotel/")
-                            || (url.contains("booking.com")
-                                && !url.matches("https://www\\.booking\\.com/?")),
-                    new Page.WaitForURLOptions().setTimeout(20_000));
-        } catch (com.microsoft.playwright.TimeoutError ignored) {
-            try {
-                page.waitForLoadState(
-                        com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED,
-                        new Page.WaitForLoadStateOptions().setTimeout(5_000));
-            } catch (Exception ignored2) {}
-        }
+        page.waitForURL(url -> url.contains("/searchresults"),
+                new Page.WaitForURLOptions().setTimeout(20_000));
         return new SearchResultsPage(page);
     }
 }

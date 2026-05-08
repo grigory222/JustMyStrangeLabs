@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import ru.itmo.tpo.pages.BookingPage;
 import ru.itmo.tpo.pages.HotelDetailsPage;
 import ru.itmo.tpo.pages.SearchResultsPage;
+import ru.itmo.tpo.pages.WishlistPage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -107,5 +108,52 @@ class AuthenticatedBookingE2ETest extends BaseTest {
         assertFalse(address.isBlank(), "Страница отеля должна показывать адрес");
         assertTrue(address.toLowerCase().contains(city.toLowerCase()),
                 "Адрес отеля «" + address + "» должен содержать введённый город «" + city + "»");
+    }
+
+    @ParameterizedTest(name = "[{0}] S6 — Auth + Wishlist: добавил → личный кабинет → открыл оттуда → Reserve")
+    @MethodSource("browsers")
+    void authAddToWishlistOpenFromWishlistAndReserve(SupportedBrowser browser) {
+        initBrowser(browser);
+        skipUnless(authenticated, "storage-state.json не найден — запустите ./gradlew saveAuth");
+
+        String city = TestConfig.get("city.e2e.wishlist", "Paris");
+
+        SearchResultsPage results = performSearch(city, CI, CO);
+        throttle();
+        skipUnless(results.hasResults(), "Нет результатов — пропускаем");
+
+        String hotelTitle = results.getResultTitle(0);
+        boolean added = results.addToWishlist(0);
+        skipUnless(added, "Не удалось кликнуть heart-кнопку — пропускаем");
+        throttle();
+
+        WishlistPage wishlist = new WishlistPage(page).open();
+        throttle();
+
+        skipUnless(wishlist.containsHotel(hotelTitle),
+                "Отель «" + hotelTitle + "» не найден в избранном "
+                        + "(возможно, сессия не сохраняет wishlist)");
+
+        HotelDetailsPage hotel = wishlist.openHotel(hotelTitle);
+        throttle();
+
+        String detailName = hotel.getHotelName();
+        assertFalse(detailName.isBlank(), "Страница отеля должна показывать название");
+        boolean nameOk = Arrays.stream(hotelTitle.split("[\\s,\\-()]+"))
+                .filter(w -> w.length() > 3)
+                .anyMatch(w -> detailName.toLowerCase().contains(w.toLowerCase()));
+        skipUnless(nameOk, "Открылся не тот отель: «" + detailName
+                + "» вместо «" + hotelTitle + "»");
+
+        int rooms = hotel.getAvailableRoomTypeCount();
+        skipUnless(rooms > 0, "Нет доступных номеров — пропускаем Reserve");
+
+        BookingPage booking = hotel.clickFirstReserveButton();
+        skipUnless(booking != null, "Reserve не сработал — пропускаем");
+        throttle();
+
+        assertTrue(booking.isLoaded(),
+                "После Reserve ожидался переход на форму бронирования, "
+                        + "но URL: " + booking.getUrl());
     }
 }

@@ -55,56 +55,54 @@ public class HotelDetailsPage extends BasePage {
     }
 
     public int getAvailableRoomTypeCount() {
-        try {
-            Locator anchor = xpathFirst(XP_AVAILABILITY_ANCHOR);
-            anchor.waitFor(new Locator.WaitForOptions().setTimeout(8_000));
+        // Таблица номеров грузится лениво — нужно проскроллить к ней.
+        // Если якорь не найден (редкая верстка), скроллим в середину страницы.
+        Locator anchor = xpathFirst(XP_AVAILABILITY_ANCHOR);
+        if (anchor.count() > 0) {
             anchor.scrollIntoViewIfNeeded();
-        } catch (Exception ignored) {
+        } else {
             page.evaluate("window.scrollTo(0, document.body.scrollHeight / 2)");
         }
 
         Locator selects = xpath(XP_ROOM_QTY_SELECT);
         try {
             selects.first().waitFor(new Locator.WaitForOptions().setTimeout(8_000));
-            return selects.count();
-        } catch (Exception e) {
+        } catch (com.microsoft.playwright.TimeoutError noRooms) {
             return 0;
         }
+        return selects.count();
     }
 
     public BookingPage clickFirstReserveButton() {
-        try {
-            Locator select = xpath(XP_ROOM_QTY_SELECT).first();
-            select.waitFor(new Locator.WaitForOptions().setTimeout(5_000));
+        // Без выбора количества комнат форма уйдёт с qty=0 и booking покажет
+        // ошибку "выберите комнату", не уйдя с /hotel/.
+        Locator select = xpath(XP_ROOM_QTY_SELECT).first();
+        if (select.count() > 0) {
             select.selectOption("1");
-        } catch (Exception ignored) {}
+        }
 
         Locator btn = xpathFirst(XP_RESERVE_SUBMIT);
         try {
             btn.waitFor(new Locator.WaitForOptions().setTimeout(8_000));
-        } catch (Exception e) {
+        } catch (com.microsoft.playwright.TimeoutError notFound) {
             return null;
         }
-        try { btn.scrollIntoViewIfNeeded(); } catch (Exception ignored) {}
+        btn.scrollIntoViewIfNeeded();
 
+        Page resultPage;
         try {
-            Page bookPage = page.context().waitForPage(
+            resultPage = page.context().waitForPage(
                     new com.microsoft.playwright.BrowserContext.WaitForPageOptions().setTimeout(5_000),
                     () -> btn.click(new Locator.ClickOptions().setTimeout(5_000)));
-            bookPage.waitForLoadState(
-                    com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED,
-                    new Page.WaitForLoadStateOptions().setTimeout(20_000));
-            return new BookingPage(bookPage);
-        } catch (com.microsoft.playwright.TimeoutError ignored) {}
-
-        try {
+        } catch (com.microsoft.playwright.TimeoutError noNewTab) {
             page.waitForURL(url -> !url.contains("/hotel/"),
                     new Page.WaitForURLOptions().setTimeout(10_000));
-        } catch (Exception ignored) {}
+            resultPage = page;
+        }
 
-        page.waitForLoadState(
+        resultPage.waitForLoadState(
                 com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED,
-                new Page.WaitForLoadStateOptions().setTimeout(15_000));
-        return new BookingPage(page);
+                new Page.WaitForLoadStateOptions().setTimeout(20_000));
+        return new BookingPage(resultPage);
     }
 }

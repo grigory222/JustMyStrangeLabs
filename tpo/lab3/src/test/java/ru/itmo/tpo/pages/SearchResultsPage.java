@@ -42,6 +42,9 @@ public class SearchResultsPage extends BasePage {
     private static final String XP_FREE_CANCEL_FILTER =
             "//input[@type='checkbox' and @name='fc=2']";
 
+    private static final String XP_WISHLIST_BUTTON =
+            ".//button[@data-testid='wishlist-button']";
+
     public SearchResultsPage(Page page) {
         super(page);
     }
@@ -171,6 +174,23 @@ public class SearchResultsPage extends BasePage {
         checkbox.click();
         waitForListReload();
         return this;
+    }
+
+    /**
+     * Кликает heart-кнопку у карточки #index. Для авторизованного пользователя
+     * это сразу добавляет отель в wishlist. Для анонимного — booking показывает
+     * подсказку «войдите чтобы сохранить» и в избранное ничего не попадает.
+     */
+    public boolean addToWishlist(int index) {
+        try {
+            Locator card = xpath(XP_PROPERTY_CARDS).nth(index);
+            Locator btn = card.locator("xpath=" + XP_WISHLIST_BUTTON);
+            btn.waitFor(new Locator.WaitForOptions().setTimeout(5_000));
+            btn.click();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public SearchResultsPage sortBy(String optionText) {

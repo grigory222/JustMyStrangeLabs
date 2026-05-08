@@ -39,8 +39,7 @@ public class SaveAuthState {
             System.out.println("       НЕ через «Войти через Google» — Google блокирует автобраузеры.");
             page.navigate("https://account.booking.com/sign-in");
 
-            System.out.println(">> Нажмите Enter ПОСЛЕ того, как увидите главную страницу с вашим аккаунтом...");
-            //noinspection ResultOfMethodCallIgnored
+            System.out.println(">> Нажмите Enter после того, как увидите главную страницу с вашим аккаунтом...");
             System.in.read();
 
             Path out = Paths.get(STATE_FILE);
